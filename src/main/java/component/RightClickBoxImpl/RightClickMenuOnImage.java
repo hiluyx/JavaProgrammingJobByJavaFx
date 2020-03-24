@@ -1,7 +1,5 @@
 package component.RightClickBoxImpl;
 
-import data.FileClick;
-
-public class RightClickBoxOnImage {
+public class RightClickMenuOnImage {
     FileClick fileClick;
 }

@@ -18,7 +18,7 @@ public class ImageSet {
     //图片
     private ImageFilter imageFilter;
     private List<Image> images;
-    
+
     public ImageSet(File dir){
         /*
         传入参数Dir（ImageSet必须有一个目录dir找出）
@@ -33,4 +33,6 @@ public class ImageSet {
             images.add(new Image(s));
         }
     }
+
+
 }

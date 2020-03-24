@@ -1,4 +1,4 @@
 package component.RightClickBoxImpl;
 
-public class RightClickBoxOnDir {
+public class RightClickMenuOnDir {
 }
