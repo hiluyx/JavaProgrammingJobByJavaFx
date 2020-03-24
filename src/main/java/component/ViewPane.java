@@ -4,7 +4,7 @@ import data.Image;
 import lombok.Getter;
 import lombok.Setter;
 
-public class ViewWindow {
+public class ViewPane {
     //图片查看窗口
     @Setter
     @Getter

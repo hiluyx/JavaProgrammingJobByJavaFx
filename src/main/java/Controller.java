@@ -8,7 +8,6 @@ public class Controller {
     @FXML
     private Button hello;
 
-
     @FXML
     public void handleButtonAction(ActionEvent actionEvent) {
         hello.setText("Hello World, but sky is the best cool Super Saia!");
