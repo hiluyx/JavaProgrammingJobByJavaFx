@@ -1,4 +1,4 @@
-package component;
+package controller;
 
 import javafx.scene.control.ContextMenu;
 

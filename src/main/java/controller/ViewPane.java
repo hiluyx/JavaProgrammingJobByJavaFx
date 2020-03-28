@@ -1,4 +1,4 @@
-package component;
+package controller;
 
 import model.ImageSet;
 import lombok.Getter;

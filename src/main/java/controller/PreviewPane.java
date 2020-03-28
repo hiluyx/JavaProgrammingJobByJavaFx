@@ -1,7 +1,11 @@
-package component;
+package controller;
 
+import lombok.Getter;
+import lombok.Setter;
 import model.ImageSet;
 
+@Getter
+@Setter
 public class PreviewPane {
     /*
     预览窗口模块
