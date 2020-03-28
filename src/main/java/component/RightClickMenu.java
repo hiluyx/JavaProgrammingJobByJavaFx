@@ -1,17 +1,6 @@
 package component;
 
-public interface RightClickMenu {
-    /*
-    JavaFX ContextMenu
-    http://www.xntutor.com/javafx/javafx-contextmenu.html
-     */
-    void openPane();
+import javafx.scene.control.ContextMenu;
 
-    void deleteFile();
-
-    void copy();
-
-    void paste();
-
-    void rename();
+public class RightClickMenu extends ContextMenu {
 }
