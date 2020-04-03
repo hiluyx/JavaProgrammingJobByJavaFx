@@ -23,15 +23,12 @@ public class FileTreePane extends VBox implements Initializable {
     JavaFX TreeView + JavaFX ScrollPane
     http://www.xntutor.com/javafx/javafx-treeview.html
     http://www.xntutor.com/javafx/javafx-scrollpane.html
-
-
-
      */
     @FXML
     private TreeView<String> treeView;//树结构模块
 
-    @FXML
-    private ScrollPane scrollPane;
+//    @FXML
+//    private ScrollPane scrollPane;
 
     private FileTreeItem rootTreeItem;
 
@@ -43,10 +40,17 @@ public class FileTreePane extends VBox implements Initializable {
 
     //设置根目录
     public void setRootFileTreeItem(File file) {
-        rootTreeItem = new FileTreeItem((Function<File, File[]>) file);
+        rootTreeItem = new FileTreeItem(file);
         rootTreeItem.setExpanded(true);
         treeView.setRoot(rootTreeItem);
     }
+
+//    /*
+//    加载一个节点下面的所有子节点
+//     */
+//    public void loadAll(FileTreeItem fileTreeItem){
+//        fileTreeItem.getChildren().addAll(fileTreeItem.getChildrenFileTreeItem());
+//    }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -57,5 +61,14 @@ public class FileTreePane extends VBox implements Initializable {
         然后执行@FXML修饰的方法，最后执行initializable方法，
         我们可以在initializable方法中对fxml文件的控件进行初始化。
          */
+        treeView.prefHeightProperty().bind(this.heightProperty());
+    }
+
+    public void action() {
+
+    }
+
+    public String getURL(FileTreeItem fileTreeItem) {
+        return fileTreeItem.getFile().getAbsolutePath();//返回绝对路径
     }
 }

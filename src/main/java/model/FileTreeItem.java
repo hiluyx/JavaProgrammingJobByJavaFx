@@ -5,44 +5,74 @@ import javafx.scene.control.TreeItem;
 import lombok.Data;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Function;
+import java.io.FileFilter;
+import java.util.*;
 
 @Data
 public class FileTreeItem extends TreeItem<String> {
-    //当前文件目录,包含该目录下的所有子目录dirs
-    private File file;
-    private boolean notInitialized = true;
-    private final Function<File, File[]> supplier;
 
-    public FileTreeItem(File file, Function<File, File[]> supplier) {
-        this.supplier = supplier;
+    //判断树节点是否被初始化，没有初始化为真
+    private boolean notInitialized = true;
+
+    private File file;//路径
+
+    private List<File> imageFile;
+
+    public FileTreeItem(File file) {
+        super(file.getName());
+        this.file = file;
     }
+
 
     @Override
-    public ObservableList<TreeItem<String>> getChildren() {
+    public ObservableList<TreeItem<String>> getChildren() {//获取当前文件的子文件（文件夹和图片，两个过滤器）
 
         ObservableList<TreeItem<String>> children = super.getChildren();
-        //没有加载子目录时，则加载子目录作为树节点的孩子
+
         if (this.notInitialized && this.isExpanded()) {
+            //没有被初始化而且可以扩展，然后进行初始化
+            this.notInitialized = false;
 
-            this.notInitialized = false;    //设置没有初始化为假
+            File[] dirs = file.listFiles(new FileFilter() {
+                @Override
+                public boolean accept(File pathname) {
+                    return file.isDirectory();
+                }
+            });//文件过滤器
+            File[] images = file.listFiles(new FileFilter() {
+                private Set<String> set = new HashSet<>();
 
-            /*判断树节点的文件是否是目录，
-             *如果是目录，着把目录里面的所有的文件目录添加入树节点的孩子中。
-             */
-
-            if (this.getFile().isDirectory()) {
-                for (File f : supplier.apply(this.getFile())) {
-                    //如果文件是目录，则把它加到树节点上
-                    if (f.isDirectory()) {
-                        children.add(new FileTreeItem((Function<File, File[]>) f));
-                    }
+                @Override
+                public boolean accept(File pathname) {
+                    set.addAll(Arrays.asList("jpg", "png", "gif", "bmp"));
+                    return set.contains(getExtension(pathname.getName()));
                 }
 
+                public String getExtension(String name) {
+                    if (name == null) {
+                        return null;
+                    }
+                    int index = name.lastIndexOf(".");
+                    return index > -1 ? name.substring(index + 1) : null;
+                }
+            });//图片后缀过滤器
+
+            for (File f : dirs) {
+                FileTreeItem fileTreeItem = new FileTreeItem(f);
+                children.add(fileTreeItem);
             }
+            imageFile.addAll(Arrays.asList(images));
         }
+
         return children;
     }
+
+    //重写叶子方法，如果该文件不是目录，则返回真
+    @Override
+    public boolean isLeaf() {
+        //是叶子，说明到终点了，不可展开
+
+        return !file.isDirectory();
+    }
+
 }
