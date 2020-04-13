@@ -1,71 +1,59 @@
 package controller;
 
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TreeView;
 import javafx.scene.layout.VBox;
 import lombok.Getter;
 import lombok.Setter;
 import model.FileTreeItem;
+import model.TreeNode;
 
+import javax.swing.filechooser.FileSystemView;
 import java.io.File;
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
-import java.util.function.Function;
 
 @Getter
 @Setter
 public class FileTreePane extends VBox implements Initializable {
-    /*
-    文件树窗口
-    JavaFX TreeView + JavaFX ScrollPane
-    http://www.xntutor.com/javafx/javafx-treeview.html
-    http://www.xntutor.com/javafx/javafx-scrollpane.html
-     */
     @FXML
-    private TreeView<String> treeView;//树结构模块
-
-//    @FXML
-//    private ScrollPane scrollPane;
-
+    private TreeView<TreeNode> treeView;//树结构模块
     private FileTreeItem rootTreeItem;
 
     public FileTreePane() {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/file-tree-pane.fxml"));
-        loader.setRoot(this);
-        loader.setController(this);
+        this.setRootFileTreeItem();
+        this.getChildren().add(this.treeView);
     }
 
     //设置根目录
-    public void setRootFileTreeItem(File file) {
-        rootTreeItem = new FileTreeItem(file);
-        rootTreeItem.setExpanded(true);
-        treeView.setRoot(rootTreeItem);
-    }
-
-//    /*
-//    加载一个节点下面的所有子节点
-//     */
-//    public void loadAll(FileTreeItem fileTreeItem){
-//        fileTreeItem.getChildren().addAll(fileTreeItem.getChildrenFileTreeItem());
-//    }
-
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
+    public void setRootFileTreeItem() {
         /*
-        初始化
-        PS：对于一个fxml文件来说它首先执行控制器的构造函数，
-        这个时候它是无法对@FXML修饰的方法进行访问的，
-        然后执行@FXML修饰的方法，最后执行initializable方法，
-        我们可以在initializable方法中对fxml文件的控件进行初始化。
+        创建一个假文件substitute来作为树的根
          */
-        treeView.prefHeightProperty().bind(this.heightProperty());
+        File substitute = new File("Substitute");
+        substitute.mkdir();
+        this.rootTreeItem = new FileTreeItem(substitute, substitute.getName());
+
+        File[] roots = File.listRoots();
+        FileSystemView fsv = FileSystemView.getFileSystemView();
+        for (File f : roots) {
+            String name = fsv.getSystemDisplayName(new File(f.toString()));
+            FileTreeItem child = new FileTreeItem(f, name);
+            this.rootTreeItem.getChildren().add(child);
+        }
+        this.treeView = new TreeView<TreeNode>(rootTreeItem);
+        this.treeView.setShowRoot(false);//隐藏假文件
     }
 
-    public void action() {
+    @FXML
+    public void initialize(URL location, ResourceBundle resources) {
+        this.treeView.prefHeightProperty().bind(this.heightProperty());
 
+        this.treeView.getSelectionModel().selectionModeProperty().addListener((observable, oldValue, newValue) -> {
+            TreeNode imageFiles = this.treeView.getSelectionModel().getSelectedItem().getValue();
+        });
     }
 
     public String getURL(FileTreeItem fileTreeItem) {

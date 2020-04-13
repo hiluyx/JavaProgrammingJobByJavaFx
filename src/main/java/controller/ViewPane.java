@@ -1,6 +1,5 @@
 package controller;
 
-import model.ImageSet;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,9 +11,6 @@ public class ViewPane {
     http://www.xntutor.com/javafx/javafx-image-and-imageview.html
     http://www.xntutor.com/javafx/javafx-anchorpane-layout.html
      */
-    @Setter
-    @Getter
-    private ImageSet imageEditing;
 
     public void enlargeImage() {
 

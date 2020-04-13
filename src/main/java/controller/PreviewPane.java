@@ -2,7 +2,6 @@ package controller;
 
 import lombok.Getter;
 import lombok.Setter;
-import model.ImageSet;
 
 @Getter
 @Setter
@@ -13,7 +12,6 @@ public class PreviewPane {
     http://www.xntutor.com/javafx/javafx-gridpane-layout.html
     http://www.xntutor.com/javafx/javafx-image-and-imageview.html
      */
-    private ImageSet imageSet;
 
     public void turn2SlideWindow() {
         //细节
