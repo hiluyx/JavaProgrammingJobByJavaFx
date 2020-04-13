@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="654.0" prefWidth="917.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.FileTreePane">
+    <left>
+        <TreeView fx:id="treeView" prefHeight="454.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+    </left>
+    <top>
+        <AnchorPane prefHeight="14.0" prefWidth="917.0" BorderPane.alignment="CENTER">
+            <children>
+                <HBox layoutX="198.0" layoutY="1.0" prefHeight="38.0" prefWidth="120.0">
+                    <children>
+                        <Button layoutX="198.0" layoutY="2.0" mnemonicParsing="false" prefHeight="37.0" prefWidth="39.0" text="&lt;" />
+                        <Button layoutX="230.0" layoutY="2.0" mnemonicParsing="false" prefHeight="37.0" prefWidth="39.0" text="&gt;" />
+                        <Button layoutX="262.0" layoutY="1.0" mnemonicParsing="false" prefHeight="37.0" prefWidth="38.0" text="↑" />
+                    </children>
+                </HBox>
+                <TextArea layoutX="310.0" layoutY="1.0" prefHeight="38.0" prefWidth="252.0" text="文件路径" />
+                <TextField layoutX="728.0" layoutY="7.0" prefHeight="36.0" prefWidth="139.0" AnchorPane.bottomAnchor="-4.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="7.0" />
+                <Button layoutX="867.0" layoutY="7.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="50.0" text="搜索" AnchorPane.bottomAnchor="-2.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="7.0" />
+                <Label layoutX="39.0" layoutY="7.0" text="我的电脑" />
+            </children>
+        </AnchorPane>
+    </top>
+    <center>
+
+    </center>
+    <center>
+        <ScrollPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+            <content>
+                <BorderPane prefHeight="579.0" prefWidth="711.0">
+                    <center>
+                        <FlowPane fx:id="flowPane" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+                    </center>
+                    <top>
+                        <HBox prefHeight="31.0" prefWidth="711.0" BorderPane.alignment="CENTER">
+                            <children>
+                                <Label prefHeight="48.0" prefWidth="73.0" text="图片数量">
+                                    <rotationAxis>
+                                        <Point3D x="1.0" z="1.0" />
+                                    </rotationAxis>
+                                </Label>
+                                <ComboBox prefHeight="30.0" prefWidth="66.0">
+                                    <HBox.margin>
+                                        <Insets />
+                                    </HBox.margin>
+                                </ComboBox>
+                            </children>
+                        </HBox>
+                    </top>
+                </BorderPane>
+            </content>
+        </ScrollPane>
+    </center>
+    <bottom>
+        <HBox prefHeight="30.0" prefWidth="917.0" BorderPane.alignment="CENTER">
+            <children>
+                <Label prefHeight="32.0" prefWidth="209.0" text="一些信息" />
+            </children>
+        </HBox>
+    </bottom>
+</BorderPane>
