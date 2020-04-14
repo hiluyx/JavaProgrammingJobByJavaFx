@@ -9,6 +9,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+
         try {
             BorderPane root = new BorderPane();
             Scene scene = new Scene(root, 900, 700);
