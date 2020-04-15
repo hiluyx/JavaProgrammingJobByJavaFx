@@ -5,19 +5,14 @@ import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.scene.control.SplitPane;
 
-
 public class Main extends Application {
     @Override
     public void start(Stage primaryStage) {
         try {
-
             SplitPane root = new SplitPane();
-
             ViewerPane vi = new ViewerPane();
             FileTree fileTree = new FileTree(vi);
-
             root.getItems().addAll(fileTree.getTreeView(), vi);
-
             root.setDividerPositions(0.275);
             SplitPane.setResizableWithParent(fileTree.getTreeView(), false);
             Scene scene = new Scene(root, 900, 700);
