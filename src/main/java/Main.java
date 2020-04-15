@@ -13,6 +13,7 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) {
 
+        //
         try {
             FXMLLoader root = new FXMLLoader(getClass().getResource("fxml/main-pane.fxml"));
             primaryStage.setTitle("PhotoView");
