@@ -1,30 +1,28 @@
-import controller.FileTreePane;
+import controller.FileTree;
+import controller.ViewerPane;
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import javafx.scene.Scene;
+import javafx.scene.control.SplitPane;
 
-import java.io.IOException;
 
 public class Main extends Application {
-
     @Override
     public void start(Stage primaryStage) {
-
-        //
         try {
-            FXMLLoader root = new FXMLLoader(getClass().getResource("fxml/main-pane.fxml"));
-            primaryStage.setTitle("PhotoView");
 
-//            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("fxml/file-tree-pane.fxml"));
-//            fxmlLoader.setRoot(root.getNamespace().get("fileTreePane"));
-//            fxmlLoader.load();
+            SplitPane root = new SplitPane();
 
-            primaryStage.setScene(new Scene(root.load()));
-            primaryStage.setMinWidth(800);
-            primaryStage.setMinHeight(500);
+            ViewerPane vi = new ViewerPane();
+            FileTree fileTree = new FileTree(vi);
+
+            root.getItems().addAll(fileTree.getTreeView(), vi);
+
+            root.setDividerPositions(0.275);
+            SplitPane.setResizableWithParent(fileTree.getTreeView(), false);
+            Scene scene = new Scene(root, 900, 700);
+            scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+            primaryStage.setScene(scene);
             primaryStage.show();
         } catch (Exception e) {
             e.printStackTrace();

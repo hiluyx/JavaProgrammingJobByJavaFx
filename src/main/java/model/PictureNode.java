@@ -8,16 +8,33 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.text.Text;
+
+import javafx.scene.Scene;
+import javafx.scene.layout.BorderPane;
+import javafx.stage.Stage;
 import lombok.Data;
 
 @Data
 public class PictureNode extends Label {
+	private File file;
 	private Image image;
 	private ImageView imageView;
 	private Text pictureName;
 
 	public PictureNode(File aPicture) {
-		//init(aPicture);
+		this.file = aPicture;
+		this.setPickOnBounds(true);
+		this.setOnMouseClicked(e -> {
+			Stage s = new Stage();
+			BorderPane borderPane = new BorderPane();
+			ImageView iv = new ImageView(new Image("file:" + this.file, 900, 700, true, true));
+			iv.setFitHeight(900);
+			iv.setFitWidth(700);
+			borderPane.setCenter(iv);
+			Scene scene = new Scene(borderPane, 900, 700);
+			s.setScene(scene);
+			s.show();
+		});
 		this.setGraphicTextGap(10);
 		this.setPadding(new Insets(10, 10, 10, 10));
 		this.setContentDisplay(ContentDisplay.TOP);

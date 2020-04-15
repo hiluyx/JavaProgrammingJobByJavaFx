@@ -1,4 +1,4 @@
-import controller.FileTreePane;
+import controller.FileTree;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -20,7 +20,7 @@ public class MainController implements Initializable {
     @FXML
     private BorderPane borderPane;
     @FXML
-    private FileTreePane fileTreePane;
+    private FileTree fileTreePane;
     @FXML
     private ScrollPane scrollPane;
     @FXML
