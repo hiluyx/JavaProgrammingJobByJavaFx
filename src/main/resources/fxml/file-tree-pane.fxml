@@ -6,9 +6,13 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="fxml.FileTreePane"
-            prefHeight="400.0" prefWidth="600.0">
+<?import controller.FileTreePane?>
+<FileTreePane xmlns="http://javafx.com/javafx"
+              xmlns:fx="http://javafx.com/fxml"
+              fx:id="fileTreePane"
+              fx:controller="controller.FileTreePane"
+              prefHeight="400.0" prefWidth="600.0">
 
-</AnchorPane>
+    <TreeView fx:id="treeView"/>
+
+</FileTreePane>
