@@ -2,6 +2,9 @@ package model;
 
 import java.io.File;
 
+
+import controller.SeePicture;
+import controller.ViewerPane;
 import javafx.geometry.Insets;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
@@ -20,20 +23,42 @@ public class PictureNode extends Label {
 	private Image image;
 	private ImageView imageView;
 	private Text pictureName;
+	private ViewerPane viewerPane;
 
-	public PictureNode(File aPicture) {
+	public PictureNode(File aPicture, ViewerPane viewerPane) {
+
+		this.viewerPane = viewerPane;
 		this.file = aPicture;
 		this.setPickOnBounds(true);
+		this.setOnMouseExited(e -> {
+			this.setStyle("-fx-background-color: White;");
+		});
+
 		this.setOnMouseClicked(e -> {
-			Stage s = new Stage();
-			BorderPane borderPane = new BorderPane();
-			ImageView iv = new ImageView(new Image("file:" + this.file, 900, 700, true, true));
-			iv.setFitHeight(900);
-			iv.setFitWidth(700);
-			borderPane.setCenter(iv);
-			Scene scene = new Scene(borderPane, 900, 700);
-			s.setScene(scene);
-			s.show();
+			if (e.getSceneX() != 0 && e.getSceneY() != 0) {
+				int count = e.getClickCount();
+				if (count % 2 == 1) {
+					this.setStyle("-fx-background-color: #8bb9ff;");
+				}
+
+			}
+
+			if (e.getClickCount() == 2) {
+				new SeePicture(this.file, this.file.getName());
+				/*Stage s = new Stage();
+				BorderPane borderPane = new BorderPane();
+				Image im = new Image("file:" + this.file.getAbsolutePath());
+				ImageView iv = new ImageView(im);
+				iv.setPreserveRatio(true);
+				if(im.getWidth()>1000){
+					iv.setFitWidth(700);
+				}
+				borderPane.setCenter(iv);
+				Scene scene = new Scene(borderPane, 1200, 1000);
+				s.setScene(scene);
+				s.show();*/
+			}
+
 		});
 		this.setGraphicTextGap(10);
 		this.setPadding(new Insets(10, 10, 10, 10));

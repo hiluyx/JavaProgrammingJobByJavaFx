@@ -28,7 +28,7 @@ public class FileTree {
 
     public void setRootFileTreeItem() {
         File substitute = new File("Substitute");
-        substitute.mkdir();
+      //  substitute.mkdir();
         this.rootTreeItem = new FileTreeItem(substitute, substitute.getName());
 
         File[] roots = File.listRoots();
