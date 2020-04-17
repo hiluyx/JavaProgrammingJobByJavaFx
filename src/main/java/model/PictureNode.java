@@ -26,7 +26,6 @@ public class PictureNode extends Label {
 	private ViewerPane viewerPane;
 
 	public PictureNode(File aPicture, ViewerPane viewerPane) {
-
 		this.viewerPane = viewerPane;
 		this.file = aPicture;
 		this.setPickOnBounds(true);

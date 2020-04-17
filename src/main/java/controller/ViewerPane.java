@@ -56,12 +56,12 @@ public class ViewerPane extends BorderPane {
                 TreeNode p = newValue;
                 if (p != null && p.getImages() != null)
                     for (int i = 0; i < p.getImages().size(); i++) {
+//                        System.out.println(p.getImages().get(i).getName());
                         PictureNode iv = new PictureNode(p.getImages().get(i), vp);
                         flowPane.getChildren().add(iv);
                     }
-                System.out.println("打印结束");
             }
-        }); // end of selectedFolderProperty addddListener
+        });
 
 
     }

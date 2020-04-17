@@ -6,9 +6,11 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.scene.control.TreeItem;
 import lombok.Data;
+
+import javax.swing.filechooser.FileSystemView;
 
 @Data
 public class FileTreeItem extends TreeItem<TreeNode> {
@@ -16,58 +18,51 @@ public class FileTreeItem extends TreeItem<TreeNode> {
     private boolean notInitialized = true;
     private File file;
     private TreeNode treeNode;
+    private boolean isRoot;
 
-    public FileTreeItem(File file, String name) {
+    public FileTreeItem(File file, String name, boolean isRoot) {
         this.file = file;
-        this.treeNode = new TreeNode();
+        this.isRoot = isRoot;
+        this.treeNode = new TreeNode(file, name);
         this.setValue(treeNode);
-        this.getValue().setNodeText(name);
+//        System.out.println(this.getTreeNode().getNodeText());
+//        System.out.println("---------------------------");
+//        if(this.getTreeNode().getImages()!=null)for(File f:this.getTreeNode().getImages())
+//        System.out.println(f.getName());
+//        System.out.println("---------------------------");
     }
 
-    @Override
-    public ObservableList<TreeItem<TreeNode>> getChildren() {
-
-        ObservableList<TreeItem<TreeNode>> children = super.getChildren();
-
-        if (this.notInitialized && this.isExpanded()) {
+    public void loadChildren() {
+        if (isNotInitialized()) {
             this.notInitialized = false;
-            File[] dirs = file.listFiles(new FileFilter() {
-                @Override
-                public boolean accept(File pathname) {
-                    return pathname.isDirectory();
-                }
-            });//鏂囦欢杩囨护鍣�
-            File[] images = file.listFiles(new FileFilter() {
-                private Set<String> set = new HashSet<>();
-
-                @Override
-                public boolean accept(File pathname) {
-                    set.addAll(Arrays.asList("jpg", "png", "gif", "bmp"));
-                    return set.contains(getExtension(pathname.getName()));
-                }
-
-                public String getExtension(String name) {
-                    if (name == null) {
-                        return null;
-                    }
-                    int index = name.lastIndexOf(".");
-                    return index > -1 ? name.substring(index + 1) : null;
-                }
-            });//鍥剧墖鍚庣紑杩囨护鍣�
-
-            if (dirs != null) {
-                for (File f : dirs) {
-                    FileTreeItem fileTreeItem = new FileTreeItem(f, f.getName());
-                    children.add(fileTreeItem);
+            File[] childrenDir;
+            if (!isRoot) {
+                childrenDir = this.file.listFiles(File::isDirectory);
+            } else {
+                childrenDir = File.listRoots();
+            }
+            if (childrenDir == null) return;
+            for (File child : childrenDir) {
+                if (child.isDirectory() && (isRoot || !child.isHidden())) {
+                    FileTreeItem item = new FileTreeItem(child, this.getForName(child), false);
+                    item.addEventHandler(FileTreeItem.branchExpandedEvent(),
+                            (EventHandler<TreeModificationEvent<TreeNode>>) event -> {
+                                for (TreeItem<TreeNode> treeItem : event.getSource().getChildren()) {
+                                    FileTreeItem currChild = (FileTreeItem) treeItem;
+                                    currChild.loadChildren();
+                                }
+                            });
+                    this.getChildren().add(item);
                 }
             }
-            if (images != null) this.getTreeNode().setImages(Arrays.asList(images));
+
         }
-        return children;
     }
 
-    @Override
-    public boolean isLeaf() {
-        return !file.isDirectory();
+    private String getForName(File file) {
+        if (isRoot) {
+            FileSystemView fsv = FileSystemView.getFileSystemView();
+            return fsv.getSystemDisplayName(new File(file.toString()));
+        } else return file.getName();
     }
 }
