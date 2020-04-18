@@ -3,9 +3,6 @@ package controller;
 import javafx.fxml.FXML;
 
 import java.io.File;
-import javax.swing.filechooser.FileSystemView;
-
-import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import lombok.Getter;

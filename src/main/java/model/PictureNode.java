@@ -1,8 +1,6 @@
 package model;
 
 import java.io.File;
-
-
 import controller.SeePicture;
 import controller.ViewerPane;
 import javafx.geometry.Insets;
@@ -12,11 +10,11 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.text.Text;
 
-import javafx.scene.Scene;
-import javafx.scene.layout.BorderPane;
-import javafx.stage.Stage;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
+
+@EqualsAndHashCode(callSuper = true)
 @Data
 public class PictureNode extends Label {
 	private File file;

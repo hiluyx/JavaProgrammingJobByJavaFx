@@ -1,17 +1,14 @@
 package model;
 
 import java.io.File;
-import java.io.FileFilter;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-
 import javafx.event.EventHandler;
 import javafx.scene.control.TreeItem;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.swing.filechooser.FileSystemView;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 public class FileTreeItem extends TreeItem<TreeNode> {
 

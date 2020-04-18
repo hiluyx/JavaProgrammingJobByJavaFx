@@ -2,10 +2,7 @@ package controller;
 
 
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
@@ -15,12 +12,8 @@ import javafx.scene.control.ScrollPane;
 import model.PictureNode;
 import model.TreeNode;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
 public class ViewerPane extends BorderPane {
-    private SimpleObjectProperty<TreeNode> selectedFolderProperty = new SimpleObjectProperty<TreeNode>();
+    private SimpleObjectProperty<TreeNode> selectedFolderProperty = new SimpleObjectProperty<>();
     private PictureNode pictureNodeProperty;
     private FlowPane flowPane;
     private ViewerPane vp = this;
@@ -48,19 +41,15 @@ public class ViewerPane extends BorderPane {
         this.setCenter(scrollPane);
 
 
-        selectedFolderProperty.addListener(new ChangeListener<TreeNode>() {
-            @Override
-            public void changed(ObservableValue<? extends TreeNode> observable, TreeNode oldValue, TreeNode newValue) {
+        selectedFolderProperty.addListener((observable, oldValue, newValue) -> {
 
-                flowPane.getChildren().remove(0, flowPane.getChildren().size());
-                TreeNode p = newValue;
-                if (p != null && p.getImages() != null)
-                    for (int i = 0; i < p.getImages().size(); i++) {
+            flowPane.getChildren().remove(0, flowPane.getChildren().size());
+            if (newValue != null && newValue.getImages() != null)
+                for (int i = 0; i < newValue.getImages().size(); i++) {
 //                        System.out.println(p.getImages().get(i).getName());
-                        PictureNode iv = new PictureNode(p.getImages().get(i), vp);
-                        flowPane.getChildren().add(iv);
-                    }
-            }
+                    PictureNode iv = new PictureNode(newValue.getImages().get(i), vp);
+                    flowPane.getChildren().add(iv);
+                }
         });
 
 
