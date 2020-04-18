@@ -11,27 +11,23 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+import model.TreeNode;
 
 import java.io.File;
-import java.io.FilenameFilter;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
 
 public class SeePicture extends BorderPane {
-    private ArrayList<File> pictureFiles = new ArrayList<File>(); //图片的
+    private TreeNode treeNode;
     private int clickCount;                     // 计数器
     private int changeNum = 0;                  //缩放系数
 
     public SeePicture(File file, String nodePane) {
-
-        load(file);     //加载图片信息
+        treeNode = new TreeNode(file.getParentFile(), file.getParentFile().getName());
         if ("".equals(nodePane)) {
             clickCount = 0;
         } else {
-            for (int i = 0; i < pictureFiles.size(); i++) {
-                if (nodePane.equals(pictureFiles.get(i).getName())) {
+            for (int i = 0; i < treeNode.getImages().size(); i++) {
+                if (nodePane.equals(treeNode.getImages().get(i).getName())) {
                     clickCount = i;
                     break;
                 }
@@ -39,7 +35,7 @@ public class SeePicture extends BorderPane {
         }   //判断图片
 
         ///////////////组件////////////
-        ImageView iv = new ImageView(new Image("file:" + this.pictureFiles.get(clickCount), 600, 600, true, true));
+        ImageView iv = new ImageView(new Image("file:" + this.treeNode.getImages().get(clickCount), 600, 600, true, true));
         Button previous = new Button("previous");
         Button next = new Button("next");
         Button enlarge = new Button("enlarge");
@@ -78,8 +74,8 @@ public class SeePicture extends BorderPane {
         this.setLeft(previous);
         this.setRight(next);
         this.setTop(hBox);
-        this.setAlignment(this.getLeft(), Pos.CENTER);
-        this.setAlignment(this.getRight(), Pos.CENTER);
+        setAlignment(this.getLeft(), Pos.CENTER);
+        setAlignment(this.getRight(), Pos.CENTER);
         previous.setContentDisplay(ContentDisplay.CENTER);
         next.setContentDisplay(ContentDisplay.CENTER);
         Scene scene = new Scene(this, 1000, 1000);
@@ -100,7 +96,7 @@ public class SeePicture extends BorderPane {
             Stage.setScene(scene);
             Stage.show();
             this.clickCount++;
-        } else if (this.clickCount > this.pictureFiles.size() - 1) {
+        } else if (this.clickCount > this.treeNode.getImages().size() - 1) {
             Label label = new Label("这是最后一张图片");
             Pane root = new Pane(label);
             Scene scene = new Scene(root);
@@ -113,24 +109,8 @@ public class SeePicture extends BorderPane {
         } else {
             this.changeNum = 0;
             System.out.println(this.clickCount);
-            ImageView iv = new ImageView(new Image("file:" + this.pictureFiles.get(clickCount), 600, 600, true, true));
+            ImageView iv = new ImageView(new Image("file:" + this.treeNode.getImages().get(clickCount), 600, 600, true, true));
             this.setCenter(iv);
-        }
-    }
-
-    //加载图片文件
-    private void load(File file) {
-        System.out.println(file.getAbsolutePath());
-        try {
-            pictureFiles.clear();
-            String parentPath = file.getParentFile().getAbsolutePath();
-            String[] imageNames = getImageNames(parentPath);
-            for (String imageName : imageNames) {
-                String imagePath = parentPath + "\\" + imageName;
-                pictureFiles.add(new File(imagePath));
-            }
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
         }
     }
 
@@ -161,22 +141,5 @@ public class SeePicture extends BorderPane {
         iv.setFitWidth(600 * (changeNum * 0.1 + 1));
         iv.setFitHeight(600 * (changeNum * 0.1 + 1));
         iv.setPreserveRatio(true);
-    }
-
-    //筛选图片文件
-    public String[] getImageNames(String parentPath) throws URISyntaxException {
-        File parentDir = new File(parentPath);
-        String[] pngs = parentDir.list(new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                if (name.endsWith("jpg") || name.endsWith("png")
-                        || name.endsWith("jpeg") || name.endsWith("gif")
-                        || name.endsWith("bmp")) {
-                    return true;
-                }
-                return false;
-            }
-        });
-        return pngs;
     }
 }
