@@ -3,12 +3,14 @@ package controller;
 import javafx.fxml.FXML;
 
 import java.io.File;
-import javafx.scene.control.TreeItem;
+
 import javafx.scene.control.TreeView;
 import lombok.Getter;
 import lombok.Setter;
 import model.FileTreeItem;
 import model.TreeNode;
+import util.FileTreeLoader;
+import util.TaskThreadPool;
 
 @Getter
 @Setter
@@ -22,20 +24,15 @@ public class FileTree {
     public FileTree(ViewerPane viewerPane) {
         this.viewerPane = viewerPane;
         this.setRootFileTreeItem();
+        TaskThreadPool.execute(new FileTreeLoader(this));
         addListener();
-
-        for (TreeItem<TreeNode> fileTreeItem : this.rootTreeItem.getChildren()) {
-            ((FileTreeItem) fileTreeItem).loadChildren();
-        }
     }
 
     public void setRootFileTreeItem() {
         File substitute = new File("Substitute");
         this.rootTreeItem = new FileTreeItem(substitute, substitute.getName(), true);
-        this.rootTreeItem.loadChildren();
         this.treeView = new TreeView<>(rootTreeItem);
         this.treeView.setShowRoot(false);
-//        this.treeView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
     }
 
     public void addListener() {

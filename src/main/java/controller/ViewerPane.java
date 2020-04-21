@@ -42,7 +42,6 @@ public class ViewerPane extends BorderPane {
 
 
         selectedFolderProperty.addListener((observable, oldValue, newValue) -> {
-
             flowPane.getChildren().remove(0, flowPane.getChildren().size());
             if (newValue != null && newValue.getImages() != null)
                 for (int i = 0; i < newValue.getImages().size(); i++) {
