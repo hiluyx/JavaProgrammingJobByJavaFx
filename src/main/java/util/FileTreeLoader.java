@@ -37,13 +37,11 @@ public class FileTreeLoader implements Runnable {
             List<FileTreeItem> allChildren = new ArrayList<>();
             for (FileTreeItem item : fileTreeItems) {
                 if (dirLevel < 3) {
-                    //文件层数小于3
                     List<FileTreeItem> childList = loadChildren(item);
                     if (childList != null) {
                         allChildren.addAll(childList);
                     }
                 } else {
-                    //文件层数大于等于3
                     TaskThreadPools.executeOnCachedThreadPool(() -> {
                         System.out.println(Thread.currentThread().getName());
                         loadChildren(item);
