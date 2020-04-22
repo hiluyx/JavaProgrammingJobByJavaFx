@@ -1,17 +1,21 @@
 package util;
 
 import controller.FileTree;
-import javafx.event.EventHandler;
-import javafx.scene.control.TreeItem;
-import lombok.Getter;
-import lombok.Setter;
 import model.FileTreeItem;
-import model.TreeNode;
+
+import javafx.application.Platform;
+import javafx.concurrent.Task;
 
 import javax.swing.filechooser.FileSystemView;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
-public class FileTreeLoader implements Runnable {
+import lombok.Getter;
+import lombok.Setter;
+
+public class FileTreeLoader extends Task {
+
     @Setter
     @Getter
     private FileTree fileTree;
@@ -21,45 +25,37 @@ public class FileTreeLoader implements Runnable {
     }
 
     @Override
-    public void run() {
-        FileTreeItem root = fileTree.getRootTreeItem();
-        loadChildren(root);
-        for (TreeItem<TreeNode> item : root.getChildren()) {
-            loadChildren((FileTreeItem) item);
+    protected Object call() throws Exception {
+        List<FileTreeItem> fileTreeItems = fileTree.getFileTreeItems();
+        while (fileTreeItems.size() > 0) {
+            List<FileTreeItem> allChildren = new ArrayList<>();
+            for (FileTreeItem item : fileTreeItems) {
+                System.out.println(item.getValue().getNodeText());
+                File curFile = item.getFile();
+                if (curFile.isDirectory()) {
+                    List<FileTreeItem> curChildren = new ArrayList<>();
+                    File[] childFiles = curFile.listFiles(File::isDirectory);
+                    if (childFiles == null) continue;
+                    for (File childFile : childFiles) {
+                        FileTreeItem child = new FileTreeItem(childFile, childFile.getName(), false);
+                        curChildren.add(child);
+                    }
+                    Platform.runLater(() -> {
+                        item.setExpanded(false);
+                        for (FileTreeItem child : curChildren) {
+                            item.getChildren().add(child);
+                        }
+                    });
+                    allChildren.addAll(curChildren);
+                }
+            }
+            fileTreeItems = allChildren;
         }
+        return null;
     }
 
-    public static void loadChildren(FileTreeItem f) {
-        if (f.getIsNotInit()) {
-            f.setIsNotInit(false);
-            File[] childrenDir;
-            boolean isSystemDisk = true;
-            if (!f.isRoot()) {
-                childrenDir = f.getFile().listFiles(File::isDirectory);
-                isSystemDisk = false;
-            } else {
-                childrenDir = File.listRoots();
-            }
-            if (childrenDir == null) return;
-            for (File child : childrenDir) {
-                if (child.isHidden() && !isSystemDisk) continue;
-                FileTreeItem item = new FileTreeItem(child, FileTreeLoader.getForName(child, f.isRoot()), false);
-                f.getChildren().add(item);
-                item.addEventHandler(FileTreeItem.branchExpandedEvent(),
-                        (EventHandler<TreeItem.TreeModificationEvent<TreeNode>>) event -> {
-                            for (TreeItem<TreeNode> treeItem : event.getSource().getChildren()) {
-                                FileTreeItem currChild = (FileTreeItem) treeItem;
-                                loadChildren(currChild);
-                            }
-                        });
-            }
-        }
-    }
-
-    private static String getForName(File file, Boolean isSystemRoot) {
-        if (isSystemRoot) {
-            FileSystemView fsv = FileSystemView.getFileSystemView();
-            return fsv.getSystemDisplayName(new File(file.toString()));
-        } else return file.getName();
+    public static String getDiskName(File file) {
+        FileSystemView fsv = FileSystemView.getFileSystemView();
+        return fsv.getSystemDisplayName(new File(file.toString()));
     }
 }

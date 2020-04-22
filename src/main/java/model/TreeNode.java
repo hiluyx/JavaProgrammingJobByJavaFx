@@ -1,7 +1,5 @@
 package model;
 
-import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
 import lombok.Data;
 
 import java.io.File;
@@ -19,13 +17,11 @@ public class TreeNode {
     */
     private File file;
     private String nodeText;
-    //    private List<File> images;
     private List<File> images;
 
     public TreeNode(File file, String name) {
         this.setFile(file);
         this.setNodeText(name);
-        this.setImages();
     }
 
     @Override
@@ -36,7 +32,7 @@ public class TreeNode {
     public void setImages() {
         File[] imagesFile;
         imagesFile = this.getFile().listFiles(new FileFilter() {
-            private Set<String> set = new HashSet<>();
+            private final Set<String> set = new HashSet<>();
 
             @Override
             public boolean accept(File pathname) {
