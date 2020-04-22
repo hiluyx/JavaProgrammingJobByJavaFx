@@ -13,10 +13,10 @@ import model.PictureNode;
 import model.TreeNode;
 
 public class ViewerPane extends BorderPane {
-    private SimpleObjectProperty<TreeNode> selectedFolderProperty = new SimpleObjectProperty<>();
+    private final SimpleObjectProperty<TreeNode> selectedFolderProperty = new SimpleObjectProperty<>();
     private PictureNode pictureNodeProperty;
-    private FlowPane flowPane;
-    private ViewerPane vp = this;
+    private final FlowPane flowPane;
+    private final ViewerPane vp = this;
 
     public ViewerPane() {
 
@@ -40,15 +40,15 @@ public class ViewerPane extends BorderPane {
         this.setTop(hBox);
         this.setCenter(scrollPane);
 
-
         selectedFolderProperty.addListener((observable, oldValue, newValue) -> {
             flowPane.getChildren().remove(0, flowPane.getChildren().size());
-            if (newValue != null && newValue.getImages() != null)
-                for (int i = 0; i < newValue.getImages().size(); i++) {
-//                        System.out.println(p.getImages().get(i).getName());
+            if (newValue != null && newValue.getImages() != null) {
+                int imageSetSize = newValue.getImages().size();
+                for (int i = 0; i < imageSetSize; i++) {
                     PictureNode iv = new PictureNode(newValue.getImages().get(i), vp);
                     flowPane.getChildren().add(iv);
                 }
+            }
         });
 
 

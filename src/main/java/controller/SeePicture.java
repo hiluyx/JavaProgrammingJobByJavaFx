@@ -23,6 +23,7 @@ public class SeePicture extends BorderPane {
 
     public SeePicture(File file, String nodePane) {
         treeNode = new TreeNode(file.getParentFile(), file.getParentFile().getName());
+        treeNode.setImages();
         if ("".equals(nodePane)) {
             clickCount = 0;
         } else {
@@ -90,7 +91,7 @@ public class SeePicture extends BorderPane {
             Label label = new Label("这是第一张图片");
             Pane root = new Pane(label);
             Scene scene = new Scene(root);
-            Stage Stage = null;
+            Stage Stage;
             Stage = new Stage();
             Stage.setTitle("提示");
             Stage.setScene(scene);
@@ -100,7 +101,7 @@ public class SeePicture extends BorderPane {
             Label label = new Label("这是最后一张图片");
             Pane root = new Pane(label);
             Scene scene = new Scene(root);
-            Stage Stage = null;
+            Stage Stage;
             Stage = new Stage();
             Stage.setTitle("提示");
             Stage.setScene(scene);
@@ -120,7 +121,7 @@ public class SeePicture extends BorderPane {
             Label label = new Label("已是最小");
             Pane root = new Pane(label);
             Scene scene = new Scene(root);
-            Stage Stage = null;
+            Stage Stage;
             Stage = new Stage();
             Stage.setTitle("提示");
             Stage.setScene(scene);
@@ -130,7 +131,7 @@ public class SeePicture extends BorderPane {
             Label label = new Label("已是最大");
             Pane root = new Pane(label);
             Scene scene = new Scene(root);
-            Stage Stage = null;
+            Stage Stage;
             Stage = new Stage();
             Stage.setTitle("提示");
             Stage.setScene(scene);

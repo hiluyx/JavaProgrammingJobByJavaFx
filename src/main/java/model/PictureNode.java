@@ -27,9 +27,7 @@ public class PictureNode extends Label {
 		this.viewerPane = viewerPane;
 		this.file = aPicture;
 		this.setPickOnBounds(true);
-		this.setOnMouseExited(e -> {
-			this.setStyle("-fx-background-color: White;");
-		});
+		this.setOnMouseExited(e -> this.setStyle("-fx-background-color: White;"));
 
 		this.setOnMouseClicked(e -> {
 			if (e.getSceneX() != 0 && e.getSceneY() != 0) {
@@ -41,6 +39,7 @@ public class PictureNode extends Label {
 			}
 
 			if (e.getClickCount() == 2) {
+//				System.out.println(file.getName());
 				new SeePicture(this.file, this.file.getName());
 				/*Stage s = new Stage();
 				BorderPane borderPane = new BorderPane();

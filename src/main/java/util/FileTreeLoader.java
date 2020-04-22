@@ -30,7 +30,6 @@ public class FileTreeLoader extends Task {
         while (fileTreeItems.size() > 0) {
             List<FileTreeItem> allChildren = new ArrayList<>();
             for (FileTreeItem item : fileTreeItems) {
-                System.out.println(item.getValue().getNodeText());
                 File curFile = item.getFile();
                 if (curFile.isDirectory()) {
                     List<FileTreeItem> curChildren = new ArrayList<>();

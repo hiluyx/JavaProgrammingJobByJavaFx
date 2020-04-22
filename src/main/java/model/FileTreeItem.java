@@ -9,7 +9,6 @@ import lombok.EqualsAndHashCode;
 @Data
 public class FileTreeItem extends TreeItem<TreeNode> {
 
-    private Boolean isNotInit = true;
     private File file;
     private TreeNode treeNode;
     private boolean isRoot;
