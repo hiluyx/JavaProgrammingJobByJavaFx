@@ -9,7 +9,7 @@ import java.util.List;
 import model.FileTreeItem;
 import model.TreeNode;
 import util.FileTreeLoader;
-import util.TaskThreadPool;
+import util.TaskThreadPools;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -17,33 +17,32 @@ import lombok.Setter;
 @Getter
 @Setter
 public class FileTree {
-    private TreeNode imageFiles;
     private TreeView<TreeNode> treeView;
-    private FileTreeItem rootTreeItem;
+    private FileTreeItem rootTree;
     private ViewerPane viewerPane;
-    private List<FileTreeItem> fileTreeItems;
+    private List<FileTreeItem> rootFileTreeItems;
 
     public FileTree(ViewerPane viewerPane) {
         this.viewerPane = viewerPane;
-        this.setRootFileTreeItem();
-        TaskThreadPool.execute(new FileTreeLoader(this));
+        this.setRootFileTreeItems();
+        TaskThreadPools.execute(new FileTreeLoader(this));
         addListener();
     }
 
-    public void setRootFileTreeItem() {
+    public void setRootFileTreeItems() {
         /*
         加载磁盘
          */
         File substitute = new File("Substitute");
-        this.rootTreeItem = new FileTreeItem(substitute, substitute.getName());
-        this.fileTreeItems = new ArrayList<>();
+        this.rootTree = new FileTreeItem(substitute, substitute.getName());
+        this.rootFileTreeItems = new ArrayList<>();
         File[] childrenDir = File.listRoots();
         for (File child : childrenDir) {
             FileTreeItem item = new FileTreeItem(child, FileTreeLoader.getDiskName(child));
-            this.fileTreeItems.add(item);
-            this.rootTreeItem.getChildren().add(item);
+            this.rootFileTreeItems.add(item);
+            this.rootTree.getChildren().add(item);
         }
-        this.treeView = new TreeView<>(rootTreeItem);
+        this.treeView = new TreeView<>(rootTree);
         this.treeView.setShowRoot(false);
     }
 
