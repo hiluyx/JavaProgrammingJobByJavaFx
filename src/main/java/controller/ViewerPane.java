@@ -15,8 +15,7 @@ import model.TreeNode;
 public class ViewerPane extends BorderPane {
     private final SimpleObjectProperty<TreeNode> selectedFolderProperty = new SimpleObjectProperty<>();
     private PictureNode pictureNodeProperty;
-    private final FlowPane flowPane;
-    private final ViewerPane vp = this;
+    public final static FlowPane flowPane = new FlowPane();
 
     public ViewerPane() {
 
@@ -33,7 +32,6 @@ public class ViewerPane extends BorderPane {
         hBox.getChildren().add(button2);
         //以下为图片预览窗口
         ScrollPane scrollPane = new ScrollPane();
-        flowPane = new FlowPane();
         scrollPane.setFitToHeight(true);
         scrollPane.setFitToWidth(true);
         scrollPane.setContent(flowPane);
@@ -45,7 +43,7 @@ public class ViewerPane extends BorderPane {
             if (newValue != null && newValue.getImages() != null) {
                 int imageSetSize = newValue.getImages().size();
                 for (int i = 0; i < imageSetSize; i++) {
-                    PictureNode iv = new PictureNode(newValue.getImages().get(i), vp);
+                    PictureNode iv = new PictureNode(newValue.getImages().get(i));
                     flowPane.getChildren().add(iv);
                 }
             }

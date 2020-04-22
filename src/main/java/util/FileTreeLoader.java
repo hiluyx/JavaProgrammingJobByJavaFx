@@ -25,7 +25,6 @@ public class FileTreeLoader implements Runnable {
         return fsv.getSystemDisplayName(new File(file.toString()));
     }
 
-    @SneakyThrows
     @Override
     public void run() {
         /*
