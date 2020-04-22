@@ -54,6 +54,7 @@ public class FileTree {
             if (newValue == null) return;
             newValue.getValue().setImages();
             viewerPane.setSelectedFolder(newValue.getValue());
+//            viewerPane.getToolBar().setSelectedFolder(newValue.getValue());
         });
     }
 }

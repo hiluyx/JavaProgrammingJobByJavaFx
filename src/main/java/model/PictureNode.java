@@ -26,7 +26,6 @@ public class PictureNode extends Label {
 
     private MenuPane menuPane = new MenuPane();
 
-    private static int Sigcount = 0;
     private int count;
 
     protected static ArrayList<PictureNode> selectedPictures = new ArrayList<>();

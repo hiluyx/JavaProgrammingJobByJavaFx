@@ -1,7 +1,6 @@
 package util;
 
 import controller.FileTree;
-import lombok.SneakyThrows;
 import model.FileTreeItem;
 
 import javafx.application.Platform;

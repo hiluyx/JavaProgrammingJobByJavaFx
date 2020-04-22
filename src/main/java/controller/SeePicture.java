@@ -17,7 +17,7 @@ import model.TreeNode;
 import java.io.File;
 
 public class SeePicture extends BorderPane {
-    private TreeNode treeNode;
+    private final TreeNode treeNode;
     private int clickCount;                     // 计数器
     private int changeNum = 0;                  //缩放系数
 
