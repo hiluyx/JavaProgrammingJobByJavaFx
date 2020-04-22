@@ -35,11 +35,11 @@ public class FileTree {
         加载磁盘
          */
         File substitute = new File("Substitute");
-        this.rootTreeItem = new FileTreeItem(substitute, substitute.getName(), true);
+        this.rootTreeItem = new FileTreeItem(substitute, substitute.getName());
         this.fileTreeItems = new ArrayList<>();
         File[] childrenDir = File.listRoots();
         for (File child : childrenDir) {
-            FileTreeItem item = new FileTreeItem(child, FileTreeLoader.getDiskName(child), false);
+            FileTreeItem item = new FileTreeItem(child, FileTreeLoader.getDiskName(child));
             this.fileTreeItems.add(item);
             this.rootTreeItem.getChildren().add(item);
         }

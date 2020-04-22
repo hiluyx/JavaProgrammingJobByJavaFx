@@ -14,7 +14,7 @@ import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 
-public class FileTreeLoader extends Task {
+public class FileTreeLoader implements Runnable {
 
     @Setter
     @Getter
@@ -24,8 +24,13 @@ public class FileTreeLoader extends Task {
         this.fileTree = fileTree;
     }
 
+    public static String getDiskName(File file) {
+        FileSystemView fsv = FileSystemView.getFileSystemView();
+        return fsv.getSystemDisplayName(new File(file.toString()));
+    }
+
     @Override
-    protected Object call() throws Exception {
+    public void run() {
         List<FileTreeItem> fileTreeItems = fileTree.getFileTreeItems();
         while (fileTreeItems.size() > 0) {
             List<FileTreeItem> allChildren = new ArrayList<>();
@@ -36,7 +41,7 @@ public class FileTreeLoader extends Task {
                     File[] childFiles = curFile.listFiles(File::isDirectory);
                     if (childFiles == null) continue;
                     for (File childFile : childFiles) {
-                        FileTreeItem child = new FileTreeItem(childFile, childFile.getName(), false);
+                        FileTreeItem child = new FileTreeItem(childFile, childFile.getName());
                         curChildren.add(child);
                     }
                     Platform.runLater(() -> {
@@ -50,11 +55,5 @@ public class FileTreeLoader extends Task {
             }
             fileTreeItems = allChildren;
         }
-        return null;
-    }
-
-    public static String getDiskName(File file) {
-        FileSystemView fsv = FileSystemView.getFileSystemView();
-        return fsv.getSystemDisplayName(new File(file.toString()));
     }
 }

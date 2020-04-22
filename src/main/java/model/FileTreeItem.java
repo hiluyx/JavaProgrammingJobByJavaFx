@@ -11,11 +11,9 @@ public class FileTreeItem extends TreeItem<TreeNode> {
 
     private File file;
     private TreeNode treeNode;
-    private boolean isRoot;
 
-    public FileTreeItem(File file, String name, boolean isRoot) {
+    public FileTreeItem(File file, String name) {
         this.file = file;
-        this.isRoot = isRoot;
         this.treeNode = new TreeNode(file, name);
         this.setValue(treeNode);
     }
