@@ -19,7 +19,7 @@ import java.io.*;
  * @date 2020/4/20 10:45 上午
  */
 public class MenuPane extends MenuItem {
-    private final MenuItem openMenuItem = new MenuItem("打开");
+    private  MenuItem openMenuItem = new MenuItem("打开");
     @Getter
     @Setter
     private MenuItem copyMenuItem = new MenuItem("复制");
@@ -43,7 +43,7 @@ public class MenuPane extends MenuItem {
             Clipboard clipboard = Clipboard.getSystemClipboard();
             ClipboardContent clipboardContent = new ClipboardContent();
             clipboard.clear();
-            clipboardContent.putFiles(PictureNode.getSelectedPictureFiles());
+        //    clipboardContent.putFiles(PictureNode.getSelectedPictureFiles());
             clipboard.setContent(clipboardContent);
         }
     }
@@ -59,10 +59,13 @@ public class MenuPane extends MenuItem {
             if (clipboard.hasFiles()) {
                 for (File each : clipboard.getFiles()) {
                     String path = ViewerPane.selectedFolderProperty.getValue().getFile().getAbsolutePath();
+                    String oldName = each.getName();
+                    String newName = path+"/"+oldName;
+                    String prefixName = newName.substring(0,
+                                                          newName.lastIndexOf("."))+"(副本)";
 
-                    String prefixName = path.substring(0,
-                            path.lastIndexOf(".")) + "(副本)";
-                    String[] strArray = each.getName().split("\\.");
+                    String[] strArray =
+                            each.getName().split("\\.");
                     int suffixIndex = strArray.length - 1;
                     String suffixName = strArray[suffixIndex];//缺少"."
                     String newFile = prefixName + "." + suffixName;

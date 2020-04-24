@@ -20,6 +20,8 @@ public class SeePicture extends BorderPane {
     private final TreeNode treeNode;
     private int clickCount;                     // 计数器
     private int changeNum = 0;                  //缩放系数
+    private int currentRotate = 0;              //当前角度
+    private boolean isRotate;                   //左转为false，右转为true
 
     public SeePicture(File file, String nodePane) {
         treeNode = new TreeNode(file.getParentFile(), file.getParentFile().getName());
@@ -42,34 +44,30 @@ public class SeePicture extends BorderPane {
         Button enlarge = new Button("enlarge");
         Button small = new Button("small");
         Button ppt = new Button("ppt");
+        Button left_rotate = new Button("left");
+        Button right_rotate = new Button("right");
+        Button screenshot = new Button("screenshot");
         previous.setPadding(new Insets(10, 10, 10, 10));
         next.setPadding(new Insets(10, 10, 10, 10));
         enlarge.setPadding(new Insets(10, 10, 10, 10));
         small.setPadding(new Insets(10, 10, 10, 10));
         ppt.setPadding(new Insets(10, 10, 10, 10));
+        left_rotate.setPadding(new Insets(10, 10, 10, 10));
+        right_rotate.setPadding(new Insets(10, 10, 10, 10));
+        screenshot.setPadding(new Insets(10, 10, 10, 10));
         HBox hBox = new HBox();
         hBox.setAlignment(Pos.BOTTOM_CENTER);
-        hBox.getChildren().addAll(small, ppt, enlarge);
+        hBox.getChildren().addAll(small, left_rotate, ppt, screenshot, right_rotate, enlarge);
 
         ///////////////监听器//////////////////
-        previous.setOnMouseClicked(e -> {
-            this.clickCount--;
-            previous_next_action();
-        });
-        next.setOnMouseClicked(e -> {
-            this.clickCount++;
-            previous_next_action();
-        });
-        ppt.setOnMouseClicked(e -> {
-        });
-        small.setOnMouseClicked(e -> {
-            this.changeNum--;
-            enlarge_small_action();
-        });
-        enlarge.setOnMouseClicked(e -> {
-            this.changeNum++;
-            enlarge_small_action();
-        });
+        previous.setOnMouseClicked(e -> { this.clickCount--;previous_next_action(); });
+        next.setOnMouseClicked(e -> { this.clickCount++;previous_next_action(); });
+        ppt.setOnMouseClicked(e -> new PPT(treeNode) );
+        small.setOnMouseClicked(e -> { this.changeNum--;enlarge_small_action(); });
+        enlarge.setOnMouseClicked(e -> { this.changeNum++;enlarge_small_action(); });
+        left_rotate.setOnMouseClicked(e->{ this.isRotate=false;rotate(); } );
+        right_rotate.setOnMouseClicked(e->{ this.isRotate=true;rotate(); } );
+        screenshot.setOnAction( e-> new Screen_shot(treeNode.getFile()) );
 
         this.setCenter(iv);
         this.setLeft(previous);
@@ -108,6 +106,7 @@ public class SeePicture extends BorderPane {
             Stage.show();
             this.clickCount--;
         } else {
+            this.currentRotate = 0;
             this.changeNum = 0;
             System.out.println(this.clickCount);
             ImageView iv = new ImageView(new Image("file:" + this.treeNode.getImages().get(clickCount), 600, 600, true, true));
@@ -115,7 +114,7 @@ public class SeePicture extends BorderPane {
         }
     }
 
-    //缩放功能（未完成）
+    //缩放功能
     private void enlarge_small_action() {
         if (this.changeNum <= -5) {
             Label label = new Label("已是最小");
@@ -142,5 +141,20 @@ public class SeePicture extends BorderPane {
         iv.setFitWidth(600 * (changeNum * 0.1 + 1));
         iv.setFitHeight(600 * (changeNum * 0.1 + 1));
         iv.setPreserveRatio(true);
+    }
+
+    //旋转
+    private void rotate(){
+        if(isRotate){
+            currentRotate += 90;
+        }else{
+            currentRotate -= 90;
+        }
+        ImageView iv = new ImageView(new Image("file:" + this.treeNode.getImages().get(clickCount), 500, 500, true, true));
+        iv.setRotate(this.currentRotate % 360);
+        iv.setFitWidth(600 * (changeNum * 0.1 + 1));
+        iv.setFitHeight(600 * (changeNum * 0.1 + 1));
+        iv.setPreserveRatio(true);
+        this.setCenter(iv);
     }
 }
