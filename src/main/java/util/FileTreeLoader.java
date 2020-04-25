@@ -10,7 +10,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * @Date 2020/4/22
+ * @Author Hi lu
+ */
 public class FileTreeLoader implements Runnable {
 
     private final FileTree fileTree;
@@ -41,7 +44,7 @@ public class FileTreeLoader implements Runnable {
                     }
                 } else {
                     TaskThreadPools.executeOnCachedThreadPool(() -> {
-                        System.out.println(Thread.currentThread().getName());
+//                        System.out.println(Thread.currentThread().getName());
                         loadChildren(item);
                     });
                 }

@@ -9,12 +9,18 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * @Author Hi lu
+ * @Date 2020/4/15
+ */
 @Data
-public class TreeNode {
-    /*
-    @param nodeText 节点名称
-    @param images 节点包含的图片集
+public class TreeNode{
+    /**
+     * @param id 如果是云相册的图片要记录id，以便删除。
+     * @param nodeText 节点名称
+     * @param images 节点包含的图片集
     */
+    private int id;
     private File file;
     private String nodeText;
     private List<File> images;

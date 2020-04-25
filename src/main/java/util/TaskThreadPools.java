@@ -3,9 +3,11 @@ package util;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
-/*
-线程池
-加载图片,网络连接,文件传输,文件加载......
+/**
+ * @Date 2020/4/22
+ * @Author Hi lu
+ * 线程池
+ * 加载图片,网络连接,文件传输,文件加载......
  */
 public class TaskThreadPools {
     private static final int QUEUE_SIZE = 5;//缓冲队列队长

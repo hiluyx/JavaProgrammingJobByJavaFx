@@ -5,6 +5,10 @@ import javafx.scene.control.TreeItem;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+/**
+ * @Author Hi lu
+ * @Date 2020/4/15
+ */
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class FileTreeItem extends TreeItem<TreeNode> {

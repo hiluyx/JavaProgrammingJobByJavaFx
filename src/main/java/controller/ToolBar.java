@@ -22,7 +22,7 @@ public class ToolBar extends HBox {
     private Button cut = createButton("剪切");
     private Button paste = createButton("粘贴");
     private Button delete = createButton("删除");
-    private Button reName = createButton("重命名");
+    private final Button reName = createButton("重命名");
     @Getter
     private final Label path = new Label();
 
