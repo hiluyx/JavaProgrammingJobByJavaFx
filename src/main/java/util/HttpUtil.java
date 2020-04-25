@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
-POST
 /**
  * @Date 2020/4/26
  * @Author Hi lu
@@ -97,7 +96,7 @@ public class HttpUtil {
             httpPost.setEntity(new StringEntity(jsonImagesStrings, ContentType.APPLICATION_JSON));
             try {
                 CloseableHttpResponse response = client.execute(httpPost);
-                //get status
+                //get statusPOST
                 int statusCode = response.getStatusLine().getStatusCode();
                 System.out.println("状态码:"+statusCode);
             } catch (IOException exception) {
