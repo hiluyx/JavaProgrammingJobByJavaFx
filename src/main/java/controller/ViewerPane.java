@@ -70,6 +70,13 @@ public class ViewerPane extends BorderPane {
                 massageOfPictures.setText(String.format("0张图片(0MB)"));
             }
             ViewerPane.选中多少张.setText(String.format("-选中0张"));
+            //设置“查看”按钮的可用性
+            if(ViewerPane.selectedFolderProperty.getValue().getImages().size()>0){
+                ViewerPane.toolBar.getSeePicture().setDisable(false);
+            }
+            else {
+                ViewerPane.toolBar.getSeePicture().setDisable(true);
+            }
         });
     }
 
@@ -79,6 +86,20 @@ public class ViewerPane extends BorderPane {
             int rowNumber = ViewerPane.flowPane.getChildren().size()/5+1;//获取图片行数(不准确)
             if(e.getY()>rowNumber*110){
                 PictureNode.getSelectedPictures().clear();//清空PIctureNode中被选中的图片(不知道还要不要清除其他的)
+                ViewerPane.选中多少张.setText(new String("-选中0张"));//修复一个显示的小bug
+                //设置“复制、剪切、删除、重命名”按钮的可用性
+                if (PictureNode.getSelectedPictures().size()>0){
+                    ViewerPane.toolBar.getCopy().setDisable(false);
+                    ViewerPane.toolBar.getCut().setDisable(false);
+                    ViewerPane.toolBar.getDelete().setDisable(false);
+                    ViewerPane.toolBar.getReName().setDisable(false);
+                }
+                else {
+                    ViewerPane.toolBar.getCopy().setDisable(true);
+                    ViewerPane.toolBar.getCut().setDisable(true);
+                    ViewerPane.toolBar.getDelete().setDisable(true);
+                    ViewerPane.toolBar.getReName().setDisable(true);
+                }
                 for(int i=0;i<ViewerPane.flowPane.getChildren().size();i++){//把所有子节点背景设置为白色
                     ViewerPane.flowPane.getChildren().get(i).setStyle("-fx-background-color: White;");
                 }

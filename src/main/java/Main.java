@@ -9,7 +9,6 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) {
         try {
-            //
             SplitPane root = new SplitPane();
             ViewerPane vi = new ViewerPane();
             FileTree fileTree = new FileTree(vi);

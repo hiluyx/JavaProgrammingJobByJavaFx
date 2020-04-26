@@ -1,12 +1,7 @@
 package model;
 
-import java.io.File;
-import java.util.ArrayList;
-
-import com.sun.scenario.effect.impl.prism.PrImage;
 import controller.MenuPane;
 import controller.SeePicture;
-import controller.ToolBar;
 import controller.ViewerPane;
 import javafx.geometry.Insets;
 import javafx.scene.control.ContentDisplay;
@@ -16,6 +11,9 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.text.Text;
 import lombok.Data;
+
+import java.io.File;
+import java.util.ArrayList;
 
 @Data
 public class PictureNode extends Label {
@@ -69,6 +67,18 @@ public class PictureNode extends Label {
                 }
             }
 
+            if (selectedPictures.size()>0){
+                ViewerPane.toolBar.getCopy().setDisable(false);
+                ViewerPane.toolBar.getCut().setDisable(false);
+                ViewerPane.toolBar.getDelete().setDisable(false);
+                ViewerPane.toolBar.getReName().setDisable(false);
+            }
+            else {
+                ViewerPane.toolBar.getCopy().setDisable(true);
+                ViewerPane.toolBar.getCut().setDisable(true);
+                ViewerPane.toolBar.getDelete().setDisable(true);
+                ViewerPane.toolBar.getReName().setDisable(true);
+            }
             //双击图片进入查看界面
             if (e.getClickCount() == 2) {
                 //e.getClickCount() == 2,双击
