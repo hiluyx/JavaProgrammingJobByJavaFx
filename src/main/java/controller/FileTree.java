@@ -36,15 +36,18 @@ public class FileTree {
 
     public void setRootFileTreeItems() {
         /*
-        加载磁盘
+         * 加载系统磁盘和云相册
          */
         File substitute = new File("Substitute");
         this.setCloudAlum();
         this.rootTree = new FileTreeItem(substitute, substitute.getName());
         this.rootFileTreeItems = new ArrayList<>();
-        File[] childrenDir = File.listRoots();
-        for (File child : childrenDir) {
-            FileTreeItem item = new FileTreeItem(child, FileTreeLoader.getDiskName(child));
+        File[] disks = File.listRoots();
+        for (File disk : disks) {
+            /*
+             * 在这里可以忽略加载disks[0]（C盘）以免性能消耗过大
+             */
+            FileTreeItem item = new FileTreeItem(disk, FileTreeLoader.getDiskName(disk));
             this.rootFileTreeItems.add(item);
             this.rootTree.getChildren().add(item);
         }
@@ -55,7 +58,7 @@ public class FileTree {
 
     public void addListener() {
         /*
-        优化，点击再加载item的图片集
+         * 优化，点击再加载item的图片集
          */
         this.getTreeView().getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue == null) return;
@@ -65,7 +68,7 @@ public class FileTree {
         });
     }
 
-    /**
+    /*
      * 添加一个触发器，点击cloudAlbum的时候连接网络加载图片
      */
     public void setCloudAlum(){

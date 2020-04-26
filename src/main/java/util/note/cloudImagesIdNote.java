@@ -1,4 +1,4 @@
-package util;
+package util.note;
 
 /**
  * 绑定云相册的id与文件路径
