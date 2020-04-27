@@ -81,9 +81,7 @@ public class HttpUtil {
                 try {
                     base64EncodedImages.add(FileCode.encodeImages(path));
                 } catch (IOException exception) {
-                    System.out.println(Thread.currentThread()+"------------------");
                     exception.printStackTrace();
-                    System.out.println("--------------------");
                 }
             }
             //to JSON
@@ -101,9 +99,7 @@ public class HttpUtil {
                 System.out.println("状态码:"+statusCode);
             } catch (IOException exception) {
                 //print error
-                System.out.println(Thread.currentThread()+"------------------");
                 exception.printStackTrace();
-                System.out.println("--------------------");
             }
         });
     }

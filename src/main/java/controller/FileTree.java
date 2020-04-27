@@ -1,5 +1,7 @@
 package controller;
 
+import javafx.event.EventHandler;
+import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 
 import java.io.File;
@@ -68,7 +70,7 @@ public class FileTree {
         });
     }
 
-    /*
+    /**
      * 添加一个触发器，点击cloudAlbum的时候连接网络加载图片
      */
     public void setCloudAlum(){
@@ -77,5 +79,13 @@ public class FileTree {
             cloudAlbumFile.mkdirs();//            this.cloudAlbum.addEventHandler();
         }
         this.cloudAlbum = new FileTreeItem(cloudAlbumFile,cloudAlbumFile.getName());
+        this.cloudAlbum.addEventHandler(FileTreeItem.branchExpandedEvent(),
+                (EventHandler<TreeItem.TreeModificationEvent<File>>) event -> {
+                    /*
+                     * HttpUtil的doGet
+                     * 进度条窗口弹出
+                     * class PopUpProBarWindow
+                     */
+                });
     }
 }

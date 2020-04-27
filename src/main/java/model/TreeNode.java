@@ -20,7 +20,6 @@ public class TreeNode{
      * @param nodeText 节点名称
      * @param images 节点包含的图片集
     */
-    private int id;
     private File file;
     private String nodeText;
     private List<File> images;
