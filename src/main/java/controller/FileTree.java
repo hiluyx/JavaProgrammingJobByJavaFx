@@ -73,9 +73,9 @@ public class FileTree {
      */
     public void setCloudAlum(){
         File cloudAlbumFile = new File(System.getProperty("user.dir")+"/cloudAlbum");
-        if(cloudAlbumFile.mkdirs()){
-            this.cloudAlbum = new FileTreeItem(cloudAlbumFile,cloudAlbumFile.getName());
-//            this.cloudAlbum.addEventHandler();
+        if(!cloudAlbumFile.exists()){
+            cloudAlbumFile.mkdirs();//            this.cloudAlbum.addEventHandler();
         }
+        this.cloudAlbum = new FileTreeItem(cloudAlbumFile,cloudAlbumFile.getName());
     }
 }
