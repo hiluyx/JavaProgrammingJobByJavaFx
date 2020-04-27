@@ -63,7 +63,7 @@ public class FileTree {
         this.getTreeView().getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue == null) return;
             newValue.getValue().setImages();
-            ViewerPane.setSelectedFolder(newValue.getValue());
+            ViewerPane.setCurrentTreeNode(newValue.getValue());
 //            viewerPane.getToolBar().setSelectedFolder(newValue.getValue());
         });
     }

@@ -7,22 +7,20 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.input.Clipboard;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import lombok.Getter;
 import model.PictureNode;
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
 public class ToolBar extends HBox {
 
-    public int 状态 = -1;//状态为1是粘贴，状态为2是剪切
-
+    public int status = -1;//状态为1是粘贴，状态为2是剪切
+    //按钮
     private Button copy = createButton("复制");
     private Button cut = createButton("剪切");
     private Button paste = createButton("粘贴");
@@ -34,29 +32,18 @@ public class ToolBar extends HBox {
 
     public ToolBar(double spacing) {
         super(10);
+        //设置padding
         this.setPadding(new Insets(10, 10, 10, 10));
-
-        //给粘贴按钮设置粘贴操作
-        paste.setOnAction(new paste());
-        //把Buttons加到ToolBar
+        //把buttons加到ToolBar
         addButton2Bar();
-        //添加功能
-        复制功能();
-        剪切功能();
-        粘贴功能();
-        删除功能();
-        重命名功能();
-        查看功能();
-        //初始化按钮的可用性
-        copy.setDisable(true);
-        cut.setDisable(true);
-        paste.setDisable(true);
-        delete.setDisable(true);
-        reName.setDisable(true);
-        seePicture.setDisable(true);
+        //给按钮添加功能
+        addFunction2Button();
+        //初始化按钮为不可用
+        setButtonDisable();
     }
 
-    private void addButton2Bar(){//把button加入ToolBar
+    //把button加入ToolBar
+    private void addButton2Bar(){
         this.getChildren().add(copy);
         this.getChildren().add(cut);
         this.getChildren().add(paste);
@@ -66,31 +53,66 @@ public class ToolBar extends HBox {
         this.getChildren().add(path);
     }
 
-    private void 复制功能(){
+    //给button加上功能
+    private void addFunction2Button(){
+        copyFunction();
+        cutFunction();
+        pasteFunction();
+        deleteFunction();
+        seePictureFunction();
+        reNameFunction();
+    }
+
+    //初始化button不可用
+    private void setButtonDisable(){
+        this.copy.setDisable(true);
+        this.cut.setDisable(true);
+        this.paste.setDisable(true);
+        this.delete.setDisable(true);
+        this.reName.setDisable(true);
+        this.seePicture.setDisable(true);
+    }
+
+    //六大功能
+    private void copyFunction(){
         this.copy.setOnMouseClicked(event -> {
             if(PictureNode.getSelectedPictures().size()>0){
-                状态 = 1;
+                this.status = 1;
                 paste.setDisable(false);
             }
 
         });
     }
-    private void 剪切功能(){
+    private void cutFunction(){
         this.cut.setOnMouseClicked(event -> {
             if(PictureNode.getSelectedPictures().size()>0){
-                状态 = 2;
+                this.status = 2;
                 paste.setDisable(false);
             }
         });
     }
-    private void 粘贴功能(){
+    private void pasteFunction(){
         this.paste.setOnMouseClicked(event -> {
             try {
                 //srcPath是原路径，destPath是构造出来的目标路径
                 // （例如srcPath=G:\0tjx\2.png  destPath =G:\计算机二级\2.png）
                 for(PictureNode each:PictureNode.getSelectedPictures()){
                     String srcPath = each.getFile().getAbsolutePath();
-                    String destPath = ViewerPane.selectedFolderProperty.getValue().getFile().getAbsolutePath()+"\\"+each.getFile().getName();
+//                    String destPath = ViewerPane.selectedFolderProperty.getValue().getFile().getAbsolutePath()+"\\"+each.getFile().getName();
+                    String path = ViewerPane.currentTreeNode.getValue().getFile().getAbsolutePath();
+                    String picName = each.getFile().getName();
+                    String destPath = path+"/"+picName;
+                    String destPrefix = destPath.substring(0,
+                            destPath.lastIndexOf("."));
+                    List<File> files = ViewerPane.currentTreeNode.getValue().getImages();
+                    String destTyle = picName.substring(picName.lastIndexOf(
+                            "."),picName.length());
+                    System.out.println(destPrefix+destTyle);
+                    destPath = destPrefix+destTyle;
+                    while(new File(destPath).exists()){
+                        destPrefix+="(_1)";
+                        destPath = destPrefix+destTyle;
+                    }
                     //观察路径，无实际作用
                     System.out.println(srcPath);
                     System.out.println(destPath);
@@ -101,7 +123,7 @@ public class ToolBar extends HBox {
                     PictureNode p = new PictureNode(file);
                     ViewerPane.flowPane.getChildren().add(p);
                 }
-                if(状态==2){//剪切功能
+                if(status==2){
                     int num = 0;
                     for(PictureNode each:PictureNode.getSelectedPictures()){
                         if(each.getFile().delete()){
@@ -111,13 +133,12 @@ public class ToolBar extends HBox {
                     }
                 }
                 paste.setDisable(true);
-                //    String destPath = ViewerPane.selectedFolderProperty.getValue().getFile().getAbsolutePath()+"\\"+PictureNode.getSelectedPictures().get(0).getFile().getName();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         });
     }
-    private void 删除功能(){
+    private void deleteFunction(){
         this.delete.setOnMouseClicked(event -> {
             int num = 0;
             for(PictureNode each:PictureNode.getSelectedPictures()){
@@ -128,14 +149,12 @@ public class ToolBar extends HBox {
             }
         });
     }
-
-    private void 查看功能(){
+    private void seePictureFunction(){
         this.seePicture.setOnMouseClicked(event -> {
-            new SeePicture(ViewerPane.selectedFolderProperty.getValue().getImages().get(0),ViewerPane.selectedFolderProperty.getValue().getImages().get(0).getName());
+            new SeePicture(ViewerPane.currentTreeNode.getValue().getImages().get(0),ViewerPane.currentTreeNode.getValue().getImages().get(0).getName());
         });
     }
-
-    private void 重命名功能() {
+    private void reNameFunction() {
         this.reName.setOnMouseClicked(event -> {
             boolean single;
             GridPane grid = new GridPane();
@@ -146,7 +165,7 @@ public class ToolBar extends HBox {
             TextField name = new TextField();
             TextField startNum = new TextField();
 
-            if (ViewerPane.selectedFolderProperty.getValue().getImages().size() == 1) {
+            if (PictureNode.getSelectedPictures().size() == 1) {
                 single = true;
             } else {
                 single = false;
@@ -212,6 +231,7 @@ public class ToolBar extends HBox {
 
         });
     }
+
     //创建名字
     private String createName(String newFileName,int id,int bit) {
         String newName = newFileName;
@@ -229,6 +249,7 @@ public class ToolBar extends HBox {
         newName += id;
         return newName;
     }
+
     //重命名单个文件
     private boolean renameSingle(String newFileName) {
         PictureNode oldNode = PictureNode.getSelectedPictures().get(0);
@@ -245,6 +266,7 @@ public class ToolBar extends HBox {
         ViewerPane.flowPane.getChildren().add(newNode);
         return true;
     }
+
     //重命名多个文件
     private boolean renameMore(String newFileName,String startNum) {
         File file;
@@ -282,95 +304,6 @@ public class ToolBar extends HBox {
         return button;
     }
 
-    private static class paste implements EventHandler<ActionEvent> {
-        @Override
-        public void handle(ActionEvent event) {
-            Clipboard clipboard = Clipboard.getSystemClipboard();
-
-            if (clipboard.hasFiles()) {
-                for (File each : clipboard.getFiles()) {
-                    String path = ViewerPane.selectedFolderProperty.getValue().getFile().getAbsolutePath();
-                    String oldName = each.getName();
-                    String newName = path+"/"+oldName;
-                    int num =1;
-                    String prefixName = newName.substring(0,
-                                                          newName.lastIndexOf("."))+"(_1)";
-                    List<File> files = ViewerPane.selectedFolderProperty.getValue().getImages();
-                    for(File f:files){
-
-                        String fName = f.getAbsolutePath();
-                        String fPrefix = fName.substring(0,fName.lastIndexOf(
-                                "."));
-                        System.out.println("当前文件："+fPrefix);
-                        if(prefixName.equals(fPrefix)){
-                            System.out.println("equally");
-                            prefixName+="(_1)";
-                        }else{
-                            System.out.println("prefixName:"+prefixName);
-                            System.out.println("fprefix:"+fPrefix);
-                        }
-
-                    }
-                    String[] strArray =
-                            each.getName().split("\\.");
-                    int suffixIndex = strArray.length - 1;
-                    String suffixName = strArray[suffixIndex];//缺少"."
-                    String newFile = prefixName + "." + suffixName;
-
-
-
-
-                    System.out.println(newFile);
-                    try {
-                        BufferedImage bufferedImage = ImageIO.read(each.getAbsoluteFile());
-                        OutputStream ops =
-                                new FileOutputStream(new File(newFile));
-                        ImageIO.write(bufferedImage, suffixName, ops);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    PictureNode pictureNode = new PictureNode(new File(newFile));
-                    ViewerPane.flowPane.getChildren().add(pictureNode);
-                }
-
-            }
-
-        }
-        /*
-        public static String getCopyNewName(String name) {
-// 自定义名称 后缀
-            String COPY_NAME ="-副本" ;
-            String newName;
-//判断名称长度是否大于3
-            if (name.length() >= COPY_NAME.length() + 1){
-                //判断名称后几位是否为“-副本”
-                newName = name.substring(name.length() - 4, name.length() - 1);
-                if (COPY_NAME.equals(newName)){
-                    //尾数加1
-                    Integer num= Integer.parseInt(name.substring(name.length() - 1, name.length() )) + 1;
-                    newName = name.substring(0,name.length()-COPY_NAME.length()-1) + COPY_NAME + num;
-                }else {
-                    // 直接拼接
-                    newName = name + COPY_NAME + "1";
-                }
-            }else {
-                // 直接拼接
-                newName = name + COPY_NAME +"1";
-            }
-// 判断新生成的文件名 是否已存在
-            int count = //检测方法;
-            if (count >= 1){
-                //如果已存在，递归调用
-                newName = getCopyNewName(newName);
-            }
-            return newName;
-        }
-*/
-    }
-//    public void setSelectedFolder(TreeNode selectedFolder) {
-//        this.selectedFolderProperty.set(selectedFolder);
-//    }
-
     //复制文件的函数
     private void copyFile(String srcPath, String destPath) throws IOException {
         // 打开输入流
@@ -390,43 +323,4 @@ public class ToolBar extends HBox {
 
     }
 
-    public Button getCopy() {
-    return copy;
-}
-
-    public void setCopy(Button copy) {
-        this.copy = copy;
-    }
-
-    public Button getCut() {
-        return cut;
-    }
-
-    public void setCut(Button cut) {
-        this.cut = cut;
-    }
-
-    public Button getPaste() {
-        return paste;
-    }
-
-    public void setPaste(Button paste) {
-        this.paste = paste;
-    }
-
-    public Button getDelete() {
-        return delete;
-    }
-
-    public void setDelete(Button delete) {
-        this.delete = delete;
-    }
-
-    public Button getReName() {
-        return reName;
-    }
-
-    public Button getSeePicture() {
-        return seePicture;
-    }
 }

@@ -11,30 +11,31 @@ import model.PictureNode;
 import model.TreeNode;
 
 public class ViewerPane extends BorderPane {
-    //当文件树点击其他文件夹的时候，该变量会随之改变，selectedFolderProperty.getValue()才能获得对应的TreeNode
-    public static SimpleObjectProperty<TreeNode> selectedFolderProperty = new SimpleObjectProperty<>();
+    //当文件树点击其他文件夹的时候，该变量会随之改变，currentTreeNode.getValue()才能获得对应的TreeNode
+    public static SimpleObjectProperty<TreeNode> currentTreeNode = new SimpleObjectProperty<>();
 
     public static FlowPane flowPane = new FlowPane();
     public static ToolBar toolBar = new ToolBar(10);
     public static HBox bottom = new HBox();
     public static Label massageOfPictures = new Label();
-    public static Label 选中多少张 = new Label();
+    public static Label selectedNumberOfPicture = new Label();
 
     public ViewerPane() {
         //添加监听器
         addListener();
         //预览区上方的功能按键(复制粘贴剪切删除)
         this.setTop(toolBar);
-        //以下为图片预览窗口
-        生成图片预览窗口();
+        //生成图片预览窗口
+        createPreview();
         //图片信息(共几张，选中几张)
-        bottom.getChildren().addAll(massageOfPictures,选中多少张);
+        bottom.getChildren().addAll(massageOfPictures,selectedNumberOfPicture);
         this.setBottom(bottom);
-        //点击外面变白
+        //点击空白处取消选中
         clickOutsideTurnWhite();
     }
 
-    private void 生成图片预览窗口(){
+    //生成图片预览窗口
+    private void createPreview(){
         ScrollPane scrollPane = new ScrollPane();
         scrollPane.setFitToHeight(true);
         scrollPane.setFitToWidth(true);
@@ -44,9 +45,10 @@ public class ViewerPane extends BorderPane {
         flowPane.setStyle("-fx-background-color: White;");
         this.setCenter(scrollPane);
     }
+
     //监听文件夹节点变化的监听器
     private void addListener() {
-        selectedFolderProperty.addListener((observable, oldValue, newValue) -> {
+        currentTreeNode.addListener((observable, oldValue, newValue) -> {
             ////////////清空flowPane的子节点
             try {
                 flowPane.getChildren().remove(0, flowPane.getChildren().size());
@@ -69,9 +71,9 @@ public class ViewerPane extends BorderPane {
             } else {
                 massageOfPictures.setText(String.format("0张图片(0MB)"));
             }
-            ViewerPane.选中多少张.setText(String.format("-选中0张"));
+            ViewerPane.selectedNumberOfPicture.setText(String.format("-选中0张"));
             //设置“查看”按钮的可用性
-            if(ViewerPane.selectedFolderProperty.getValue().getImages().size()>0){
+            if(ViewerPane.currentTreeNode.getValue().getImages().size()>0){
                 ViewerPane.toolBar.getSeePicture().setDisable(false);
             }
             else {
@@ -80,13 +82,13 @@ public class ViewerPane extends BorderPane {
         });
     }
 
-    //假装点击外面变白
+    //点击空白处取消选中
     private void clickOutsideTurnWhite(){
         ViewerPane.flowPane.setOnMouseClicked(e->{
-            int rowNumber = ViewerPane.flowPane.getChildren().size()/5+1;//获取图片行数(不准确)
+            int rowNumber = ViewerPane.flowPane.getChildren().size()/5+1;//获取图片行数
             if(e.getY()>rowNumber*110){
-                PictureNode.getSelectedPictures().clear();//清空PIctureNode中被选中的图片(不知道还要不要清除其他的)
-                ViewerPane.选中多少张.setText(new String("-选中0张"));//修复一个显示的小bug
+                PictureNode.getSelectedPictures().clear();//清空PIctureNode中被选中的图片
+                ViewerPane.selectedNumberOfPicture.setText(new String("-选中0张"));
                 //设置“复制、剪切、删除、重命名”按钮的可用性
                 if (PictureNode.getSelectedPictures().size()>0){
                     ViewerPane.toolBar.getCopy().setDisable(false);
@@ -106,17 +108,10 @@ public class ViewerPane extends BorderPane {
             }
         });
     }
-    
-    public Label get选中多少张() {
-        return 选中多少张;
-    }
 
-    public static void setSelectedFolder(TreeNode selectedFolder) {
-        selectedFolderProperty.set(selectedFolder);
-    }
-
-    public static TreeNode getSelectedFolder() {
-        return selectedFolderProperty.getValue();
+    //
+    public static void setCurrentTreeNode(TreeNode newTreeNode) {
+        currentTreeNode.set(newTreeNode);
     }
 
 }

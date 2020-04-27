@@ -38,7 +38,6 @@ public class PictureNode extends Label {
     }
 
     private void 给图片节点添加点击事件监听器(){
-        /**无法实现点击空白取消所有高亮，因为不是在这个this上处理的*/
         this.setOnMouseClicked(e -> {
             if (e.getButton() == MouseButton.PRIMARY) {
                 System.out.println("单击了:"+this.file.getName());
@@ -62,9 +61,9 @@ public class PictureNode extends Label {
                 }
                 System.out.println("选中的数量：" + selectedPictures.size());
                 显示选了多少张();
-                if (this.getStyle().equals("-fx-background-color: #8bb9ff;")) {
+                //if (this.getStyle().equals("-fx-background-color: #8bb9ff;")) {
                     this.setContextMenu(menuPane.getContextMenu());
-                }
+
             }
 
             if (selectedPictures.size()>0){
@@ -90,7 +89,7 @@ public class PictureNode extends Label {
     }
 
     private void 显示选了多少张(){
-        ViewerPane.选中多少张.setText(String.format("-选中%d张",PictureNode.selectedPictures.size()));
+        ViewerPane.selectedNumberOfPicture.setText(String.format("-选中%d张",PictureNode.selectedPictures.size()));
     }
 
     private void 根据参数初始化图片节点(File aPictureFile){
