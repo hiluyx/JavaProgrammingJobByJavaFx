@@ -3,18 +3,22 @@ package controller;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import lombok.Getter;
 import model.PictureNode;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Getter
 public class ToolBar extends HBox {
@@ -34,6 +38,7 @@ public class ToolBar extends HBox {
         super(10);
         //设置padding
         this.setPadding(new Insets(10, 10, 10, 10));
+        this.setStyle("-fx-background-color: White;");
         //把buttons加到ToolBar
         addButton2Bar();
         //给按钮添加功能
@@ -80,7 +85,6 @@ public class ToolBar extends HBox {
                 this.status = 1;
                 paste.setDisable(false);
             }
-
         });
     }
     private void cutFunction(){
@@ -95,10 +99,9 @@ public class ToolBar extends HBox {
         this.paste.setOnMouseClicked(event -> {
             try {
                 //srcPath是原路径，destPath是构造出来的目标路径
-                // （例如srcPath=G:\0tjx\2.png  destPath =G:\计算机二级\2.png）
+                //例如srcPath=G:\0tjx\2.png  destPath =G:\计算机二级\2.png
                 for(PictureNode each:PictureNode.getSelectedPictures()){
                     String srcPath = each.getFile().getAbsolutePath();
-//                    String destPath = ViewerPane.selectedFolderProperty.getValue().getFile().getAbsolutePath()+"\\"+each.getFile().getName();
                     String path = ViewerPane.currentTreeNode.getValue().getFile().getAbsolutePath();
                     String picName = each.getFile().getName();
                     String destPath = path+"/"+picName;
@@ -113,25 +116,26 @@ public class ToolBar extends HBox {
                         destPrefix+="(_1)";
                         destPath = destPrefix+destTyle;
                     }
-                    //观察路径，无实际作用
+                    //观察路径
                     System.out.println(srcPath);
                     System.out.println(destPath);
-                    //网上找的复制代码，直接从文件层面复制
+                    //直接从文件层面复制
                     copyFile(srcPath,destPath);
                     //添加到flowPane
                     File file = new File(destPath);
                     PictureNode p = new PictureNode(file);
                     ViewerPane.flowPane.getChildren().add(p);
                 }
-                if(status==2){
+                if(status==2){//如果为剪切状态，删除原路径下的图片
                     int num = 0;
                     for(PictureNode each:PictureNode.getSelectedPictures()){
                         if(each.getFile().delete()){
-                            System.out.printf("第%d张图片删除成功",++num);
+                            System.out.printf("第%d张图片删除成功\n",++num);
                             ViewerPane.flowPane.getChildren().remove(each);
                         }
                     }
                 }
+                //粘贴一次之后设置为不可用
                 paste.setDisable(true);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -140,13 +144,43 @@ public class ToolBar extends HBox {
     }
     private void deleteFunction(){
         this.delete.setOnMouseClicked(event -> {
-            int num = 0;
-            for(PictureNode each:PictureNode.getSelectedPictures()){
-                if(each.getFile().delete()){
-                    System.out.printf("第%d张图片删除成功",++num);
-                    ViewerPane.flowPane.getChildren().remove(each);
+
+            //以下为一些页面布局，具体功能就是实现删除时的确认
+            AtomicBoolean isDelete = new AtomicBoolean(false);
+
+            BorderPane root = new BorderPane();
+            root.setStyle("-fx-background-color: White;");
+            Label label = new Label("是否删除");
+            label.setFont(new Font(35));
+            HBox hBox = new HBox(25);
+            Button yes = new Button("是");
+            Button no = new Button("否");
+            yes.setPrefWidth(50);
+            no.setPrefWidth(50);
+            hBox.getChildren().add(yes);
+            hBox.getChildren().add(no);
+            hBox.setAlignment(Pos.BOTTOM_CENTER);
+            hBox.setPadding(new Insets(5,5,15,5));
+            root.setCenter(label);
+            root.setBottom(hBox);
+            Scene scene = new Scene(root,450,150);
+            Stage stage = new Stage();
+            stage.setScene(scene);
+            stage.show();
+            yes.setOnMouseClicked(event1 -> {
+                isDelete.set(true);
+                stage.close();
+                int num = 0;
+                for(PictureNode each:PictureNode.getSelectedPictures()){
+                    if(each.getFile().delete()){
+                        System.out.printf("第%d张图片删除成功",++num);
+                        ViewerPane.flowPane.getChildren().remove(each);
+                    }
                 }
-            }
+            });
+            no.setOnMouseClicked(event1 -> {
+                stage.close();
+            });
         });
     }
     private void seePictureFunction(){

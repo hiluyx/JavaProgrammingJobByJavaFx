@@ -2,6 +2,7 @@ package controller;
 
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.control.Label;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.control.ScrollPane;
@@ -20,6 +21,8 @@ public class ViewerPane extends BorderPane {
     public static Label massageOfPictures = new Label();
     public static Label selectedNumberOfPicture = new Label();
 
+    private MenuPane menuPane = new MenuPane();
+
     public ViewerPane() {
         //添加监听器
         addListener();
@@ -36,6 +39,8 @@ public class ViewerPane extends BorderPane {
 
     //生成图片预览窗口
     private void createPreview(){
+        flowPane.setHgap(5);
+        flowPane.setVgap(5);
         ScrollPane scrollPane = new ScrollPane();
         scrollPane.setFitToHeight(true);
         scrollPane.setFitToWidth(true);
@@ -49,15 +54,18 @@ public class ViewerPane extends BorderPane {
     //监听文件夹节点变化的监听器
     private void addListener() {
         currentTreeNode.addListener((observable, oldValue, newValue) -> {
-            ////////////清空flowPane的子节点
+
+            //清空flowPane的子节点
             try {
                 flowPane.getChildren().remove(0, flowPane.getChildren().size());
             }catch (Exception e){
                 e.printStackTrace();
             }
-            /////////////更新当前路径
+
+            //更新当前路径
             toolBar.getPath().setText(newValue.getFile().getAbsolutePath());
-            /////////////统计图片张数与图片大小
+
+            //统计图片张数与图片大小
             if (newValue.getImages() != null) {
                 long totalByte = 0;
                 for (int i = 0; i < newValue.getImages().size(); i++) {
@@ -69,9 +77,10 @@ public class ViewerPane extends BorderPane {
                 }
                 massageOfPictures.setText(String.format("%d张图片(%.2fMB)", newValue.getImages().size(), totalByte / 1024.0 / 1024.0));
             } else {
-                massageOfPictures.setText(String.format("0张图片(0MB)"));
+                massageOfPictures.setText("0张图片(0MB)");
             }
-            ViewerPane.selectedNumberOfPicture.setText(String.format("-选中0张"));
+            ViewerPane.selectedNumberOfPicture.setText("-选中0张");
+
             //设置“查看”按钮的可用性
             if(ViewerPane.currentTreeNode.getValue().getImages().size()>0){
                 ViewerPane.toolBar.getSeePicture().setDisable(false);
@@ -79,37 +88,44 @@ public class ViewerPane extends BorderPane {
             else {
                 ViewerPane.toolBar.getSeePicture().setDisable(true);
             }
+
         });
     }
 
     //点击空白处取消选中
     private void clickOutsideTurnWhite(){
         ViewerPane.flowPane.setOnMouseClicked(e->{
-            int rowNumber = ViewerPane.flowPane.getChildren().size()/5+1;//获取图片行数
-            if(e.getY()>rowNumber*110){
-                PictureNode.getSelectedPictures().clear();//清空PIctureNode中被选中的图片
-                ViewerPane.selectedNumberOfPicture.setText(new String("-选中0张"));
-                //设置“复制、剪切、删除、重命名”按钮的可用性
-                if (PictureNode.getSelectedPictures().size()>0){
-                    ViewerPane.toolBar.getCopy().setDisable(false);
-                    ViewerPane.toolBar.getCut().setDisable(false);
-                    ViewerPane.toolBar.getDelete().setDisable(false);
-                    ViewerPane.toolBar.getReName().setDisable(false);
-                }
-                else {
-                    ViewerPane.toolBar.getCopy().setDisable(true);
-                    ViewerPane.toolBar.getCut().setDisable(true);
-                    ViewerPane.toolBar.getDelete().setDisable(true);
-                    ViewerPane.toolBar.getReName().setDisable(true);
-                }
-                for(int i=0;i<ViewerPane.flowPane.getChildren().size();i++){//把所有子节点背景设置为白色
-                    ViewerPane.flowPane.getChildren().get(i).setStyle("-fx-background-color: White;");
+            if(e.getButton()== MouseButton.SECONDARY){
+                System.out.println("右击了flowPane");
+                //出现右键菜单
+            }
+            else{
+                int rowNumber = ViewerPane.flowPane.getChildren().size()/5+1;//获取图片行数
+                if(e.getY()>rowNumber*110){
+                    PictureNode.getSelectedPictures().clear();//清空PIctureNode中被选中的图片
+                    ViewerPane.selectedNumberOfPicture.setText("-选中0张");
+                    //设置“复制、剪切、删除、重命名”按钮的可用性
+                    if (PictureNode.getSelectedPictures().size()>0){
+                        ViewerPane.toolBar.getCopy().setDisable(false);
+                        ViewerPane.toolBar.getCut().setDisable(false);
+                        ViewerPane.toolBar.getDelete().setDisable(false);
+                        ViewerPane.toolBar.getReName().setDisable(false);
+                    }
+                    else {
+                        ViewerPane.toolBar.getCopy().setDisable(true);
+                        ViewerPane.toolBar.getCut().setDisable(true);
+                        ViewerPane.toolBar.getDelete().setDisable(true);
+                        ViewerPane.toolBar.getReName().setDisable(true);
+                    }
+                    for(int i=0;i<ViewerPane.flowPane.getChildren().size();i++){//把所有子节点背景设置为白色
+                        ViewerPane.flowPane.getChildren().get(i).setStyle("-fx-background-color: White;");
+                    }
                 }
             }
         });
     }
 
-    //
+    //设置新的文件树节点
     public static void setCurrentTreeNode(TreeNode newTreeNode) {
         currentTreeNode.set(newTreeNode);
     }
