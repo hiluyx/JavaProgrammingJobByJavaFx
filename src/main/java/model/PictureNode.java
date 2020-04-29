@@ -70,16 +70,16 @@ public class PictureNode extends Label{
 
             //根据用户操作，设置按钮的可用性
             if (selectedPictures.size()>0){
-                ViewerPane.toolBar.getCopy().setDisable(false);
-                ViewerPane.toolBar.getCut().setDisable(false);
-                ViewerPane.toolBar.getDelete().setDisable(false);
-                ViewerPane.toolBar.getReName().setDisable(false);
+                ViewerPane.functionBar.getCopy().setDisable(false);
+                ViewerPane.functionBar.getCut().setDisable(false);
+                ViewerPane.functionBar.getDelete().setDisable(false);
+                ViewerPane.functionBar.getReName().setDisable(false);
             }
             else {
-                ViewerPane.toolBar.getCopy().setDisable(true);
-                ViewerPane.toolBar.getCut().setDisable(true);
-                ViewerPane.toolBar.getDelete().setDisable(true);
-                ViewerPane.toolBar.getReName().setDisable(true);
+                ViewerPane.functionBar.getCopy().setDisable(true);
+                ViewerPane.functionBar.getCut().setDisable(true);
+                ViewerPane.functionBar.getDelete().setDisable(true);
+                ViewerPane.functionBar.getReName().setDisable(true);
             }
 
             //双击图片进入查看界面

@@ -21,20 +21,20 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Getter
-public class ToolBar extends HBox {
+public class FunctionBar extends HBox {
 
     public int status = -1;//状态为1是粘贴，状态为2是剪切
     //按钮
-    private Button copy = createButton("复制");
-    private Button cut = createButton("剪切");
-    private Button paste = createButton("粘贴");
-    private Button delete = createButton("删除");
-    private Button reName = createButton("重命名");
-    private Button seePicture = createButton("查看");
+    private Button copy = createButton("copy");
+    private Button cut = createButton("cut");
+    private Button paste = createButton("paste");
+    private Button delete = createButton("delete");
+    private Button reName = createButton("reName");
+    private Button seePicture = createButton("seePicture");
     @Getter
     private final Label path = new Label();
 
-    public ToolBar(double spacing) {
+    public FunctionBar(double spacing) {
         super(10);
         //设置padding
         this.setPadding(new Insets(10, 10, 10, 10));
@@ -198,7 +198,9 @@ public class ToolBar extends HBox {
             Stage anotherStage = new Stage();
             TextField name = new TextField();
             TextField startNum = new TextField();
+            TextField bitNum = new TextField();
 
+            //单选多选
             if (PictureNode.getSelectedPictures().size() == 1) {
                 single = true;
             } else {
@@ -226,9 +228,15 @@ public class ToolBar extends HBox {
                 startNum.setPrefColumnCount(15);
                 startNum.getText();
                 GridPane.setConstraints(startNum, 1, 1);
+                Label label3 = new Label("编号位数");
+                GridPane.setConstraints(label3, 0, 2);
+                bitNum.setPromptText("请输入编号位数");
+                bitNum.setPrefColumnCount(10);
+                bitNum.getText();
+                GridPane.setConstraints(bitNum, 1, 2);
                 GridPane.setConstraints(msg, 1, 3);
                 GridPane.setConstraints(submit, 0, 4);
-                grid.getChildren().addAll(label2, startNum, submit, msg);
+                grid.getChildren().addAll(label2, startNum, submit, msg,label3,bitNum);
             }
 
             submit.setOnAction(new EventHandler<ActionEvent>() {
@@ -242,12 +250,13 @@ public class ToolBar extends HBox {
                                 msg.setText("已有该名字的图片存在，请重新输入");
                             }
                         } else {
-                            msg.setText("你没有输入，请输入!");
+                            msg.setText("请输入!");
                         }
                     } else {
                         if ((name.getText() != null && !name.getText().isEmpty())
-                                && (startNum.getText() != null && !startNum.getText().isEmpty())) {
-                            if (renameMore(name.getText(),startNum.getText())) {
+                                && (startNum.getText() != null && !startNum.getText().isEmpty())
+                                &&(bitNum.getText() != null && !bitNum.getText().isEmpty())){
+                            if (renameMore(name.getText(),startNum.getText(),bitNum.getText())) {
                                 anotherStage.close();
                             } else {
                                 msg.setText("错误！请重新输入");
@@ -283,7 +292,6 @@ public class ToolBar extends HBox {
         newName += id;
         return newName;
     }
-
     //重命名单个文件
     private boolean renameSingle(String newFileName) {
         PictureNode oldNode = PictureNode.getSelectedPictures().get(0);
@@ -300,12 +308,12 @@ public class ToolBar extends HBox {
         ViewerPane.flowPane.getChildren().add(newNode);
         return true;
     }
-
     //重命名多个文件
-    private boolean renameMore(String newFileName,String startNum) {
+    private boolean renameMore(String newFileName,String startNum,String bitNum) {
         File file;
         int id = Integer.valueOf(startNum);
-        int bit = String.valueOf(PictureNode.getSelectedPictures().size()).length();
+//        int bit = String.valueOf(PictureNode.getSelectedPictures().size()).length();
+        int bit = Integer.valueOf(bitNum);
         ArrayList<PictureNode> oldList = new ArrayList<>();
         ArrayList<PictureNode> newList = new ArrayList<>();
 
@@ -329,10 +337,10 @@ public class ToolBar extends HBox {
         }
         return true;
     }
-
     //创建一个Button，button的文字为函数参数
     private Button createButton(String buttonName) {
         Button button = new Button();
+        button.setId(buttonName);
         button.setPadding(new Insets(10, 10, 10, 10));
         button.setText(buttonName);
         return button;

@@ -22,6 +22,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import model.PictureNode;
 
 public class Screen_shot {
     static File nodeFile;
@@ -149,9 +150,12 @@ public class Screen_shot {
         content.putImage(wi);
         cb.setContent(content);
 
-        // 吧图片写入当前文件结点
+        //把图片写入当前文件结点
         int number = (int) (Math.random() * 1000);
-        System.out.println(nodeFile.getAbsolutePath() + "\\" + number + "img.png");
-        ImageIO.write(buffimg, "png", new File(nodeFile.getAbsolutePath() + "\\" + number + "img.png"));
+        File file = new File(nodeFile.getAbsolutePath() + "\\" + number + "img.png");
+        ImageIO.write(buffimg, "png", file);
+        PictureNode node = new PictureNode(file);
+        ViewerPane.flowPane.getChildren().add(node);
     }
+
 }
