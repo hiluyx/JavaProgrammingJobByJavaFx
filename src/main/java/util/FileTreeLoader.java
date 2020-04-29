@@ -62,6 +62,7 @@ public class FileTreeLoader implements Runnable {
         File[] childFiles = curFile.listFiles(File::isDirectory);
         if (childFiles == null) return null;
         for (File childFile : childFiles) {
+            if(childFile.isHidden()) continue;
             FileTreeItem child = new FileTreeItem(childFile, childFile.getName());
             curChildren.add(child);
         }

@@ -5,6 +5,7 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,6 +16,7 @@ import util.TaskThreadPools;
 
 import lombok.Getter;
 import lombok.Setter;
+import util.note.CloudImageNote;
 
 /**
  * @Author Hi lu
@@ -27,16 +29,26 @@ public class FileTree {
     private FileTreeItem rootTree;
     private ViewerPane viewerPane;
     private List<FileTreeItem> rootFileTreeItems;
+    /**
+     * 隐藏的虚拟根目录
+     * 程序结束时，清空cloudAlbum下的所有文件
+     */
     private FileTreeItem cloudAlbum;//云相册
+    /**
+     * cloudImageNoteList 每次运行程序，打开云相册的临时抽象数据链表
+     * 每次do get cloudImageNoteList会自动增长
+     * ，记录id，以便删除
+     */
+    private List<CloudImageNote> cloudImageNoteList;
 
-    public FileTree(ViewerPane viewerPane) {
+    public FileTree(ViewerPane viewerPane) throws IOException {
         this.viewerPane = viewerPane;
         this.setRootFileTreeItems();
         TaskThreadPools.execute(new FileTreeLoader(this));
         addListener();
     }
 
-    public void setRootFileTreeItems() {
+    public void setRootFileTreeItems() throws IOException {
         /*
          * 加载系统磁盘和云相册
          */
@@ -73,10 +85,11 @@ public class FileTree {
     /**
      * 添加一个触发器，点击cloudAlbum的时候连接网络加载图片
      */
-    public void setCloudAlum(){
+    public void setCloudAlum() throws IOException {
         File cloudAlbumFile = new File(System.getProperty("user.dir")+"/cloudAlbum");
         if(!cloudAlbumFile.exists()){
-            cloudAlbumFile.mkdirs();//            this.cloudAlbum.addEventHandler();
+            if(cloudAlbumFile.mkdirs())
+                Runtime.getRuntime().exec("attrib +H \"" + cloudAlbumFile.getAbsolutePath() + "\"");
         }
         this.cloudAlbum = new FileTreeItem(cloudAlbumFile,cloudAlbumFile.getName());
         this.cloudAlbum.addEventHandler(FileTreeItem.branchExpandedEvent(),

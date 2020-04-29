@@ -11,7 +11,10 @@ import java.io.File;
  * @Author Hi lu
  */
 @Data
-public class cloudImageNote {
+public class CloudImageNote {
     private int id;
     private File image;
+    public CloudImageNote(int id){
+        this.id = id;
+    }
 }
