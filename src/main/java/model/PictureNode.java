@@ -1,6 +1,5 @@
 package model;
 
-import controller.MenuPane;
 import controller.SeePicture;
 import controller.ViewerPane;
 import javafx.geometry.Insets;
@@ -11,39 +10,43 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.text.Text;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.io.File;
 import java.util.ArrayList;
 
+@EqualsAndHashCode(callSuper = true)//调用父类构造方法
 @Data
-public class PictureNode extends Label {
+public class PictureNode extends Label{
     private File file;//图片对应的文件
     private Image image;//由文件加载出来的Image
     private ImageView imageView;
     private Text pictureName;
 
-    private MenuPane menuPane = new MenuPane();
-
-    public int count = 0;
+    public int count = 0;//点击次数
 
     //保存被点击图片节点，图片节点中包含图片数据
     protected static ArrayList<PictureNode> selectedPictures = new ArrayList<>();
 
-
     public PictureNode(File aPictureFile) {
         this.file = aPictureFile;
-        根据参数初始化图片节点(aPictureFile);
-        给图片节点添加点击事件监听器();
-
+        //初始化图片
+        initializeAPicture(aPictureFile);
+        //为图片节点添加监听器
+        addListener2PictureNode();
     }
-
-    private void 给图片节点添加点击事件监听器(){
+    //为图片节点添加监听器
+    private void addListener2PictureNode(){
         this.setOnMouseClicked(e -> {
+
+            //如果是左键点击
             if (e.getButton() == MouseButton.PRIMARY) {
                 System.out.println("单击了:"+this.file.getName());
+
                 //记录该节点被点击的总次数
                 this.count += e.getClickCount();
-                //如果control键没有按下
+
+                //如果control键没有按下，先清空所有被选择的图片
                 if (!e.isControlDown()) {
                     for (PictureNode each : selectedPictures) {
                         each.setStyle("-fx-background-color: transparent;");
@@ -51,7 +54,9 @@ public class PictureNode extends Label {
                     }
                     selectedPictures.clear();
                 }
-                if (this.count % 2 == 1) {
+
+                //判断当前节点是否被选中
+                if (!selectedPictures.contains(this)&&this.count % 2 == 1) {
                     this.setStyle("-fx-background-color: #8bb9ff;");
                     this.count=0;
                     selectedPictures.add(this);
@@ -60,12 +65,10 @@ public class PictureNode extends Label {
                     selectedPictures.remove(this);
                 }
                 System.out.println("选中的数量：" + selectedPictures.size());
-                显示选了多少张();
-                //if (this.getStyle().equals("-fx-background-color: #8bb9ff;")) {
-                    this.setContextMenu(menuPane.getContextMenu());
-
+                showSelectedPictureNumber();//更新被选中的数量
             }
 
+            //根据用户操作，设置按钮的可用性
             if (selectedPictures.size()>0){
                 ViewerPane.toolBar.getCopy().setDisable(false);
                 ViewerPane.toolBar.getCut().setDisable(false);
@@ -78,6 +81,7 @@ public class PictureNode extends Label {
                 ViewerPane.toolBar.getDelete().setDisable(true);
                 ViewerPane.toolBar.getReName().setDisable(true);
             }
+
             //双击图片进入查看界面
             if (e.getClickCount() == 2) {
                 //e.getClickCount() == 2,双击
@@ -88,11 +92,13 @@ public class PictureNode extends Label {
         });
     }
 
-    private void 显示选了多少张(){
+    //显示选中多少张
+    private void showSelectedPictureNumber(){
         ViewerPane.selectedNumberOfPicture.setText(String.format("-选中%d张",PictureNode.selectedPictures.size()));
     }
 
-    private void 根据参数初始化图片节点(File aPictureFile){
+    //初始化一张图片
+    private void initializeAPicture(File aPictureFile){
         this.setPickOnBounds(true);
         this.setGraphicTextGap(10);
         this.setPadding(new Insets(10, 10, 10, 10));
@@ -107,13 +113,8 @@ public class PictureNode extends Label {
         this.setGraphic(imageView);
     }
 
-
     public static ArrayList<PictureNode> getSelectedPictures() {
         return selectedPictures;
-    }
-
-    public void setCount(){
-        this.count = 0;
     }
 
 }

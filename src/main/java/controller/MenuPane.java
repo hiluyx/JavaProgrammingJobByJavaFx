@@ -5,18 +5,15 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.input.Clipboard;
-import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import lombok.Getter;
-import lombok.Setter;
 import model.PictureNode;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author helefeng
@@ -24,7 +21,7 @@ import java.util.ArrayList;
  */
 public class MenuPane extends MenuItem {
 
-    public int 状态 = -1;
+    public int status = -1;
 
     @Getter
     private MenuItem copyMenuItem = new MenuItem("复制");
@@ -36,16 +33,17 @@ public class MenuPane extends MenuItem {
     private ContextMenu contextMenu = new ContextMenu();
 
     public MenuPane() {
+        copyMenuItem.setAccelerator(KeyCombination.valueOf("Ctrl+C"));
         contextMenu.getItems().addAll(copyMenuItem, cutMenuItem,pasteMenuItem,deleteMenuItem,reNameMenuItem,seePictureMenuItem);
         copyMenuItem.setOnAction(event -> {
             if(PictureNode.getSelectedPictures().size()>0){
-                状态 = 1;
+                status = 1;
                 pasteMenuItem.setDisable(false);
             }
         });
         cutMenuItem.setOnAction(event -> {
             if(PictureNode.getSelectedPictures().size()>0){
-                状态 = 2;
+                status = 2;
                 pasteMenuItem.setDisable(false);
             }
         });
@@ -55,7 +53,21 @@ public class MenuPane extends MenuItem {
                 // （例如srcPath=G:\0tjx\2.png  destPath =G:\计算机二级\2.png）
                 for(PictureNode each:PictureNode.getSelectedPictures()){
                     String srcPath = each.getFile().getAbsolutePath();
-                    String destPath = ViewerPane.currentTreeNode.getValue().getFile().getAbsolutePath()+"\\"+each.getFile().getName();
+//                    String destPath = ViewerPane.selectedFolderProperty.getValue().getFile().getAbsolutePath()+"\\"+each.getFile().getName();
+                    String path = ViewerPane.currentTreeNode.getValue().getFile().getAbsolutePath();
+                    String picName = each.getFile().getName();
+                    String destPath = path+"/"+picName;
+                    String destPrefix = destPath.substring(0,
+                            destPath.lastIndexOf("."));
+                    List<File> files = ViewerPane.currentTreeNode.getValue().getImages();
+                    String destTyle = picName.substring(picName.lastIndexOf(
+                            "."),picName.length());
+                    System.out.println(destPrefix+destTyle);
+                    destPath = destPrefix+destTyle;
+                    while(new File(destPath).exists()){
+                        destPrefix+="(_1)";
+                        destPath = destPrefix+destTyle;
+                    }
                     //观察路径，无实际作用
                     System.out.println(srcPath);
                     System.out.println(destPath);
@@ -66,7 +78,7 @@ public class MenuPane extends MenuItem {
                     PictureNode p = new PictureNode(file);
                     ViewerPane.flowPane.getChildren().add(p);
                 }
-                if(状态==2){//剪切功能
+                if(status==2){
                     int num = 0;
                     for(PictureNode each:PictureNode.getSelectedPictures()){
                         if(each.getFile().delete()){
@@ -75,9 +87,7 @@ public class MenuPane extends MenuItem {
                         }
                     }
                 }
-                PictureNode.getSelectedPictures().clear();
                 pasteMenuItem.setDisable(true);
-                //    String destPath = ViewerPane.selectedFolderProperty.getValue().getFile().getAbsolutePath()+"\\"+PictureNode.getSelectedPictures().get(0).getFile().getName();
             } catch (IOException e) {
                 e.printStackTrace();
             }
