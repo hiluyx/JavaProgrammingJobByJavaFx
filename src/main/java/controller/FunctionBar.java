@@ -30,7 +30,7 @@ public class FunctionBar extends HBox {
     private Button paste = createButton("paste");
     private Button delete = createButton("delete");
     private Button reName = createButton("reName");
-    private Button seePicture = createButton("seePicture");
+    private Button seePicture = createButton("查看");
     @Getter
     private final Label path = new Label();
 
@@ -44,16 +44,16 @@ public class FunctionBar extends HBox {
         //给按钮添加功能
         addFunction2Button();
         //初始化按钮为不可用
-        setButtonDisable();
+        //setButtonDisable();
     }
 
     //把button加入ToolBar
     private void addButton2Bar(){
-        this.getChildren().add(copy);
-        this.getChildren().add(cut);
-        this.getChildren().add(paste);
-        this.getChildren().add(delete);
-        this.getChildren().add(reName);
+        //  this.getChildren().add(copy);
+        //  this.getChildren().add(cut);
+        //  this.getChildren().add(paste);
+        //  this.getChildren().add(delete);
+        //  this.getChildren().add(reName);
         this.getChildren().add(seePicture);
         this.getChildren().add(path);
     }

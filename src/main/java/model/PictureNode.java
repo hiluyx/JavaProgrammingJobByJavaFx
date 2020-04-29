@@ -1,5 +1,6 @@
 package model;
 
+import controller.MenuPane;
 import controller.SeePicture;
 import controller.ViewerPane;
 import javafx.geometry.Insets;
@@ -22,7 +23,7 @@ public class PictureNode extends Label{
     private Image image;//由文件加载出来的Image
     private ImageView imageView;
     private Text pictureName;
-
+    private MenuPane menuPane = new MenuPane();
     public int count = 0;//点击次数
 
     //保存被点击图片节点，图片节点中包含图片数据
@@ -38,7 +39,7 @@ public class PictureNode extends Label{
     //为图片节点添加监听器
     private void addListener2PictureNode(){
         this.setOnMouseClicked(e -> {
-
+            this.setContextMenu(menuPane.getContextMenu());
             //如果是左键点击
             if (e.getButton() == MouseButton.PRIMARY) {
                 System.out.println("单击了:"+this.file.getName());
