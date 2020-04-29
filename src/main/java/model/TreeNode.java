@@ -10,8 +10,8 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * @Author Hi lu
- * @Date 2020/4/15
+ * @author Hi lu
+ * @date 2020/4/15
  */
 @Data
 public class TreeNode{

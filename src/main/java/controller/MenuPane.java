@@ -88,15 +88,15 @@ public class MenuPane extends MenuItem {
                     String path = ViewerPane.currentTreeNode.getValue().getFile().getAbsolutePath();
                     String picName = each.getFile().getName();
                     String destPath = path+"/"+picName;
-                    String destPrefix = destPath.substring(0,
-                            destPath.lastIndexOf("."));
+                    StringBuilder destPrefix = new StringBuilder(destPath.substring(0,
+                            destPath.lastIndexOf(".")));
                     List<File> files = ViewerPane.currentTreeNode.getValue().getImages();
                     String destTyle = picName.substring(picName.lastIndexOf(
                             "."),picName.length());
                     System.out.println(destPrefix+destTyle);
                     destPath = destPrefix+destTyle;
                     while(new File(destPath).exists()){
-                        destPrefix+="(_1)";
+                        destPrefix.append("(_1)");
                         destPath = destPrefix+destTyle;
                     }
                     //观察路径
@@ -184,11 +184,7 @@ public class MenuPane extends MenuItem {
             TextField bitNum = new TextField();
 
             //单选多选
-            if (PictureNode.getSelectedPictures().size() == 1) {
-                single = true;
-            } else {
-                single = false;
-            }
+            single = PictureNode.getSelectedPictures().size() == 1;
 
             grid.setPadding(new Insets(10, 10, 10, 10));
             grid.setVgap(5);
@@ -260,7 +256,7 @@ public class MenuPane extends MenuItem {
 
     //创建名字
     private String createName(String newFileName,int id,int bit) {
-        String newName = newFileName;
+        StringBuilder newName = new StringBuilder(newFileName);
         int tt = id;
         int cnt=0;
         while(tt!=0) {
@@ -269,11 +265,11 @@ public class MenuPane extends MenuItem {
         }
         if(id==0)  cnt++;
         while(bit>cnt) {
-            newName+=0;
+            newName.append(0);
             cnt++;
         }
-        newName += id;
-        return newName;
+        newName.append(id);
+        return newName.toString();
     }
     //重命名单个文件
     private boolean renameSingle(String newFileName) {
@@ -294,7 +290,7 @@ public class MenuPane extends MenuItem {
     //重命名多个文件
     private boolean renameMore(String newFileName,String startNum,String bitNum) {
         File file;
-        int id = Integer.valueOf(startNum);
+        int id = Integer.parseInt(startNum);
 //        int bit = String.valueOf(PictureNode.getSelectedPictures().size()).length();
         int bit = Integer.valueOf(bitNum);
         ArrayList<PictureNode> oldList = new ArrayList<>();

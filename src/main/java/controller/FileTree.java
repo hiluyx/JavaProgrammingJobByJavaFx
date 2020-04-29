@@ -19,8 +19,8 @@ import lombok.Setter;
 import util.note.CloudImageNote;
 
 /**
- * @Author Hi lu
- * @Date 2020/4/15
+ * @author Hi lu
+ * @date 2020/4/15
  */
 @Getter
 @Setter

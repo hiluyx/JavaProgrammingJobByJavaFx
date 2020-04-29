@@ -22,9 +22,9 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
-/**
- * @Date 2020/4/26
- * @Author Hi lu
+/**a
+ * @date  2020/4/26
+ * @author Hi lu
  *
  * 程序结束要把未保存的图片删去
  */
@@ -40,36 +40,34 @@ public class HttpUtil {
      * @param size do get 每页大小，最小为1
      */
     public  void doGetPageImages(List<CloudImageNote> fileTreeCloudImageNotes,int page, int size) {
-        TaskThreadPools.execute(()->{
-            try {
-                List<CloudImageNote> cloudImageNoteList = new ArrayList<>();
-                URIBuilder builder = new URIBuilder(URI_LOCALHOST + "/getImagesDivideIntoPages");
-                //set the params of PAGE
-                List<NameValuePair> params= new ArrayList<>();
-                params.add(new BasicNameValuePair("page",String.valueOf(page)));
-                params.add(new BasicNameValuePair("size",String.valueOf(size)));
-                builder.addParameters(params);
-                HttpGet httpGet = new HttpGet(builder.build());
-                //do GET
-                CloseableHttpResponse response = client.execute(httpGet);
-                int statusCode = response.getStatusLine().getStatusCode();
-                System.out.println("GET状态码:"+statusCode);
-                HttpEntity entity = response.getEntity();
-                String jsonImagesStrings = EntityUtils.toString(entity, "utf-8");
-                //to IMAGES
-                JSONArray imagesArray = JSONArray.parseArray(jsonImagesStrings);
-                for(Object o : imagesArray){
-                    JSONObject image = (JSONObject) o;
-                    String id = image.getString("id");
-                    String targetPath = System.getProperty("user.dir") + "/cloudAlbum" + "/cloudImage" + id + ".jpg";
-                    FileCode.decodeBASE64(image.getString("imageString"), targetPath);
-                    cloudImageNoteList.add(new CloudImageNote(Integer.parseInt(id)));
-                }
-                fileTreeCloudImageNotes.addAll(cloudImageNoteList);
-            } catch (IOException | URISyntaxException exception) {
-                exception.printStackTrace();
+        try {
+            List<CloudImageNote> cloudImageNoteList = new ArrayList<>();
+            URIBuilder builder = new URIBuilder(URI_LOCALHOST + "/getImagesDivideIntoPages");
+            //set the params of PAGE
+            List<NameValuePair> params= new ArrayList<>();
+            params.add(new BasicNameValuePair("page",String.valueOf(page)));
+            params.add(new BasicNameValuePair("size",String.valueOf(size)));
+            builder.addParameters(params);
+            HttpGet httpGet = new HttpGet(builder.build());
+            //do GET
+            CloseableHttpResponse response = client.execute(httpGet);
+            int statusCode = response.getStatusLine().getStatusCode();
+            System.out.println("GET状态码:"+statusCode);
+            HttpEntity entity = response.getEntity();
+            String jsonImagesStrings = EntityUtils.toString(entity, "utf-8");
+            //to IMAGES
+            JSONArray imagesArray = JSONArray.parseArray(jsonImagesStrings);
+            for(Object o : imagesArray){
+                JSONObject image = (JSONObject) o;
+                String id = image.getString("id");
+                String targetPath = System.getProperty("user.dir") + "/cloudAlbum" + "/cloudImage" + id + ".jpg";
+                FileCode.decodeBASE64(image.getString("imageString"), targetPath);
+                cloudImageNoteList.add(new CloudImageNote(Integer.parseInt(id)));
             }
-        });
+            fileTreeCloudImageNotes.addAll(cloudImageNoteList);
+        } catch (IOException | URISyntaxException exception) {
+            exception.printStackTrace();
+        }
     }
 
     /**
@@ -80,34 +78,32 @@ public class HttpUtil {
     public static void doPostJson(String[] paths) throws URISyntaxException {
         URIBuilder builder = new URIBuilder(URI_LOCALHOST + "/addImages");
         HttpPost httpPost = new HttpPost(builder.build());
-        TaskThreadPools.execute(()->{
-            //encoding
-            List<String> base64EncodedImages = new ArrayList<>();
-            for(String path : paths){
-                try {
-                    base64EncodedImages.add(FileCode.encodeImages(path));
-                } catch (IOException exception) {
-                    exception.printStackTrace();
-                }
-            }
-            //to JSON
-            String jsonImagesStrings = JSONObject.toJSONString(new jsonPostString(
-                    "images",
-                    base64EncodedImages.size(),
-                    base64EncodedImages
-            ));
-            //do POST
-            httpPost.setEntity(new StringEntity(jsonImagesStrings, ContentType.APPLICATION_JSON));
+        //encoding
+        List<String> base64EncodedImages = new ArrayList<>();
+        for(String path : paths){
             try {
-                CloseableHttpResponse response = client.execute(httpPost);
-                //get statusPOST
-                int statusCode = response.getStatusLine().getStatusCode();
-                System.out.println("状态码:"+statusCode);
+                base64EncodedImages.add(FileCode.encodeImages(path));
             } catch (IOException exception) {
-                //print error
                 exception.printStackTrace();
             }
-        });
+        }
+        //to JSON
+        String jsonImagesStrings = JSONObject.toJSONString(new jsonPostString(
+                "images",
+                base64EncodedImages.size(),
+                base64EncodedImages
+        ));
+        //do POST
+        httpPost.setEntity(new StringEntity(jsonImagesStrings, ContentType.APPLICATION_JSON));
+        try {
+            CloseableHttpResponse response = client.execute(httpPost);
+            //get statusPOST
+            int statusCode = response.getStatusLine().getStatusCode();
+            System.out.println("状态码:"+statusCode);
+        } catch (IOException exception) {
+            //print error
+            exception.printStackTrace();
+        }
     }
 
     public static void doDelete(){
