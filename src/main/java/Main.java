@@ -19,8 +19,8 @@ public class Main extends Application {
             root.getItems().addAll(fileTree.getTreeView(), vi);
             root.setDividerPositions(0.25);
             SplitPane.setResizableWithParent(fileTree.getTreeView(), false);
-            Scene scene = new Scene(root, 1500, 927);
-            scene.getStylesheets().add(getClass().getResource("test.css").toExternalForm());
+            Scene scene = new Scene(root, 1400, 927);
+        //    scene.getStylesheets().add(getClass().getResource("test.css").toExternalForm());
             primaryStage.setScene(scene);
             primaryStage.show();
         } catch (Exception e) {

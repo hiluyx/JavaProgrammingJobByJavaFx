@@ -13,6 +13,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import lombok.Getter;
+import lombok.Setter;
 import model.PictureNode;
 
 import java.io.*;
@@ -25,6 +26,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @date 2020/4/20 10:45 上午
  */
 @Getter
+@Setter
 public class MenuPane extends MenuItem {
 
     public int status = -1;
@@ -128,9 +130,9 @@ public class MenuPane extends MenuItem {
     private void deleteFunction(){
         this.delete.setOnAction(event -> {
 
-            //以下为一些页面布局，具体功能就是实现删除时的确认
             AtomicBoolean isDelete = new AtomicBoolean(false);
 
+            //以下为一些页面布局，具体功能就是实现删除时的确认
             BorderPane root = new BorderPane();
             root.setStyle("-fx-background-color: White;");
             Label label = new Label("是否删除");
@@ -353,4 +355,6 @@ public class MenuPane extends MenuItem {
         seePicture.setAccelerator(KeyCombination.valueOf("shift+o"));
 //        allSelectedMenuItem.setAccelerator(KeyCombination.valueOf("shift+a"));
     }
+
+
 }

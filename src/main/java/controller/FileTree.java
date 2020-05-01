@@ -75,6 +75,7 @@ public class FileTree {
         this.getTreeView().getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue == null) return;
             if(newValue == this.cloudAlbum) {
+                System.out.println("同学要联网咯");
                 /*
                 点击的是cloudAlum文件选项，
                 进行弹窗提示
