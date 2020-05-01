@@ -35,9 +35,7 @@ public class FileCode {
             byte[] buffer = new byte[(int) targetFile.length()];
             long finalTargetFileLength = targetFileLength;
             CountingInputStream countingInputStream = new CountingInputStream(targetFile, transferredBytes -> {
-                Platform.runLater(()->{
-                    ProgressBarWindow.updateProgressBar(3,transferredBytes, finalTargetFileLength);
-                });
+                ProgressBarWindow.updateProgressBar(3,transferredBytes, finalTargetFileLength);
             });
             int read = countingInputStream.read(buffer);
             base64EncodedImages.add(new BASE64Encoder().encode(buffer));
@@ -50,20 +48,10 @@ public class FileCode {
     public static void decodeBASE64(String BASE64, String targetPath, long targetFileLength)
             throws IOException {
         byte[] buffer = new BASE64Decoder().decodeBuffer(BASE64);
-        /*
-        监控下载输出进度
-         */
         CountingOutputStream countingOutputStream = new CountingOutputStream(targetPath, transferredBytes -> {
-            /*
-            告知ProgressBarWindow
-             */
-            synchronized (ViewerPane.progressBarWindow.getProgressBar()){
-                ProgressBarWindow.updateProgressBar(3,transferredBytes,targetFileLength);
-            }
+            ProgressBarWindow.updateProgressBar(3,transferredBytes,targetFileLength);
         });
         countingOutputStream.write(buffer);
-//        FileOutputStream fileOutputStream = new FileOutputStream(targetPath);
-//        fileOutputStream.write(buffer);
     }
 
     protected static class CountingInputStream extends FileInputStream{

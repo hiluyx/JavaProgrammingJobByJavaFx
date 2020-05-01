@@ -4,6 +4,7 @@ import javafx.scene.control.TreeView;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -78,14 +79,14 @@ public class FileTree {
             if (newValue == null) return;
             if(newValue == this.cloudAlbum&&!isOpened) {
                 System.out.println("同学要联网咯");
-                /*
-                点击的是cloudAlum文件选项，
-                进行弹窗提示
-                网络连接
-                 */
                 isOpened = true;
                 TaskThreadPools.execute(()->{
-                    HttpUtil.doGetPageImages(this.cloudImageNoteList,0,4);
+                    try {
+                        ProgressBarWindow.updateProgressBar(0);
+                        HttpUtil.doGetPageImages(this.cloudImageNoteList,0,15);
+                    } catch (ConnectException e) {
+                        e.printStackTrace();
+                    }
                 });
             }else if(newValue != this.cloudAlbum){
                 newValue.getValue().setImages();

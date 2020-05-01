@@ -22,6 +22,7 @@ import org.apache.http.util.EntityUtils;
 import util.TaskThreadPools;
 
 import java.io.IOException;
+import java.net.ConnectException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,25 +44,26 @@ public class HttpUtil {
      * @param page do get 第几页，从0开始
      * @param size do get 每页大小，最小为1
      */
-    public static void doGetPageImages(List<CloudImageNote> fileTreeCloudImageNotes,int page, int size) {
+    public static void doGetPageImages(List<CloudImageNote> fileTreeCloudImageNotes,int page, int size) throws ConnectException {
         ViewerPane.progressBarWindow.clearBar();
         try {
             List<CloudImageNote> cloudImageNoteList = new ArrayList<>();
             URIBuilder builder = new URIBuilder(URI_LOCALHOST + "/getImagesDivideIntoPages");
-            ProgressBarWindow.updateProgressBar(0);
             //set the params of PAGE
             List<NameValuePair> params= new ArrayList<>();
             params.add(new BasicNameValuePair("page",String.valueOf(page)));
             params.add(new BasicNameValuePair("size",String.valueOf(size)));
             builder.addParameters(params);
             //假进度条刷新
-            ProgressBarWindow.updateProgressBar(1);
+            ProgressBarWindow.updateProgressBar(1,size);
             //do GET
             HttpGet httpGet = new HttpGet(builder.build());
             CloseableHttpResponse response = client.execute(httpGet);
+            //
+            if(response.getStatusLine().getStatusCode() != 200){
+                throw new ConnectException();
+            }
             //the response to json string
-            int statusCode = response.getStatusLine().getStatusCode();
-            System.out.println("GET状态码:"+statusCode);
             HttpEntity entity = response.getEntity();
             String jsonImagesStrings = EntityUtils.toString(entity, "utf-8");
             //to IMAGES

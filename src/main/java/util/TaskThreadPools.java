@@ -10,10 +10,10 @@ import java.util.concurrent.atomic.AtomicInteger;
  * 加载图片,网络连接,文件传输,文件加载......
  */
 public class TaskThreadPools {
-    private static final int QUEUE_SIZE = 5;//缓冲队列队长
-    private static final int ALIVE_POOL_SIZE = 4;
-    private static final int MAX_POOL_SIZE = 7;
-    private static final int KEEP_ALIVE_TIME = 5;
+    private static final int QUEUE_SIZE = 20;//缓冲队列队长
+    private static final int ALIVE_POOL_SIZE = 6;
+    private static final int MAX_POOL_SIZE = 10;
+    private static final int KEEP_ALIVE_TIME = 6;
     private static final ExecutorService THREAD_POOL = new ThreadPoolExecutor(
             ALIVE_POOL_SIZE, MAX_POOL_SIZE, KEEP_ALIVE_TIME,
             TimeUnit.SECONDS,//时间单位

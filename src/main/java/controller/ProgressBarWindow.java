@@ -40,30 +40,42 @@ public class ProgressBarWindow {
     }
 
     public static void updateProgressBar(int step){
-        updateProgressBar(step,0,0);
+        updateProgressBar(step,0,0,0);
     }
+
+    public static void updateProgressBar(int step,int pageSize){
+        updateProgressBar(step,0,0,pageSize);
+    }
+
     public static void updateProgressBar(int step,long transferredBytes,long targetFileLength){
+        updateProgressBar(step,transferredBytes,targetFileLength,0);
+    }
+
+    public static void updateProgressBar(int step,long transferredBytes,long targetFileLength,int pageSize){
         TaskThreadPools.execute(()->{
-            Platform.runLater(() -> {
-                synchronized (ViewerPane.progressBarWindow.getProgressBar()) {
+            synchronized (ViewerPane.progressBarWindow.getProgressBar()){
+                if(step == 1){
+                    try {
+                        for (int i = 0; i < 100; i++) {
+                            Thread.sleep(1 + pageSize/2);
+                            double pro = (int) ((i / 100.0) * 650 + 150);
+                            Platform.runLater(()->{
+                                ViewerPane.progressBarWindow.getProgressBar().setProgress(pro / 1000);
+                            });
+                        }
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                Platform.runLater(() -> {
                     if (step == 0) {
                         ViewerPane.progressBarWindow.getProgressBar().setProgress(0.15);
-                    } else if (step == 1) {
-                        for (int i = 0; i < 100; i++) {
-                            try {
-                                Thread.sleep(2);
-                                double pro = (int) ((i / 100.0) * 650 + 150);
-                                ViewerPane.progressBarWindow.getProgressBar().setProgress(pro / 1000);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    } else {
+                    }else if(step == 3) {
                         double inputProgress = (int) (100 * transferredBytes / targetFileLength);
                         ViewerPane.progressBarWindow.getProgressBar().setProgress(inputProgress * 0.2 + 0.8);
                     }
-                }
-            });
+                });
+            }
         });
     }
 }
