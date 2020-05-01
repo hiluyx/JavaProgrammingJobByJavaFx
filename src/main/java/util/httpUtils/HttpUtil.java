@@ -63,8 +63,11 @@ public class HttpUtil {
             for(Object o : imagesArray){
                 JSONObject image = (JSONObject) o;
                 String id = image.getString("id");
-                String targetPath = System.getProperty("user.dir") + "/cloudAlbum" + "/cloudImage" + id + ".jpg";
-                FileCode.decodeBASE64(image.getString("imageString"), targetPath,loadingSize,progressBarWindow);
+                FileCode.decodeBASE64(image.getString(
+                        "imageString"),
+                        System.getProperty("user.dir") + "/cloudAlbum" + "/cloudImage" + id + ".jpg",
+                        loadingSize,
+                        progressBarWindow);
                 cloudImageNoteList.add(new CloudImageNote(Integer.parseInt(id)));
             }
             //add to fileTree
@@ -75,23 +78,32 @@ public class HttpUtil {
     }
 
     /**
+     *
+     * @param paths
+     * @throws URISyntaxException
+     * @throws IOException
+     */
+    public static void doPostJson(List<String> paths) throws URISyntaxException, IOException{
+        String[] pathStrings = new String[paths.size()];
+        for(int i = 0;i < paths.size();i++){
+            pathStrings[i] = paths.get(i);
+        }
+        doPostJson(pathStrings);
+    }
+    /**
      * do the  http post method to save the images to database
      * @param paths
      * @throws URISyntaxException
+     * @throws IOException
      */
-    public static void doPostJson(String[] paths) throws URISyntaxException {
+    public static void doPostJson(String[] paths) throws URISyntaxException, IOException {
         progressBarWindow.clearBar();
         URIBuilder builder = new URIBuilder(URI_LOCALHOST + "/addImages");
         HttpPost httpPost = new HttpPost(builder.build());
         //encoding
-        List<String> base64EncodedImages = new ArrayList<>();
-        for(String path : paths){
-            try {
-                base64EncodedImages.add(FileCode.encodeImages(path));
-            } catch (IOException exception) {
-                exception.printStackTrace();
-            }
-        }
+        List<String> base64EncodedImages = FileCode.encodeImages(
+                paths,
+                progressBarWindow);
         //to JSON
         String jsonImagesStrings = JSONObject.toJSONString(new jsonPostString(
                 "images",
