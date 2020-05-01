@@ -71,20 +71,6 @@ public class PictureNode extends Label{
                 showSelectedPictureNumber();//更新被选中的数量
             }
 
-            //根据用户操作，设置按钮的可用性
-            if (selectedPictures.size()>0){
-                ViewerPane.functionBar.getCopy().setDisable(false);
-                ViewerPane.functionBar.getCut().setDisable(false);
-                ViewerPane.functionBar.getDelete().setDisable(false);
-                ViewerPane.functionBar.getReName().setDisable(false);
-            }
-            else {
-                ViewerPane.functionBar.getCopy().setDisable(true);
-                ViewerPane.functionBar.getCut().setDisable(true);
-                ViewerPane.functionBar.getDelete().setDisable(true);
-                ViewerPane.functionBar.getReName().setDisable(true);
-            }
-
             //双击图片进入查看界面
             if (e.getClickCount() == 2) {
                 //e.getClickCount() == 2,双击
