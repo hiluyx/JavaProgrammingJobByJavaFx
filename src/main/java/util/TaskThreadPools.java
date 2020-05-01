@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class TaskThreadPools {
     private static final int QUEUE_SIZE = 5;//缓冲队列队长
-    private static final int ALIVE_POOL_SIZE = 3;
+    private static final int ALIVE_POOL_SIZE = 4;
     private static final int MAX_POOL_SIZE = 7;
     private static final int KEEP_ALIVE_TIME = 5;
     private static final ExecutorService THREAD_POOL = new ThreadPoolExecutor(

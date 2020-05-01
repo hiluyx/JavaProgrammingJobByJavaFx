@@ -15,6 +15,7 @@ import util.TaskThreadPools;
 import lombok.Getter;
 import lombok.Setter;
 import util.httpUtils.CloudImageNote;
+import util.httpUtils.HttpUtil;
 
 /**
  * @author Hi lu
@@ -38,6 +39,7 @@ public class FileTree {
      * ，记录id，以便删除
      */
     private List<CloudImageNote> cloudImageNoteList;
+    private boolean isOpened;
 
     public FileTree(ViewerPane viewerPane) throws IOException {
         this.viewerPane = viewerPane;
@@ -74,17 +76,22 @@ public class FileTree {
          */
         this.getTreeView().getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue == null) return;
-            if(newValue == this.cloudAlbum) {
+            if(newValue == this.cloudAlbum&&!isOpened) {
                 System.out.println("同学要联网咯");
                 /*
                 点击的是cloudAlum文件选项，
                 进行弹窗提示
                 网络连接
                  */
-
-            }else{
+                isOpened = true;
+                TaskThreadPools.execute(()->{
+                    HttpUtil.doGetPageImages(this.cloudImageNoteList,0,4);
+                });
+            }else if(newValue != this.cloudAlbum){
                 newValue.getValue().setImages();
                 ViewerPane.setCurrentTreeNode(newValue.getValue());
+            }else{
+                System.out.println("云相册已经开始加载或者已经完成！");
             }
 //            viewerPane.getToolBar().setSelectedFolder(newValue.getValue());
         });
@@ -100,5 +107,8 @@ public class FileTree {
                 Runtime.getRuntime().exec("attrib +H \"" + cloudAlbumFile.getAbsolutePath() + "\"");
         }
         this.cloudAlbum = new FileTreeItem(cloudAlbumFile,cloudAlbumFile.getName());
+
+        this.cloudImageNoteList = new ArrayList<>();
+        this.isOpened = false;
     }
 }

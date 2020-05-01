@@ -10,6 +10,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.HBox;
 import model.PictureNode;
 import model.TreeNode;
+import util.httpUtils.HttpUtil;
 
 public class ViewerPane extends BorderPane {
     //当文件树点击其他文件夹的时候，该变量会随之改变，currentTreeNode.getValue()才能获得对应的TreeNode
@@ -21,7 +22,7 @@ public class ViewerPane extends BorderPane {
     public static Label massageOfPictures = new Label();
     public static Label selectedNumberOfPicture = new Label();
 
-    private ProgressBarWindow progressBarWindow = new ProgressBarWindow();
+    public static ProgressBarWindow progressBarWindow = new ProgressBarWindow();
 
     public ViewerPane() {
         flowPane.setId("flowPane");

@@ -4,6 +4,9 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 import controller.ProgressBarWindow;
+import controller.ViewerPane;
+import javafx.application.Platform;
+import javafx.scene.control.ProgressBar;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -16,10 +19,12 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
+import util.TaskThreadPools;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 /**a
  * @since  2020/4/26
@@ -31,7 +36,6 @@ public class HttpUtil {
     public static final CloseableHttpClient  client = HttpClientBuilder.create().build();
     private static final String URI_LOCALHOST = "http://localhost:8080/myImages";//硬编程
     private static final String URI_SPRINGBOOT = "http://139.199.66.139:8080/myImages";
-    private static final ProgressBarWindow progressBarWindow = new ProgressBarWindow();
 
     /**
      * do the http get method to request which of images divided into page
@@ -40,25 +44,28 @@ public class HttpUtil {
      * @param size do get 每页大小，最小为1
      */
     public static void doGetPageImages(List<CloudImageNote> fileTreeCloudImageNotes,int page, int size) {
-        progressBarWindow.clearBar();
+        ViewerPane.progressBarWindow.clearBar();
         try {
             List<CloudImageNote> cloudImageNoteList = new ArrayList<>();
             URIBuilder builder = new URIBuilder(URI_LOCALHOST + "/getImagesDivideIntoPages");
+            ProgressBarWindow.updateProgressBar(0);
             //set the params of PAGE
             List<NameValuePair> params= new ArrayList<>();
             params.add(new BasicNameValuePair("page",String.valueOf(page)));
             params.add(new BasicNameValuePair("size",String.valueOf(size)));
             builder.addParameters(params);
-            HttpGet httpGet = new HttpGet(builder.build());
+            //假进度条刷新
+            ProgressBarWindow.updateProgressBar(1);
             //do GET
+            HttpGet httpGet = new HttpGet(builder.build());
             CloseableHttpResponse response = client.execute(httpGet);
             //the response to json string
             int statusCode = response.getStatusLine().getStatusCode();
             System.out.println("GET状态码:"+statusCode);
             HttpEntity entity = response.getEntity();
-            final long loadingSize = entity.getContentLength();
             String jsonImagesStrings = EntityUtils.toString(entity, "utf-8");
             //to IMAGES
+            long loadingSize = jsonImagesStrings.length();
             JSONArray imagesArray = JSONArray.parseArray(jsonImagesStrings);
             for(Object o : imagesArray){
                 JSONObject image = (JSONObject) o;
@@ -66,8 +73,7 @@ public class HttpUtil {
                 FileCode.decodeBASE64(image.getString(
                         "imageString"),
                         System.getProperty("user.dir") + "/cloudAlbum" + "/cloudImage" + id + ".jpg",
-                        loadingSize,
-                        progressBarWindow);
+                        loadingSize);
                 cloudImageNoteList.add(new CloudImageNote(Integer.parseInt(id)));
             }
             //add to fileTree
@@ -97,13 +103,11 @@ public class HttpUtil {
      * @throws IOException
      */
     public static void doPostJson(String[] paths) throws URISyntaxException, IOException {
-        progressBarWindow.clearBar();
+        ViewerPane.progressBarWindow.clearBar();
         URIBuilder builder = new URIBuilder(URI_LOCALHOST + "/addImages");
         HttpPost httpPost = new HttpPost(builder.build());
         //encoding
-        List<String> base64EncodedImages = FileCode.encodeImages(
-                paths,
-                progressBarWindow);
+        List<String> base64EncodedImages = FileCode.encodeImages(paths);
         //to JSON
         String jsonImagesStrings = JSONObject.toJSONString(new jsonPostString(
                 "images",

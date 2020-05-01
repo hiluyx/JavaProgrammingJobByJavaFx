@@ -1,6 +1,9 @@
 package util.httpUtils;
 
 import controller.ProgressBarWindow;
+import controller.ViewerPane;
+import javafx.application.Platform;
+import javafx.scene.control.ProgressBar;
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
 
@@ -19,7 +22,7 @@ public class FileCode {
      * @return base64EncodeImages
      */
 
-    public static List<String> encodeImages(String[] targetFilePaths, ProgressBarWindow progressBarWindow) throws IOException{
+    public static List<String> encodeImages(String[] targetFilePaths) throws IOException{
         List<String> base64EncodedImages = new ArrayList<>();
         List<File> targetFiles = new ArrayList<>();
         long targetFileLength = 0;
@@ -32,10 +35,9 @@ public class FileCode {
             byte[] buffer = new byte[(int) targetFile.length()];
             long finalTargetFileLength = targetFileLength;
             CountingInputStream countingInputStream = new CountingInputStream(targetFile, transferredBytes -> {
-            /*
-            告知ProgressBarWindow
-             */
-                progressBarWindow.getProgressBar().setProgress((int)(100*transferredBytes/ finalTargetFileLength));
+                Platform.runLater(()->{
+                    ProgressBarWindow.updateProgressBar(3,transferredBytes, finalTargetFileLength);
+                });
             });
             int read = countingInputStream.read(buffer);
             base64EncodedImages.add(new BASE64Encoder().encode(buffer));
@@ -45,7 +47,7 @@ public class FileCode {
     /**
      * 将base64字符解码保存文件
      */
-    public static void decodeBASE64(String BASE64,String targetPath,long targetFileLength,ProgressBarWindow progressBarWindow)
+    public static void decodeBASE64(String BASE64, String targetPath, long targetFileLength)
             throws IOException {
         byte[] buffer = new BASE64Decoder().decodeBuffer(BASE64);
         /*
@@ -55,7 +57,9 @@ public class FileCode {
             /*
             告知ProgressBarWindow
              */
-            progressBarWindow.getProgressBar().setProgress((int)(100*transferredBytes/targetFileLength));
+            synchronized (ViewerPane.progressBarWindow.getProgressBar()){
+                ProgressBarWindow.updateProgressBar(3,transferredBytes,targetFileLength);
+            }
         });
         countingOutputStream.write(buffer);
 //        FileOutputStream fileOutputStream = new FileOutputStream(targetPath);

@@ -1,10 +1,12 @@
 package controller;
 
 
+import javafx.application.Platform;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ProgressIndicator;
 import lombok.Getter;
 import lombok.Setter;
+import util.TaskThreadPools;
 
 /**
  * @author Hi lu
@@ -30,10 +32,38 @@ public class ProgressBarWindow {
     }
 
     public void clearBar(){
-
         progressBar.setProgress(0);
     }
+
     public void clearIndicator(){
         progressIndicator.setProgress(0);
+    }
+
+    public static void updateProgressBar(int step){
+        updateProgressBar(step,0,0);
+    }
+    public static void updateProgressBar(int step,long transferredBytes,long targetFileLength){
+        TaskThreadPools.execute(()->{
+            Platform.runLater(() -> {
+                synchronized (ViewerPane.progressBarWindow.getProgressBar()) {
+                    if (step == 0) {
+                        ViewerPane.progressBarWindow.getProgressBar().setProgress(0.15);
+                    } else if (step == 1) {
+                        for (int i = 0; i < 100; i++) {
+                            try {
+                                Thread.sleep(2);
+                                double pro = (int) ((i / 100.0) * 650 + 150);
+                                ViewerPane.progressBarWindow.getProgressBar().setProgress(pro / 1000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    } else {
+                        double inputProgress = (int) (100 * transferredBytes / targetFileLength);
+                        ViewerPane.progressBarWindow.getProgressBar().setProgress(inputProgress * 0.2 + 0.8);
+                    }
+                }
+            });
+        });
     }
 }
