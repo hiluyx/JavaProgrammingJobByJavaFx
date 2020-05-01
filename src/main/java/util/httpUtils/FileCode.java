@@ -10,8 +10,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 
 /**
- * @Date 2020/4/26
- * @Author Hi lu
+ * @since 2020/4/26
+ * @author Hi lu
  */
 public class FileCode {
     /**

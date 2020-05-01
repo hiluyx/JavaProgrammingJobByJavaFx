@@ -4,8 +4,8 @@ import javafx.scene.control.ProgressBar;
 
 /**
  * @author Hi lu
- * @ate 2020/4/27
- * d
+ * @since 2020/4/27
+ *
  * 加载进度条窗口，包含异常处理
  *
  * 一个在0和1之间的正数表示了当前进度的百分比，比如0.4表示40%。

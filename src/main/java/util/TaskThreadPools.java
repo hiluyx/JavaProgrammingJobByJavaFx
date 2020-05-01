@@ -4,8 +4,8 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * @Date 2020/4/22
- * @Author Hi lu
+ * @since 2020/4/22
+ * @author Hi lu
  * 线程池
  * 加载图片,网络连接,文件传输,文件加载......
  */

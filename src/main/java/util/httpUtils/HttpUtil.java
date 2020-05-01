@@ -21,7 +21,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 /**a
- * @date  2020/4/26
+ * @since  2020/4/26
  * @author Hi lu
  *
  * 程序结束要把未保存的图片删去

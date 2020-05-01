@@ -7,6 +7,10 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+/**
+ * @author hilu
+ * @since 2020/5/1
+ */
 @Getter
 @Setter
 public class CountingOutputStream extends FileOutputStream {
