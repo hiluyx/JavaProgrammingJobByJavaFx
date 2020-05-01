@@ -3,6 +3,7 @@ package util.httpUtils;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
+import controller.ProgressBarWindow;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -30,13 +31,16 @@ public class HttpUtil {
     public static final CloseableHttpClient  client = HttpClientBuilder.create().build();
     private static final String URI_LOCALHOST = "http://localhost:8080/myImages";//硬编程
     private static final String URI_SPRINGBOOT = "http://139.199.66.139:8080/myImages";
+    private static final ProgressBarWindow progressBarWindow = new ProgressBarWindow();
+
     /**
      * do the http get method to request which of images divided into page
      * @param fileTreeCloudImageNotes 文件树提供，每次执行do get，文件树的fileTreeCloudImageNotes增添新数据
      * @param page do get 第几页，从0开始
      * @param size do get 每页大小，最小为1
      */
-    public  void doGetPageImages(List<CloudImageNote> fileTreeCloudImageNotes,int page, int size) {
+    public static void doGetPageImages(List<CloudImageNote> fileTreeCloudImageNotes,int page, int size) {
+        progressBarWindow.clearBar();
         try {
             List<CloudImageNote> cloudImageNoteList = new ArrayList<>();
             URIBuilder builder = new URIBuilder(URI_LOCALHOST + "/getImagesDivideIntoPages");
@@ -60,7 +64,7 @@ public class HttpUtil {
                 JSONObject image = (JSONObject) o;
                 String id = image.getString("id");
                 String targetPath = System.getProperty("user.dir") + "/cloudAlbum" + "/cloudImage" + id + ".jpg";
-                FileCode.decodeBASE64(image.getString("imageString"), targetPath,loadingSize);
+                FileCode.decodeBASE64(image.getString("imageString"), targetPath,loadingSize,progressBarWindow);
                 cloudImageNoteList.add(new CloudImageNote(Integer.parseInt(id)));
             }
             //add to fileTree
@@ -76,6 +80,7 @@ public class HttpUtil {
      * @throws URISyntaxException
      */
     public static void doPostJson(String[] paths) throws URISyntaxException {
+        progressBarWindow.clearBar();
         URIBuilder builder = new URIBuilder(URI_LOCALHOST + "/addImages");
         HttpPost httpPost = new HttpPost(builder.build());
         //encoding

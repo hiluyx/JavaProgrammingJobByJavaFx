@@ -34,7 +34,8 @@ public class FileCode {
     /**
      * 将base64字符解码保存文件
      */
-    public static void decodeBASE64(String BASE64,String targetPath,long targetFileLength) throws IOException {
+    public static void decodeBASE64(String BASE64,String targetPath,long targetFileLength,ProgressBarWindow progressBarWindow)
+            throws IOException {
         byte[] buffer = new BASE64Decoder().decodeBuffer(BASE64);
         /*
         监控下载输出进度
@@ -43,9 +44,7 @@ public class FileCode {
             /*
             告知ProgressBarWindow
              */
-            Platform.runLater(()->{
-                ProgressBarWindow.progressBar.setProgress((int)(100*transferredBytes/targetFileLength));
-            });
+            progressBarWindow.getProgressBar().setProgress((int)(100*transferredBytes/targetFileLength));
         });
         countingOutputStream.write(buffer);
 //        FileOutputStream fileOutputStream = new FileOutputStream(targetPath);
