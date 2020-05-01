@@ -1,11 +1,12 @@
-package util;
+package util.httpUtils;
 
+import controller.ProgressBarWindow;
+import javafx.application.Platform;
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 
 /**
@@ -33,9 +34,21 @@ public class FileCode {
     /**
      * 将base64字符解码保存文件
      */
-    public static void decodeBASE64(String BASE64,String targetPath) throws IOException {
+    public static void decodeBASE64(String BASE64,String targetPath,long targetFileLength) throws IOException {
         byte[] buffer = new BASE64Decoder().decodeBuffer(BASE64);
-        FileOutputStream fileOutputStream = new FileOutputStream(targetPath);
-        fileOutputStream.write(buffer);
+        /*
+        监控下载输出进度
+         */
+        CountingOutputStream countingOutputStream = new CountingOutputStream(targetPath, transferredBytes -> {
+            /*
+            告知ProgressBarWindow
+             */
+            Platform.runLater(()->{
+                ProgressBarWindow.progressBar.setProgress((int)(100*transferredBytes/targetFileLength));
+            });
+        });
+        countingOutputStream.write(buffer);
+//        FileOutputStream fileOutputStream = new FileOutputStream(targetPath);
+//        fileOutputStream.write(buffer);
     }
 }

@@ -1,4 +1,4 @@
-package util.note;
+package util.httpUtils;
 
 import lombok.Data;
 

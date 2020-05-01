@@ -1,7 +1,5 @@
 package controller;
 
-import javafx.event.EventHandler;
-import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 
 import java.io.File;
@@ -11,12 +9,12 @@ import java.util.List;
 
 import model.FileTreeItem;
 import model.TreeNode;
-import util.FileTreeLoader;
+import util.fileUtils.FileTreeLoader;
 import util.TaskThreadPools;
 
 import lombok.Getter;
 import lombok.Setter;
-import util.note.CloudImageNote;
+import util.httpUtils.CloudImageNote;
 
 /**
  * @author Hi lu
@@ -76,8 +74,17 @@ public class FileTree {
          */
         this.getTreeView().getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue == null) return;
-            newValue.getValue().setImages();
-            ViewerPane.setCurrentTreeNode(newValue.getValue());
+            if(newValue == this.cloudAlbum) {
+                /*
+                点击的是cloudAlum文件选项，
+                进行弹窗提示
+                网络连接
+                 */
+
+            }else{
+                newValue.getValue().setImages();
+                ViewerPane.setCurrentTreeNode(newValue.getValue());
+            }
 //            viewerPane.getToolBar().setSelectedFolder(newValue.getValue());
         });
     }
@@ -92,13 +99,5 @@ public class FileTree {
                 Runtime.getRuntime().exec("attrib +H \"" + cloudAlbumFile.getAbsolutePath() + "\"");
         }
         this.cloudAlbum = new FileTreeItem(cloudAlbumFile,cloudAlbumFile.getName());
-        this.cloudAlbum.addEventHandler(FileTreeItem.branchExpandedEvent(),
-                (EventHandler<TreeItem.TreeModificationEvent<File>>) event -> {
-                    /*
-                     * HttpUtil的doGet
-                     * 进度条窗口弹出
-                     * class PopUpProBarWindow
-                     */
-                });
     }
 }

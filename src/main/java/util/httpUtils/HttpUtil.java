@@ -1,8 +1,7 @@
-package util;
+package util.httpUtils;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import lombok.Getter;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
@@ -16,7 +15,6 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
-import util.note.CloudImageNote;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -32,7 +30,6 @@ public class HttpUtil {
     public static final CloseableHttpClient  client = HttpClientBuilder.create().build();
     private static final String URI_LOCALHOST = "http://localhost:8080/myImages";//硬编程
     private static final String URI_SPRINGBOOT = "http://139.199.66.139:8080/myImages";
-
     /**
      * do the http get method to request which of images divided into page
      * @param fileTreeCloudImageNotes 文件树提供，每次执行do get，文件树的fileTreeCloudImageNotes增添新数据
@@ -51,9 +48,11 @@ public class HttpUtil {
             HttpGet httpGet = new HttpGet(builder.build());
             //do GET
             CloseableHttpResponse response = client.execute(httpGet);
+            //the response to json string
             int statusCode = response.getStatusLine().getStatusCode();
             System.out.println("GET状态码:"+statusCode);
             HttpEntity entity = response.getEntity();
+            final long loadingSize = entity.getContentLength();
             String jsonImagesStrings = EntityUtils.toString(entity, "utf-8");
             //to IMAGES
             JSONArray imagesArray = JSONArray.parseArray(jsonImagesStrings);
@@ -61,9 +60,10 @@ public class HttpUtil {
                 JSONObject image = (JSONObject) o;
                 String id = image.getString("id");
                 String targetPath = System.getProperty("user.dir") + "/cloudAlbum" + "/cloudImage" + id + ".jpg";
-                FileCode.decodeBASE64(image.getString("imageString"), targetPath);
+                FileCode.decodeBASE64(image.getString("imageString"), targetPath,loadingSize);
                 cloudImageNoteList.add(new CloudImageNote(Integer.parseInt(id)));
             }
+            //add to fileTree
             fileTreeCloudImageNotes.addAll(cloudImageNoteList);
         } catch (IOException | URISyntaxException exception) {
             exception.printStackTrace();
