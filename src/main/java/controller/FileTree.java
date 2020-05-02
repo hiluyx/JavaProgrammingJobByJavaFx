@@ -1,10 +1,12 @@
 package controller;
 
+import javafx.application.Platform;
 import javafx.scene.control.TreeView;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.ConnectException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -76,43 +78,30 @@ public class FileTree {
          * 优化，点击再加载item的图片集
          */
         this.getTreeView().getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue == null) return;
+            if(newValue == null) return;
             if(newValue == this.cloudAlbum&&!isOpened) {
                 System.out.println("同学要联网咯");
                 isOpened = true;
                 TaskThreadPools.execute(()->{
-                    try {
-                        ProgressBarWindow.updateProgressBar(0);
-                        HttpUtil.doGetPageImages(this.cloudImageNoteList,0,15);
-                    } catch (ConnectException e) {
-                        e.printStackTrace();
-                    }
+                    ProgressBarWindow.updateProgressBar(0);
+                    HttpUtil.doGetPageImages(this.cloudImageNoteList,0,1);
+                    File f = this.cloudAlbum.getFile();
+                    System.out.println(f.getAbsolutePath());
+                    this.cloudAlbum.getTreeNode().setImages();
+                    Platform.runLater(()->{
+                        ViewerPane.setCurrentTreeNode(this.cloudAlbum.getTreeNode());
+                    });
                 });
-
-                //modified by sky
-                File f = new File("cloudAlbum");
-                System.out.println(f.getAbsolutePath());
-                this.cloudAlbum.getTreeNode().setFile(f);
-                this.cloudAlbum.getTreeNode().setNodeText(f.getName());
-                this.cloudAlbum.getTreeNode().setImages();
-                ViewerPane.setCurrentTreeNode(this.cloudAlbum.getTreeNode());
-
             }else if(newValue != this.cloudAlbum){
                 newValue.getValue().setImages();
-                //modified by sky
                 ViewerPane.setCurrentTreeNode(newValue.getValue());
             }else{
-                System.out.println("云相册已经开始加载或者已经完成！");
-                //modified by sky
                 ViewerPane.setCurrentTreeNode(this.cloudAlbum.getTreeNode());
+                System.out.println("云相册已经开始加载或者已经完成！");
             }
-//            viewerPane.getToolBar().setSelectedFolder(newValue.getValue());
         });
     }
 
-    /**
-     * 添加一个触发器，点击cloudAlbum的时候连接网络加载图片
-     */
     public void setCloudAlum() throws IOException {
         File cloudAlbumFile = new File(System.getProperty("user.dir")+"/cloudAlbum");
         if(!cloudAlbumFile.exists()){
@@ -120,7 +109,6 @@ public class FileTree {
                 Runtime.getRuntime().exec("attrib +H \"" + cloudAlbumFile.getAbsolutePath() + "\"");
         }
         this.cloudAlbum = new FileTreeItem(cloudAlbumFile,cloudAlbumFile.getName());
-
         this.cloudImageNoteList = new ArrayList<>();
         this.isOpened = false;
     }

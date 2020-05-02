@@ -1,5 +1,6 @@
 package util.httpUtils;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
@@ -7,7 +8,10 @@ import controller.ProgressBarWindow;
 import controller.ViewerPane;
 import javafx.application.Platform;
 import javafx.scene.control.ProgressBar;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -15,17 +19,22 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import util.TaskThreadPools;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.ConnectException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 /**a
  * @since  2020/4/26
@@ -44,11 +53,11 @@ public class HttpUtil {
      * @param page do get 第几页，从0开始
      * @param size do get 每页大小，最小为1
      */
-    public static void doGetPageImages(List<CloudImageNote> fileTreeCloudImageNotes,int page, int size) throws ConnectException {
+    public static void doGetPageImages(List<CloudImageNote> fileTreeCloudImageNotes,int page, int size) {
         ViewerPane.progressBarWindow.clearBar();
         try {
             List<CloudImageNote> cloudImageNoteList = new ArrayList<>();
-            URIBuilder builder = new URIBuilder(URI_SPRINGBOOT + "/getImagesDivideIntoPages");
+            URIBuilder builder = new URIBuilder(URI_LOCALHOST + "/getImagesDivideIntoPages");
             //set the params of PAGE
             List<NameValuePair> params= new ArrayList<>();
             params.add(new BasicNameValuePair("page",String.valueOf(page)));
@@ -60,7 +69,7 @@ public class HttpUtil {
             HttpGet httpGet = new HttpGet(builder.build());
             CloseableHttpResponse response = client.execute(httpGet);
             //
-            if(response.getStatusLine().getStatusCode() != 200){
+            if(response.getStatusLine().getStatusCode() != HttpStatus.SC_OK){
                 throw new ConnectException();
             }
             //the response to json string
@@ -86,61 +95,48 @@ public class HttpUtil {
     }
 
     /**
-     *
-     * @param paths
-     * @throws URISyntaxException
-     * @throws IOException
-     */
-    public static void doPostJson(List<String> paths) throws URISyntaxException, IOException{
-        String[] pathStrings = new String[paths.size()];
-        for(int i = 0;i < paths.size();i++){
-            pathStrings[i] = paths.get(i);
-        }
-        doPostJson(pathStrings);
-    }
-    /**
      * do the  http post method to save the images to database
      * @param paths
      * @throws URISyntaxException
-     * @throws IOException
      */
-    public static void doPostJson(String[] paths) throws URISyntaxException, IOException {
+    public static void doPostJson(List<String> paths) throws URISyntaxException {
         ViewerPane.progressBarWindow.clearBar();
         URIBuilder builder = new URIBuilder(URI_LOCALHOST + "/addImages");
         HttpPost httpPost = new HttpPost(builder.build());
-        //encoding
-        List<String> base64EncodedImages = FileCode.encodeImages(paths);
-        //to JSON
-        String jsonImagesStrings = JSONObject.toJSONString(new jsonPostString(
-                "images",
-                base64EncodedImages.size(),
-                base64EncodedImages
-        ));
-        //do POST
-        httpPost.setEntity(new StringEntity(jsonImagesStrings, ContentType.APPLICATION_JSON));
-        try {
-            CloseableHttpResponse response = client.execute(httpPost);
-            //get statusPOST
-            int statusCode = response.getStatusLine().getStatusCode();
-            System.out.println("状态码:"+statusCode);
-        } catch (IOException exception) {
-            //print error
-            exception.printStackTrace();
+        int pathsSize = paths.size();
+        for(String path : paths){
+            TaskThreadPools.executeOnCachedThreadPool(()->{
+                FileBody fileBody = new FileBody(new File(path));
+                StringBody stringBody = new StringBody("",ContentType.TEXT_PLAIN);
+                HttpEntity httpEntity = MultipartEntityBuilder.create()
+                        .addPart("fileBody",fileBody)
+                        .addPart("stringBody",stringBody).build();
+                httpPost.setEntity(httpEntity);
+                CloseableHttpResponse response;
+                try {
+                    response = client.execute(httpPost);
+                    System.out.println("POST状态" + response.getStatusLine().getStatusCode());
+                    if(response.getStatusLine().getStatusCode() != HttpStatus.SC_OK)
+                        throw new ConnectException();
+                } catch (IOException exception) {
+                    exception.printStackTrace();
+                }
+                /*
+                互斥抢锁修改上传的进度条
+                 */
+                synchronized (ViewerPane.progressBarWindow.getProgressBar()){
+                    Platform.runLater(()->{
+                        ProgressBar progressBar = ViewerPane.progressBarWindow.getProgressBar();
+                        double progress = progressBar.progressProperty().doubleValue();
+                        System.out.println("上传进度条百分比：" + progress);
+                        ViewerPane.progressBarWindow.getProgressBar().setProgress(progress + 1.0/pathsSize);
+                    });
+                }
+            });
         }
     }
 
     public static void doDelete(){
 
-    }
-
-    private static class jsonPostString{
-        String name;
-        int num;
-        List<String> images;
-        jsonPostString(String name,int num,List<String> images){
-            this.images = images;
-            this.name = name;
-            this.num = num;
-        }
     }
 }

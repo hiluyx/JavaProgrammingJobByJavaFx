@@ -57,11 +57,9 @@ public class ProgressBarWindow {
                 if(step == 1){
                     try {
                         for (int i = 0; i < 100; i++) {
-                            Thread.sleep(1 + pageSize/2);
+                            Thread.sleep(10 + pageSize / 2);
                             double pro = (int) ((i / 100.0) * 650 + 150);
-                            Platform.runLater(()->{
-                                ViewerPane.progressBarWindow.getProgressBar().setProgress(pro / 1000);
-                            });
+                            Platform.runLater(()-> ViewerPane.progressBarWindow.getProgressBar().setProgress(pro / 1000));
                         }
                     } catch (InterruptedException e) {
                         e.printStackTrace();

@@ -8,6 +8,7 @@ import javafx.scene.input.Mnemonic;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.scene.control.SplitPane;
+import org.apache.http.util.Asserts;
 
 import java.io.File;
 
@@ -29,12 +30,14 @@ public class Main extends Application {
                 try {
                     File f = new File("cloudAlbum");
                     System.out.println(f.getAbsolutePath());
-                    File list[] = f.listFiles();
-                    for(File each:list){
-                        System.out.println(each.delete());
+                    File[] list = f.listFiles();
+                    if(list != null){
+                        for(File each:list){
+                            System.out.println(each.delete());
+                        }
                     }
                 }catch (Exception e){
-
+                    e.printStackTrace();
                 }
             });
             primaryStage.show();
