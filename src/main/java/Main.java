@@ -9,6 +9,8 @@ import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.scene.control.SplitPane;
 
+import java.io.File;
+
 public class Main extends Application {
     @Override
     public void start(Stage primaryStage) {
@@ -22,7 +24,21 @@ public class Main extends Application {
             Scene scene = new Scene(root, 1400, 927);
             scene.getStylesheets().add(getClass().getResource("test.css").toExternalForm());
             primaryStage.setScene(scene);
+            primaryStage.setOnCloseRequest(event -> {
+                System.out.println("我要被关掉啦");
+                try {
+                    File f = new File("cloudAlbum");
+                    System.out.println(f.getAbsolutePath());
+                    File list[] = f.listFiles();
+                    for(File each:list){
+                        System.out.println(each.delete());
+                    }
+                }catch (Exception e){
+
+                }
+            });
             primaryStage.show();
+
         } catch (Exception e) {
             e.printStackTrace();
         }

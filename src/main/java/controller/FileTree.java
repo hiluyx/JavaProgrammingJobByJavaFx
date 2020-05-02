@@ -88,11 +88,23 @@ public class FileTree {
                         e.printStackTrace();
                     }
                 });
+
+                //modified by sky
+                File f = new File("cloudAlbum");
+                System.out.println(f.getAbsolutePath());
+                this.cloudAlbum.getTreeNode().setFile(f);
+                this.cloudAlbum.getTreeNode().setNodeText(f.getName());
+                this.cloudAlbum.getTreeNode().setImages();
+                ViewerPane.setCurrentTreeNode(this.cloudAlbum.getTreeNode());
+
             }else if(newValue != this.cloudAlbum){
                 newValue.getValue().setImages();
+                //modified by sky
                 ViewerPane.setCurrentTreeNode(newValue.getValue());
             }else{
                 System.out.println("云相册已经开始加载或者已经完成！");
+                //modified by sky
+                ViewerPane.setCurrentTreeNode(this.cloudAlbum.getTreeNode());
             }
 //            viewerPane.getToolBar().setSelectedFolder(newValue.getValue());
         });

@@ -48,7 +48,7 @@ public class HttpUtil {
         ViewerPane.progressBarWindow.clearBar();
         try {
             List<CloudImageNote> cloudImageNoteList = new ArrayList<>();
-            URIBuilder builder = new URIBuilder(URI_LOCALHOST + "/getImagesDivideIntoPages");
+            URIBuilder builder = new URIBuilder(URI_SPRINGBOOT + "/getImagesDivideIntoPages");
             //set the params of PAGE
             List<NameValuePair> params= new ArrayList<>();
             params.add(new BasicNameValuePair("page",String.valueOf(page)));
