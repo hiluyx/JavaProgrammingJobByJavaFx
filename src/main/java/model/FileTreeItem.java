@@ -2,6 +2,8 @@ package model;
 
 import java.io.File;
 import javafx.scene.control.TreeItem;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -20,5 +22,7 @@ public class FileTreeItem extends TreeItem<TreeNode> {
         this.file = file;
         this.treeNode = new TreeNode(file, name);
         this.setValue(treeNode);
+        this.setGraphic(new ImageView(new Image("file:"+new File("icon/文件夹.png"),20, 20,
+                true, true)));
     }
 }

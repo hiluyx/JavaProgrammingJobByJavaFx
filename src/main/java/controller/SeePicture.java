@@ -44,22 +44,20 @@ public class SeePicture extends BorderPane {
         //modified by sky
         Button previous = createButton("previous");
 
-        previous.setStyle("-fx-background-color:#ffffff;");
-        previous.setGraphic(new ImageView(new Image("file:"+new File("icon/前一张.png"),30, 30,
-                true, true)));
-
         Button next = createButton("next");
-        next.setStyle("-fx-background-color:#ffffff;");
-        next.setGraphic(new ImageView(new Image("file:"+new File("icon/后一张.png"),30, 30,
-                true, true)));
-
 
         Button enlarge = createButton("enlarge");
+
         Button small = createButton("small");
+
         Button ppt = createButton("ppt");
-        Button left_rotate = createButton("left");
-        Button right_rotate = createButton("right");
+
+        Button left_rotate = createButton("left_rotate");
+
+        Button right_rotate = createButton("right_rotate");
+
         Button screenshot = createButton("screenshot");
+
         HBox hBox = new HBox(10);
         hBox.setAlignment(Pos.BOTTOM_CENTER);
         hBox.getChildren().addAll(small, left_rotate, ppt, screenshot, right_rotate, enlarge);
@@ -84,6 +82,9 @@ public class SeePicture extends BorderPane {
         next.setContentDisplay(ContentDisplay.CENTER);
         Scene scene = new Scene(this, 1000, 1000);
         Stage stage = new Stage();
+        stage.getIcons().add(new Image("file:"+new File("icon/图标.png"),30, 30,
+                true, true));
+        stage.setTitle("图片查看界面");
         stage.setScene(scene);
         stage.show();
     }
@@ -169,6 +170,9 @@ public class SeePicture extends BorderPane {
         button.setId(buttonName);
         button.setPadding(new Insets(10, 10, 10, 10));
         //button.setText(buttonName);
+        button.setStyle("-fx-background-color:#ffffff;");
+        button.setGraphic(new ImageView(new Image("file:"+new File("icon/"+buttonName+".png"),30, 30,
+                true, true)));
         return button;
     }
 }

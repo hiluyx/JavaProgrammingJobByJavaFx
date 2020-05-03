@@ -1,6 +1,8 @@
 import controller.FileTree;
 import controller.ViewerPane;
 import javafx.application.Application;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
@@ -25,6 +27,9 @@ public class Main extends Application {
             Scene scene = new Scene(root, 1400, 927);
             scene.getStylesheets().add(getClass().getResource("test.css").toExternalForm());
             primaryStage.setScene(scene);
+            primaryStage.getIcons().add(new Image("file:"+new File("icon/图标.png"),30, 30,
+                    true, true));
+            primaryStage.setTitle("互抱大腿的小弟制作的——丑图看看");
             //设置关闭程序时要执行的操作
             primaryStage.setOnCloseRequest(event -> {
                 System.out.println("即将关闭程序");

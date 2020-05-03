@@ -14,12 +14,11 @@ import java.io.File;
 public class FunctionBar extends HBox {
     //按钮
     private Button seePicture = createButton("seePicture");
+    private Button upLoad = createButton("upLoad");
     private final Label path = new Label();
 
     public FunctionBar(double spacing) {
         super(10);
-        seePicture.setGraphic(new ImageView(new Image("file:"+new File("icon/播放.png"),30, 30,
-                true, true)));
         //设置padding
         this.setPadding(new Insets(10, 10, 10, 10));
         this.setStyle("-fx-background-color: White;");
@@ -34,7 +33,9 @@ public class FunctionBar extends HBox {
     //把button加入ToolBar
     private void addButton2Bar(){
         this.getChildren().add(seePicture);
+        this.getChildren().add(upLoad);
         this.getChildren().add(path);
+
     }
 
     //给button加上功能
@@ -59,6 +60,9 @@ public class FunctionBar extends HBox {
         button.setId(buttonName);
         button.setPadding(new Insets(10, 10, 10, 10));
         //button.setText(buttonName);
+        button.setStyle("-fx-background-color:#ffffff;");
+        button.setGraphic(new ImageView(new Image("file:"+new File("icon/"+buttonName+".png"),30, 30,
+                true, true)));
         return button;
     }
 
