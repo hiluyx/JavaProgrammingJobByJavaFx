@@ -51,7 +51,6 @@ public class MenuPane extends MenuItem {
     private void addFunction2Button(){
         copyFunction();
         cutFunction();
-//        pasteFunction();
         deleteFunction();
         seePictureFunction();
         reNameFunction();
@@ -105,7 +104,23 @@ public class MenuPane extends MenuItem {
                 isDelete.set(true);
                 stage.close();
                 int num = 0;
+
+                //创建回收站，并清空
+                File huizhouzhan = new File("huizhouzhan");
+                huizhouzhan.mkdir();
+                File huishouzhandetupian[] = huizhouzhan.listFiles();
+                for(int i=0;i<huishouzhandetupian.length;i++){
+                    huishouzhandetupian[i].delete();
+                }
                 for(PictureNode each:PictureNode.getSelectedPictures()){
+
+                    String srcPath = each.getFile().getAbsolutePath();
+                    String destPath = huizhouzhan.getAbsolutePath()+"\\"+each.getFile().getName();
+                    try {
+                        copyFile(srcPath,destPath);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                     if(each.getFile().delete()){
                         System.out.printf("第%d张图片删除成功",++num);
                         ViewerPane.flowPane.getChildren().remove(each);
