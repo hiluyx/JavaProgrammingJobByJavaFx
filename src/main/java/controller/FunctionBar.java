@@ -3,17 +3,23 @@ package controller;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import lombok.Getter;
+
+import java.io.File;
 
 @Getter
 public class FunctionBar extends HBox {
     //按钮
-    private Button seePicture = createButton("查看");
+    private Button seePicture = createButton("seePicture");
     private final Label path = new Label();
 
     public FunctionBar(double spacing) {
         super(10);
+        seePicture.setGraphic(new ImageView(new Image("file:"+new File("icon/播放.png"),30, 30,
+                true, true)));
         //设置padding
         this.setPadding(new Insets(10, 10, 10, 10));
         this.setStyle("-fx-background-color: White;");
@@ -52,7 +58,7 @@ public class FunctionBar extends HBox {
         Button button = new Button();
         button.setId(buttonName);
         button.setPadding(new Insets(10, 10, 10, 10));
-        button.setText(buttonName);
+        //button.setText(buttonName);
         return button;
     }
 

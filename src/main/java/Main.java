@@ -25,17 +25,30 @@ public class Main extends Application {
             Scene scene = new Scene(root, 1400, 927);
             scene.getStylesheets().add(getClass().getResource("test.css").toExternalForm());
             primaryStage.setScene(scene);
+            //设置关闭程序时要执行的操作
             primaryStage.setOnCloseRequest(event -> {
-                System.out.println("我要被关掉啦");
+                System.out.println("即将关闭程序");
                 try {
-                    File f = new File("cloudAlbum");
-                    System.out.println(f.getAbsolutePath());
-                    File[] list = f.listFiles();
-                    if(list != null){
-                        for(File each:list){
-                            System.out.println(each.delete());
+                    //删除云相册数据
+                    File cloudAlbum = new File("cloudAlbum");
+                    File[] filesOfCloudAlbum = cloudAlbum.listFiles();
+                    if(filesOfCloudAlbum != null){
+                        for(File each:filesOfCloudAlbum){
+                            System.out.println("删除"+each.getName()+":"+each.delete());
                         }
                     }
+                    System.out.println("云相册删除："+cloudAlbum.delete());
+
+                    //删除回收站数据
+                    File recycleBin = new File("recycleBin");
+                    File[] filesOfRecycleBin = recycleBin.listFiles();
+                    if(filesOfRecycleBin != null){
+                        for(File each:filesOfRecycleBin){
+                            System.out.println("删除"+each.getName()+":"+each.delete());
+                        }
+                    }
+                    System.out.println("回收站删除："+recycleBin.delete());
+
                 }catch (Exception e){
                     e.printStackTrace();
                 }

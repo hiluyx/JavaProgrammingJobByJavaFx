@@ -24,6 +24,8 @@ public class SeePicture extends BorderPane {
     private boolean isRotate;                   //左转为false，右转为true
 
     public SeePicture(File file, String nodePane) {
+        this.setStyle("-fx-background-color:#ffffff;");
+
         treeNode = new TreeNode(file.getParentFile(), file.getParentFile().getName());
         treeNode.setImages();
         if ("".equals(nodePane)) {
@@ -39,23 +41,26 @@ public class SeePicture extends BorderPane {
 
         ///////////////组件////////////
         ImageView iv = new ImageView(new Image("file:" + this.treeNode.getImages().get(clickCount), 600, 600, true, true));
-        Button previous = new Button("previous");
-        Button next = new Button("next");
-        Button enlarge = new Button("enlarge");
-        Button small = new Button("small");
-        Button ppt = new Button("ppt");
-        Button left_rotate = new Button("left");
-        Button right_rotate = new Button("right");
-        Button screenshot = new Button("screenshot");
-        previous.setPadding(new Insets(10, 10, 10, 10));
-        next.setPadding(new Insets(10, 10, 10, 10));
-        enlarge.setPadding(new Insets(10, 10, 10, 10));
-        small.setPadding(new Insets(10, 10, 10, 10));
-        ppt.setPadding(new Insets(10, 10, 10, 10));
-        left_rotate.setPadding(new Insets(10, 10, 10, 10));
-        right_rotate.setPadding(new Insets(10, 10, 10, 10));
-        screenshot.setPadding(new Insets(10, 10, 10, 10));
-        HBox hBox = new HBox();
+        //modified by sky
+        Button previous = createButton("previous");
+
+        previous.setStyle("-fx-background-color:#ffffff;");
+        previous.setGraphic(new ImageView(new Image("file:"+new File("icon/前一张.png"),30, 30,
+                true, true)));
+
+        Button next = createButton("next");
+        next.setStyle("-fx-background-color:#ffffff;");
+        next.setGraphic(new ImageView(new Image("file:"+new File("icon/后一张.png"),30, 30,
+                true, true)));
+
+
+        Button enlarge = createButton("enlarge");
+        Button small = createButton("small");
+        Button ppt = createButton("ppt");
+        Button left_rotate = createButton("left");
+        Button right_rotate = createButton("right");
+        Button screenshot = createButton("screenshot");
+        HBox hBox = new HBox(10);
         hBox.setAlignment(Pos.BOTTOM_CENTER);
         hBox.getChildren().addAll(small, left_rotate, ppt, screenshot, right_rotate, enlarge);
 
@@ -99,6 +104,7 @@ public class SeePicture extends BorderPane {
             Label label = new Label("这是最后一张图片");
             Pane root = new Pane(label);
             Scene scene = new Scene(root);
+            //modified by sky
             Stage Stage;
             Stage = new Stage();
             Stage.setTitle("提示");
@@ -156,5 +162,13 @@ public class SeePicture extends BorderPane {
         iv.setFitHeight(600 * (changeNum * 0.1 + 1));
         iv.setPreserveRatio(true);
         this.setCenter(iv);
+    }
+
+    private Button createButton(String buttonName) {
+        Button button = new Button();
+        button.setId(buttonName);
+        button.setPadding(new Insets(10, 10, 10, 10));
+        //button.setText(buttonName);
+        return button;
     }
 }
