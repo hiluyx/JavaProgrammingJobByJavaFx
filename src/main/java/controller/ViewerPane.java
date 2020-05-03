@@ -15,6 +15,9 @@ import model.PictureNode;
 import model.TreeNode;
 import util.httpUtils.HttpUtil;
 
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
+
 public class ViewerPane extends BorderPane {
     //当文件树点击其他文件夹的时候，该变量会随之改变，currentTreeNode.getValue()才能获得对应的TreeNode
     public static SimpleObjectProperty<TreeNode> currentTreeNode = new SimpleObjectProperty<>();
@@ -38,14 +41,13 @@ public class ViewerPane extends BorderPane {
         //生成图片预览窗口
         createPreview();
         //图片信息(共几张，选中几张)
-        progressBarWindow.getProgressBar().setProgress(0); bottom.getChildren()
-                                                                 .addAll(massageOfPictures,
-                                                                         selectedNumberOfPicture,
-                                                                         progressBarWindow
-                                                                                 .getProgressBar());
+        progressBarWindow.getProgressBar().setProgress(0);
+        bottom.getChildren().addAll(massageOfPictures,selectedNumberOfPicture,progressBarWindow.getProgressBar());
         this.setBottom(bottom);
         //点击空白处取消选中
-        clickOutsideTurnWhite(); keyboradShortCut();
+        clickOutsideTurnWhite();
+        keyboradShortCut();
+        mouseListener();
     }
 
     //生成图片预览窗口
@@ -157,6 +159,57 @@ public class ViewerPane extends BorderPane {
                     noSelectedMenuPane.revocationFunction();
                 }
             }
+        });
+    }
+
+    //鼠标拖拽多选
+    private void mouseListener(){
+        AtomicReference<Double> sceneX_start = new AtomicReference<>((double) 0);
+        AtomicReference<Double> sceneY_start = new AtomicReference<>((double) 0);
+        AtomicReference<Double> width = new AtomicReference<>((double) 0);
+        AtomicInteger colNum = new AtomicInteger();     //一行图片数(列数)
+
+        ViewerPane.flowPane.setOnMousePressed(event ->{
+            sceneX_start.set(event.getX());
+            sceneY_start.set(event.getY());
+            width.set(ViewerPane.flowPane.getWidth());
+            colNum.set((int) (width.get() / 120));
+            System.out.println("colNun:"+colNum);
+        });
+        ViewerPane.flowPane.setOnDragDetected(event -> flowPane.startFullDrag());
+        ViewerPane.flowPane.setOnMouseDragOver(event -> {
+            double startX = event.getX() < sceneX_start.get() ? event.getX() : sceneX_start.get();
+            double startY = event.getY() < sceneY_start.get() ? event.getY() : sceneY_start.get();
+            double endX = event.getX() > sceneX_start.get() ? event.getX() : sceneX_start.get();
+            double endY = event.getY() > sceneY_start.get() ? event.getY() : sceneY_start.get();
+            int startRow = (int) (startY / 150);//起始行
+            int startCol = (int) (startX / 120);//起始列
+            int endRow = (int) (endY / 150);    //终止行
+            int endCol = (int) (endX /120);     //终止列
+            int pictureRow = 0;
+            int picyureCol = 0;
+
+            for(int i = 0 , length = ViewerPane.flowPane.getChildren().size(); i < length; i++){
+                pictureRow =(int) (i / colNum.get());
+                picyureCol = i % colNum.get();
+
+                if(pictureRow < startRow || pictureRow > endRow || picyureCol < startCol || picyureCol > endCol){
+                    if(PictureNode.getSelectedPictures().indexOf(ViewerPane.flowPane.getChildren().get(i)) != -1){
+                        PictureNode.getSelectedPictures().remove(ViewerPane.flowPane.getChildren().get(i));
+                        ViewerPane.flowPane.getChildren().get(i).setStyle("-fx-background-color: White;");
+                    }
+                }else{
+                    if(PictureNode.getSelectedPictures().indexOf(ViewerPane.flowPane.getChildren().get(i)) == -1){
+                        PictureNode.getSelectedPictures().add((PictureNode) ViewerPane.flowPane.getChildren().get(i));
+                        ViewerPane.flowPane.getChildren().get(i).setStyle("-fx-background-color: #8bb9ff;");
+                    }
+                }
+            }
+        });
+
+        flowPane.setOnMouseDragExited(event -> {
+            System.out.println("结束");
+            System.out.println(PictureNode.getSelectedPictures().size());
         });
     }
 }

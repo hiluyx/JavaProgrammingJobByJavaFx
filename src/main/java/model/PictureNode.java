@@ -132,10 +132,8 @@ public class PictureNode extends Label{
         this.setGraphicTextGap(10);
         this.setPadding(new Insets(10, 10, 10, 10));
         this.setContentDisplay(ContentDisplay.TOP);
-        this.setPrefSize(110, 110);
-
-//        this.image = new Image("file:" + aPictureFile.getAbsolutePath(), 100, 100,
-//                               true, true);
+        this.setMaxSize(120,150);
+        this.setMinSize(120,150);
         this.image = image;
         this.imageView = new ImageView(image);
         this.pictureName = new Text(aPictureFile.getName());

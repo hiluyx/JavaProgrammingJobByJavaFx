@@ -29,6 +29,7 @@ public class Screen_shot {
     static ImageView iv;
     static VBox vBox;
     static Stage stage;
+    static Label label;
     static double sceneX_start;     //截图起点
     static double sceneY_start;
     static double sceneX_end;       //截图终点
@@ -77,8 +78,6 @@ public class Screen_shot {
             sceneX_start = event.getSceneX();
             sceneY_start = event.getSceneY();
             an.getChildren().add(vBox);
-            AnchorPane.setLeftAnchor(vBox, sceneX_start);
-            AnchorPane.setTopAnchor(vBox, sceneY_start);
         });
 
         // 拖拽检测
@@ -86,23 +85,29 @@ public class Screen_shot {
 
         // 获取坐标
         an.setOnMouseDragOver((EventHandler<MouseEvent>) event -> {
-            Label label = new Label();
+            an.getChildren().remove(label);
+            label = new Label();
             label.setAlignment(Pos.CENTER);
             label.setPrefWidth(170);
             label.setPrefHeight(30);
+            an.getChildren().remove(label);
             an.getChildren().add(label);
-            AnchorPane.setLeftAnchor(label, sceneX_start);
-            AnchorPane.setTopAnchor(label, sceneY_start - label.getPrefHeight());
             label.setTextFill(Paint.valueOf("#ffffff"));
             label.setStyle("-fx-background-color:#000000");
             double sceneX = event.getSceneX();
             double sceneY = event.getSceneY();
-            double width = sceneX - sceneX_start;
-            double height = sceneY - sceneY_start;
+            double width = Math.abs(sceneX - sceneX_start);
+            double height = Math.abs(sceneY - sceneY_start);
+            AnchorPane.setLeftAnchor(vBox, sceneX_start < sceneX ? sceneX_start : sceneX);
+            AnchorPane.setTopAnchor(vBox,  sceneY_start < sceneY ? sceneY_start : sceneY);
+            AnchorPane.setLeftAnchor(label, sceneX_start < sceneX ? sceneX_start : sceneX);
+            if( (sceneY_start < sceneY ? sceneY_start : sceneY - label.getPrefHeight()) <= 0){
+                AnchorPane.setTopAnchor(label, sceneY_start > sceneY ? sceneY_start : sceneY + label.getPrefHeight());
+            }else{
+                AnchorPane.setTopAnchor(label, sceneY_start < sceneY ? sceneY_start : sceneY - label.getPrefHeight());
+            }
             vBox.setPrefWidth(width);
             vBox.setPrefHeight(height);
-            System.out.println("1:" + vBox.getPrefHeight());
-            System.out.println("1:" + vBox.getPrefWidth());
             label.setText("宽度：" + width + "高度：" + height);
         });
 
@@ -130,6 +135,16 @@ public class Screen_shot {
     //保存图片
     public void getScreenImg() throws Exception {
         stage.close();// 关闭当前窗口
+        if(sceneX_start > sceneX_end){
+            sceneX_start = sceneX_start + sceneX_end;
+            sceneX_end = sceneX_start - sceneX_end;
+            sceneX_start = sceneX_start - sceneX_end;
+        }
+        if(sceneY_start > sceneY_end){
+            sceneY_start = sceneY_start + sceneY_end;
+            sceneY_end = sceneY_start - sceneY_end;
+            sceneY_start = sceneY_start - sceneY_end;
+        }
         double w = sceneX_end - sceneX_start;
         double h = sceneY_end - sceneY_start;
 

@@ -35,7 +35,6 @@ public class MenuPane extends MenuItem {
 
     private MenuItem copy = new MenuItem("复制");
     private MenuItem cut = new MenuItem("剪切");
-    private MenuItem paste = new MenuItem("粘贴");
     private MenuItem delete = new MenuItem("删除");
     private MenuItem reName = new MenuItem("重命名");
     private MenuItem seePicture = new MenuItem("查看");
@@ -43,9 +42,8 @@ public class MenuPane extends MenuItem {
 
     public MenuPane() {
         //把所有功能加进contextMenu
-        contextMenu.getItems().addAll(copy, cut, paste, delete, reName, seePicture);
+        contextMenu.getItems().addAll(copy, cut, delete, reName, seePicture);
         addFunction2Button();
-        setButtonDisable();
         shortcut();
 
     }
@@ -59,10 +57,6 @@ public class MenuPane extends MenuItem {
         reNameFunction();
     }
 
-    //初始化button不可用
-    private void setButtonDisable(){
-        this.paste.setDisable(true);
-    }
 
     //六大功能
     private void copyFunction(){
@@ -81,53 +75,7 @@ public class MenuPane extends MenuItem {
             }
         });
     }
-    /*private void pasteFunction(){
-        this.paste.setOnAction(event -> {
-            try {
-                //srcPath是原路径，destPath是构造出来的目标路径
-                //例如srcPath=G:\0tjx\2.png  destPath =G:\计算机二级\2.png
-                for(PictureNode each:PictureNode.getSelectedPictures()){
-                    String srcPath = each.getFile().getAbsolutePath();
-                    String path = ViewerPane.currentTreeNode.getValue().getFile().getAbsolutePath();
-                    String picName = each.getFile().getName();
-                    String destPath = path+"/"+picName;
-                    StringBuilder destPrefix = new StringBuilder(destPath.substring(0,
-                            destPath.lastIndexOf(".")));
-                    List<File> files = ViewerPane.currentTreeNode.getValue().getImages();
-                    String destTyle = picName.substring(picName.lastIndexOf(
-                            "."),picName.length());
-                    System.out.println(destPrefix+destTyle);
-                    destPath = destPrefix+destTyle;
-                    while(new File(destPath).exists()){
-                        destPrefix.append("(_1)");
-                        destPath = destPrefix+destTyle;
-                    }
-                    //观察路径
-                    System.out.println(srcPath);
-                    System.out.println(destPath);
-                    //直接从文件层面复制
-                    copyFile(srcPath,destPath);
-                    //添加到flowPane
-                    File file = new File(destPath);
-                    PictureNode p = new PictureNode(file);
-                    ViewerPane.flowPane.getChildren().add(p);
-                }
-                if(status==2){//如果为剪切状态，删除原路径下的图片
-                    int num = 0;
-                    for(PictureNode each:PictureNode.getSelectedPictures()){
-                        if(each.getFile().delete()){
-                            System.out.printf("第%d张图片删除成功\n",++num);
-                            ViewerPane.flowPane.getChildren().remove(each);
-                        }
-                    }
-                }
-                //粘贴一次之后设置为不可用
-                paste.setDisable(true);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
-    }*/
+
     private void deleteFunction(){
         this.delete.setOnAction(event -> {
             MenuPane.status = 3;
@@ -350,7 +298,6 @@ public class MenuPane extends MenuItem {
     private void shortcut(){
         copy.setAccelerator(KeyCombination.valueOf("shift+c"));
         cut.setAccelerator(KeyCombination.valueOf("shift+t"));
-        paste.setAccelerator(KeyCombination.valueOf("shift+v"));
         delete.setAccelerator(KeyCombination.valueOf("shift+d"));
         reName.setAccelerator(KeyCombination.valueOf("shift+r"));
         seePicture.setAccelerator(KeyCombination.valueOf("shift+o"));
