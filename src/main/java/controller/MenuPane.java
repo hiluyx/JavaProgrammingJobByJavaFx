@@ -15,6 +15,7 @@ import javafx.stage.Stage;
 import lombok.Getter;
 import lombok.Setter;
 import model.PictureNode;
+import util.ClipboardUtil;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -29,7 +30,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Setter
 public class MenuPane extends MenuItem {
 
-    public int status = -1;
+    public static int status = -1;
 
 
     private MenuItem copy = new MenuItem("复制");
@@ -52,7 +53,7 @@ public class MenuPane extends MenuItem {
     private void addFunction2Button(){
         copyFunction();
         cutFunction();
-        pasteFunction();
+//        pasteFunction();
         deleteFunction();
         seePictureFunction();
         reNameFunction();
@@ -67,20 +68,20 @@ public class MenuPane extends MenuItem {
     private void copyFunction(){
         this.copy.setOnAction(event -> {
             if(PictureNode.getSelectedPictures().size()>0){
-                this.status = 1;
-                paste.setDisable(false);
+                status = 1;
+                new ClipboardUtil();
             }
         });
     }
     private void cutFunction(){
         this.cut.setOnAction(event -> {
             if(PictureNode.getSelectedPictures().size()>0){
-                this.status = 2;
-                paste.setDisable(false);
+                status = 2;
+                new ClipboardUtil();
             }
         });
     }
-    private void pasteFunction(){
+    /*private void pasteFunction(){
         this.paste.setOnAction(event -> {
             try {
                 //srcPath是原路径，destPath是构造出来的目标路径
@@ -126,10 +127,10 @@ public class MenuPane extends MenuItem {
                 e.printStackTrace();
             }
         });
-    }
+    }*/
     private void deleteFunction(){
         this.delete.setOnAction(event -> {
-
+            MenuPane.status = 3;
             AtomicBoolean isDelete = new AtomicBoolean(false);
 
             //以下为一些页面布局，具体功能就是实现删除时的确认
@@ -328,7 +329,7 @@ public class MenuPane extends MenuItem {
     }
 
     //复制文件的函数
-    private void copyFile(String srcPath, String destPath) throws IOException {
+    public void copyFile(String srcPath, String destPath) throws IOException {
         // 打开输入流
         FileInputStream fis = new FileInputStream(srcPath);
         // 打开输出流

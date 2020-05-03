@@ -23,25 +23,46 @@ public class PictureNode extends Label{
     private Image image;//由文件加载出来的Image
     private ImageView imageView;
     private Text pictureName;
-
     private MenuPane menuPane = new MenuPane();
-
     public int count = 0;//点击次数
 
     //保存被点击图片节点，图片节点中包含图片数据
     protected static ArrayList<PictureNode> selectedPictures = new ArrayList<>();
 
+
+    public static ArrayList<File> getSelectedPictureFiles() {
+        return selectedPictureFiles;
+    }
+
+    public static void setSelectedPictureFiles(
+            ArrayList<File> selectedPictureFiles) {
+        PictureNode.selectedPictureFiles = selectedPictureFiles;
+    }
+
+    protected static ArrayList<File> selectedPictureFiles =
+            new ArrayList<>();
+
     public PictureNode(File aPictureFile) {
+        this.setWrapText(true);
         this.file = aPictureFile;
         //初始化图片
         initializeAPicture(aPictureFile);
         //为图片节点添加监听器
         addListener2PictureNode();
     }
+    public PictureNode(File aPictureFile,Image image) {
+        this.setWrapText(true);
+        this.file = aPictureFile;
+        //初始化图片
+        initializeAPicture(aPictureFile,image);
+        //为图片节点添加监听器
+        addListener2PictureNode();
+    }
     //为图片节点添加监听器
     private void addListener2PictureNode(){
+        this.setContextMenu(menuPane.getContextMenu());
         this.setOnMouseClicked(e -> {
-            this.setContextMenu(menuPane.getContextMenu());
+
             //如果是左键点击
             if (e.getButton() == MouseButton.PRIMARY) {
                 System.out.println("单击了:"+this.file.getName());
@@ -68,11 +89,12 @@ public class PictureNode extends Label{
                     selectedPictures.remove(this);
                 }
                 System.out.println("选中的数量：" + selectedPictures.size());
+
                 showSelectedPictureNumber();//更新被选中的数量
             }
 
             //双击图片进入查看界面
-            if (e.getClickCount() == 2) {
+            if (e.getClickCount() == 2&&e.getButton()==MouseButton.PRIMARY) {
                 //e.getClickCount() == 2,双击
                 //创建一个SeePicture类，传参数进去
                 System.out.println("双击了:"+this.file.getName());
@@ -95,7 +117,26 @@ public class PictureNode extends Label{
         this.setPrefSize(110, 110);
 
         this.image = new Image("file:" + aPictureFile.getAbsolutePath(), 100, 100,
-                true, true);
+                               true, true);
+        this.imageView = new ImageView(image);
+        this.pictureName = new Text(aPictureFile.getName());
+        this.setText(pictureName.getText());
+        this.setGraphic(imageView);
+    }
+
+    private void initializeAPicture(File aPictureFile,Image image){
+        if(!aPictureFile.exists()){
+            aPictureFile.mkdir();
+        }
+        this.setPickOnBounds(true);
+        this.setGraphicTextGap(10);
+        this.setPadding(new Insets(10, 10, 10, 10));
+        this.setContentDisplay(ContentDisplay.TOP);
+        this.setPrefSize(110, 110);
+
+//        this.image = new Image("file:" + aPictureFile.getAbsolutePath(), 100, 100,
+//                               true, true);
+        this.image = image;
         this.imageView = new ImageView(image);
         this.pictureName = new Text(aPictureFile.getName());
         this.setText(pictureName.getText());
