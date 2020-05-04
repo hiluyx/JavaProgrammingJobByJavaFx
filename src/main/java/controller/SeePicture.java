@@ -13,6 +13,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import model.TreeNode;
+import util.ButtonUtil;
 
 import java.io.File;
 
@@ -42,21 +43,21 @@ public class SeePicture extends BorderPane {
         ///////////////组件////////////
         ImageView iv = new ImageView(new Image("file:" + this.treeNode.getImages().get(clickCount), 600, 600, true, true));
         //modified by sky
-        Button previous = createButton("previous");
+        Button previous = ButtonUtil.createButton("previous");
 
-        Button next = createButton("next");
+        Button next = ButtonUtil.createButton("next");
 
-        Button enlarge = createButton("enlarge");
+        Button enlarge = ButtonUtil.createButton("enlarge");
 
-        Button small = createButton("small");
+        Button small = ButtonUtil.createButton("small");
 
-        Button ppt = createButton("ppt");
+        Button ppt = ButtonUtil.createButton("ppt");
 
-        Button left_rotate = createButton("left_rotate");
+        Button left_rotate = ButtonUtil.createButton("left_rotate");
 
-        Button right_rotate = createButton("right_rotate");
+        Button right_rotate = ButtonUtil.createButton("right_rotate");
 
-        Button screenshot = createButton("screenshot");
+        Button screenshot = ButtonUtil.createButton("screenshot");
 
         HBox hBox = new HBox(10);
         hBox.setAlignment(Pos.BOTTOM_CENTER);
@@ -165,14 +166,4 @@ public class SeePicture extends BorderPane {
         this.setCenter(iv);
     }
 
-    private Button createButton(String buttonName) {
-        Button button = new Button();
-        button.setId(buttonName);
-        button.setPadding(new Insets(10, 10, 10, 10));
-        //button.setText(buttonName);
-        button.setStyle("-fx-background-color:#ffffff;");
-        button.setGraphic(new ImageView(new Image("file:"+new File("icon/"+buttonName+".png"),30, 30,
-                true, true)));
-        return button;
-    }
 }
