@@ -92,20 +92,20 @@ public class FileTree {
                 });
             }else if(newValue != this.cloudAlbum){
                 newValue.getValue().setImages();
-                TaskThreadPools.execute(()->{
-                    List<String> paths = new ArrayList<>();
-                    List<File> images = newValue.getValue().getImages();
-                    if(images.size() != 0){
-                        for(File file : images){
-                            paths.add(file.getAbsolutePath());
-                        }
-                        try {
-                            HttpUtil.doPostJson(paths);
-                        } catch (URISyntaxException | IOException uriSyntaxException) {
-                            uriSyntaxException.printStackTrace();
-                        }
-                    }
-                });
+//                TaskThreadPools.execute(()->{
+//                    List<String> paths = new ArrayList<>();
+//                    List<File> images = newValue.getValue().getImages();
+//                    if(images.size() != 0){
+//                        for(File file : images){
+//                            paths.add(file.getAbsolutePath());
+//                        }
+//                        try {
+//                            HttpUtil.doPostJson(paths);
+//                        } catch (URISyntaxException | IOException uriSyntaxException) {
+//                            uriSyntaxException.printStackTrace();
+//                        }
+//                    }
+//                });
                 ViewerPane.setCurrentTreeNode(newValue.getValue());
             }else{
                 ViewerPane.setCurrentTreeNode(this.cloudAlbum.getTreeNode());

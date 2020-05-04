@@ -113,6 +113,11 @@ public class HttpUtil {
         for (String path : paths){
             ContentBody fileBody = new FileBody(new File(path));
             entityBuilder.addPart("files", fileBody);
+            Platform.runLater(()->{
+                ProgressBar progressBar = ViewerPane.progressBarWindow.getProgressBar();
+                Double progress = progressBar.getProgress();
+                progressBar.setProgress(progress + 1.0 / paths.size());
+            });
         }
         HttpEntity httpEntity = entityBuilder.build();
         httpPost.setEntity(httpEntity);
