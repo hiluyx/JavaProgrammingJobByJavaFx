@@ -1,4 +1,5 @@
 import controller.FileTree;
+import controller.MenuPane;
 import controller.ViewerPane;
 import javafx.application.Application;
 import javafx.scene.image.Image;
@@ -18,13 +19,18 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) {
         try {
+            MenuPane.recycleBin.mkdir();
+            File[] files = MenuPane.recycleBin.listFiles();
+            for(int i=0;i<files.length;i++){
+                files[i].delete();
+            }
             SplitPane root = new SplitPane();
             ViewerPane vi = new ViewerPane();
             FileTree fileTree = new FileTree(vi);
             root.getItems().addAll(fileTree.getTreeView(), vi);
             root.setDividerPositions(0.25);
             SplitPane.setResizableWithParent(fileTree.getTreeView(), false);
-            Scene scene = new Scene(root, 1400, 927);
+            Scene scene = new Scene(root, 800, 600);
             scene.getStylesheets().add(getClass().getResource("test.css").toExternalForm());
             primaryStage.setScene(scene);
             primaryStage.getIcons().add(new Image("file:"+new File("icon/图标.png"),30, 30,

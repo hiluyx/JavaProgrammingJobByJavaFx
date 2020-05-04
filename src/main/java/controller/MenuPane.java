@@ -31,6 +31,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class MenuPane extends MenuItem {
 
     public static int status = -1;
+    public static File recycleBin = new File("recycleBin");
 
 
     private MenuItem copy = new MenuItem("复制");
@@ -45,7 +46,7 @@ public class MenuPane extends MenuItem {
         contextMenu.getItems().addAll(copy, cut, delete, reName, seePicture);
         addFunction2Button();
         shortcut();
-
+        recycleBin.mkdir();
     }
 
     private void addFunction2Button(){
@@ -77,83 +78,63 @@ public class MenuPane extends MenuItem {
 
     private void deleteFunction(){
         this.delete.setOnAction(event -> {
-            //更改操作的状态
             MenuPane.status = 3;
+            AtomicBoolean isDelete = new AtomicBoolean(false);
 
-            //button & stage
+            //以下为一些页面布局，具体功能就是实现删除时的确认
+            BorderPane root = new BorderPane();
+            root.setStyle("-fx-background-color: White;");
+            Label label = new Label("是否删除");
+            label.setFont(new Font(35));
+            HBox hBox = new HBox(25);
             Button yes = new Button("是");
             Button no = new Button("否");
+            yes.setPrefWidth(50);
+            no.setPrefWidth(50);
+            hBox.getChildren().add(yes);
+            hBox.getChildren().add(no);
+            hBox.setAlignment(Pos.BOTTOM_CENTER);
+            hBox.setPadding(new Insets(5,5,15,5));
+            root.setCenter(label);
+            root.setBottom(hBox);
+            Scene scene = new Scene(root,450,150);
             Stage stage = new Stage();
-
-            //生成一个询问框
-            {
-                BorderPane root = new BorderPane();
-                root.setStyle("-fx-background-color: White;");
-                Label label = new Label("是否删除");
-                label.setFont(new Font(35));
-                HBox hBox = new HBox(25);
-                yes.setPrefWidth(50);
-                no.setPrefWidth(50);
-                hBox.getChildren().add(yes);
-                hBox.getChildren().add(no);
-                hBox.setAlignment(Pos.BOTTOM_CENTER);
-                hBox.setPadding(new Insets(5, 5, 15, 5));
-                root.setCenter(label);
-                root.setBottom(hBox);
-                Scene scene = new Scene(root, 450, 150);
-                stage.setScene(scene);
-                stage.show();
-            }
-
-            //yes button的鼠标点击事件
+            stage.setScene(scene);
+            stage.show();
             yes.setOnMouseClicked(event1 -> {
+                isDelete.set(true);
                 stage.close();
                 int num = 0;
 
-                //创建回收站，并清空
-                File recycleBin = new File("recycleBin");
-                recycleBin.mkdir();//创建路径,如果路径已存在,则无影响
-
-                File[]filesOfRecycleBin = recycleBin.listFiles();
-                //清空上一次剩下来的文件
-                for(File a:filesOfRecycleBin){
-                    a.delete();
-                }
-                //把删除的图片暂时移动到回收站,并从flowPane中移出来
+                NoSelectedMenuPane.everyRevocationNum.add(PictureNode.getSelectedPictures().size());
                 for(PictureNode each:PictureNode.getSelectedPictures()){
-                    //构造路径
+
                     String srcPath = each.getFile().getAbsolutePath();
-                    String destPath = recycleBin.getAbsolutePath()+"\\"+each.getFile().getName();
+                    String destPath =
+                            recycleBin.getAbsolutePath()+"/"
+                                    +each.getFile().getName();
+                    NoSelectedMenuPane.revocationPictureFiles.add(each.getFile());
                     try {
-                        copyFile(srcPath,destPath);//图片搬运
+                        copyFile(srcPath,destPath);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    //图片删除
                     if(each.getFile().delete()){
-                        System.out.printf("第%d张图片删除成功\n",++num);
+                        System.out.printf("第%d张图片删除成功",++num);
                         ViewerPane.flowPane.getChildren().remove(each);
-                    }
-                    else {
-                        System.out.printf("第%d张图片删除失败\n",++num);
                     }
                 }
             });
-
-            //no button的鼠标点击事件
             no.setOnMouseClicked(event1 -> {
                 stage.close();
             });
         });
     }
-
-    //图片查看功能(进入第一张图片的查看模式)
     private void seePictureFunction(){
         this.seePicture.setOnAction(event -> {
             new SeePicture(ViewerPane.currentTreeNode.getValue().getImages().get(0),ViewerPane.currentTreeNode.getValue().getImages().get(0).getName());
         });
     }
-    //重命名功能
     private void reNameFunction() {
         this.reName.setOnAction(event -> {
             boolean single;
@@ -237,7 +218,7 @@ public class MenuPane extends MenuItem {
         });
     }
 
-    //创建名字(辅助重命名功能的函数)
+    //创建名字
     private String createName(String newFileName,int id,int bit) {
         StringBuilder newName = new StringBuilder(newFileName);
         int tt = id;
@@ -254,8 +235,7 @@ public class MenuPane extends MenuItem {
         newName.append(id);
         return newName.toString();
     }
-
-    //重命名单个文件(辅助重命名功能的函数)
+    //重命名单个文件
     private boolean renameSingle(String newFileName) {
         PictureNode oldNode = PictureNode.getSelectedPictures().get(0);
         File file = oldNode.getFile();
@@ -271,8 +251,7 @@ public class MenuPane extends MenuItem {
         ViewerPane.flowPane.getChildren().add(newNode);
         return true;
     }
-
-    //重命名多个文件(辅助重命名功能的函数)
+    //重命名多个文件
     private boolean renameMore(String newFileName,String startNum,String bitNum) {
         File file;
         int id = Integer.parseInt(startNum);
@@ -301,8 +280,7 @@ public class MenuPane extends MenuItem {
         }
         return true;
     }
-
-    //通过字符串创建一个Button
+    //创建一个Button，button的文字为函数参数
     private Button createButton(String buttonName) {
         Button button = new Button();
         button.setId(buttonName);
@@ -330,13 +308,13 @@ public class MenuPane extends MenuItem {
 
     }
 
-    //设置快捷键
     private void shortcut(){
         copy.setAccelerator(KeyCombination.valueOf("shift+c"));
         cut.setAccelerator(KeyCombination.valueOf("shift+t"));
         delete.setAccelerator(KeyCombination.valueOf("shift+d"));
         reName.setAccelerator(KeyCombination.valueOf("shift+r"));
         seePicture.setAccelerator(KeyCombination.valueOf("shift+o"));
+//        allSelectedMenuItem.setAccelerator(KeyCombination.valueOf("shift+a"));
     }
 
 

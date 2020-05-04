@@ -11,7 +11,13 @@
     -fx-scale-x: 0.6;/*宽度
     -fx-scale-y: 0.8;/*长度
 }*/
+#seePicture{
+    -fx-background-color:#ffffff;
+}
 
+#previous{
+    -fx-background-color:#ffffff;
+}
 /*鼠标放在button时的显示
 .button:hover{
     -fx-background-color: #08deff;

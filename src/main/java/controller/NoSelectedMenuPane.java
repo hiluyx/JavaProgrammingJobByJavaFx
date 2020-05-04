@@ -32,28 +32,20 @@ public class NoSelectedMenuPane {
     public MenuItem getRevocation() {
         return revocation;
     }
+    private static int index =0;
 
     public void setRevocation(MenuItem revocation) {
         this.revocation = revocation;
     }
-    public static boolean isDeleted = true;
+
     private MenuItem allSelected = new MenuItem("全选");
     private MenuItem paste = new MenuItem("粘贴");
     private MenuItem revocation = new MenuItem("撤销");
     private ContextMenu contextMenu = new ContextMenu();
 
-    public static ArrayList<PictureNode> getRevocationPictures() {
-        return revocationPictures;
-    }
-
-    public static void setRevocationPictures(
-            ArrayList<PictureNode> revocationPictures) {
-        NoSelectedMenuPane.revocationPictures = revocationPictures;
-    }
-
-    public static ArrayList<PictureNode> revocationPictures = new ArrayList<>();
+//    public static ArrayList<String>revocationPicturePath = new ArrayList<>();
     public static ArrayList<File>revocationPictureFiles = new ArrayList<>();
-    public static ArrayList<Image> revocationPictureImages = new ArrayList<>();
+    public static ArrayList<Integer>everyRevocationNum = new ArrayList<>();
 
     public NoSelectedMenuPane(Node node) {
         contextMenu.getItems().addAll(paste, allSelected, revocation);
@@ -127,35 +119,59 @@ public class NoSelectedMenuPane {
     }
 
     public void revocationFunction() {
-//        revocation.setOnAction(event -> {
-        System.out.println("revocation"); System.out.println(
-                "需要撤回的大小：" + NoSelectedMenuPane.revocationPictures.size());
+        System.out.println("revocation");
+        System.out.println(everyRevocationNum.size());
+        File[] files = MenuPane.recycleBin.listFiles();
 
-        if (revocationPictureImages != null&&revocationPictureFiles!=null) {
-            for(int i=0;i<revocationPictureFiles.size();i++){
-                PictureNode pictureNode =
-                        new PictureNode(revocationPictureFiles.get(i),
-                                        revocationPictureImages.get(i));
-                ViewerPane.flowPane.getChildren().add(pictureNode);
-                System.out.println(revocationPictureFiles.get(i).exists());
-            }
-//            for (PictureNode each : revocationPictures) {
-//                ViewerPane.flowPane.getChildren().add(each);
-//
-//                System.out.println("文件是否存在："+each.getFile().exists());
-//                if(!each.getFile().exists()){
-//                    each.getFile().mkdir();
-//                }
-//                System.out.println(each.getFile().exists());
-//                System.out.println("文件名："+each.getFile().getName());
-//            }
+        index = everyRevocationNum.size()-1;
 
-//        for(PictureNode each:NoSelectedMenuPane.revocationPictures){
-//
-//            ViewerPane.flowPane.getChildren().add(each);
-//        }
-//        });
+        int curIndex = files.length-1;
+        System.out.println(everyRevocationNum.get(index));
+        for(int i=0;i<everyRevocationNum.get(index);i++,curIndex--){
+            System.out.println(files[curIndex].exists());
+            System.out.println(files[curIndex].getAbsolutePath());
+
+            String destPath = revocationPictureFiles.get(curIndex).getAbsolutePath();
+            files[i].renameTo(new File(destPath));
+            revocationPictureFiles.remove(revocationPictureFiles.get(curIndex));
+            ViewerPane.flowPane.getChildren().add(new PictureNode(new File(destPath)));
+            System.out.println("目标文件是否存在："+new File(destPath).exists());
         }
+        everyRevocationNum.remove(index);
+
+
+//        for(int i=0;i<files.length;i++){
+//            String destPath = revocationPictureFiles.get(0).getAbsolutePath();
+//            System.out.println(new File(destPath).exists());
+//        }
+
+//        System.out.println(MenuPane.recycleBinContents.size());
+//        if(revocationPicturePath!=null){
+
+//            for(String destPath:revocationPicturePath){
+//
+//            }
+//        }
+//        if(revocationPictureFiles!=null&&index<NoSelectedMenuPane.everyRevocationNum.size()){
+//
+//            for(int i=0
+//                    ;i<NoSelectedMenuPane.everyRevocationNum.get(index);i++){
+//                System.out.println(NoSelectedMenuPane.revocationPictureFiles.get(i).getAbsolutePath());
+//                String destPath =
+//                        NoSelectedMenuPane.revocationPictureFiles.get(i).getAbsolutePath();
+//                String srcPath =
+//                        MenuPane.recycleBinContents.get(i).getAbsolutePath();
+//                System.out.println(srcPath);
+//                System.out.println(new File(srcPath).exists());
+//                try {
+//                    menuPane.copyFile(srcPath,destPath);
+//                    index++;
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//                System.out.println(new File(srcPath).exists());
+//            }
+//        }
     }
 
     public void pasteFunction() {
@@ -184,7 +200,7 @@ public class NoSelectedMenuPane {
                         destPath.substring(0, destPath.lastIndexOf(".")));
 
                 String destTyle = picName
-                        .substring(picName.lastIndexOf("."), picName.length());
+                        .substring(picName.lastIndexOf("."));
                 System.out.println(destPrefix + destTyle);
                 destPath = destPrefix + destTyle;
                 while (new File(destPath).exists()) {
