@@ -18,8 +18,8 @@ public class ClipboardUtil {
         clipboard.clear(); clipboardContent.clear();
         PictureNode.getSelectedPictureFiles().clear();
         for (PictureNode each : PictureNode.getSelectedPictures()) {
-            if (PictureNode.getSelectedPictureFiles()
-                           .contains(each.getFile()) == false) {
+            if (!PictureNode.getSelectedPictureFiles()
+                    .contains(each.getFile())) {
                 PictureNode.getSelectedPictureFiles().add(each.getFile());
             }
         } clipboardContent.putFiles(PictureNode.getSelectedPictureFiles());

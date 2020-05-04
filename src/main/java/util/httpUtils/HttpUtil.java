@@ -11,6 +11,7 @@ import javafx.scene.control.ProgressBar;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -19,7 +20,9 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.entity.mime.content.ContentBody;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -28,6 +31,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import util.TaskThreadPools;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.net.ConnectException;
@@ -81,11 +85,12 @@ public class HttpUtil {
             for(Object o : imagesArray){
                 JSONObject image = (JSONObject) o;
                 String id = image.getString("id");
+                String fileName = image.getString("fileName");
                 FileCode.decodeBASE64(image.getString(
                         "imageString"),
-                        System.getProperty("user.dir") + "/cloudAlbum" + "/cloudImage" + id + ".jpg",
+                        System.getProperty("user.dir") + "/cloudAlbum" + "/" + fileName,
                         loadingSize);
-                cloudImageNoteList.add(new CloudImageNote(Integer.parseInt(id)));
+                cloudImageNoteList.add(new CloudImageNote(Integer.parseInt(id),fileName));
             }
             //add to fileTree
             fileTreeCloudImageNotes.addAll(cloudImageNoteList);
@@ -99,44 +104,26 @@ public class HttpUtil {
      * @param paths
      * @throws URISyntaxException
      */
-    public static void doPostJson(List<String> paths) throws URISyntaxException {
+    public static void doPostJson(List<String> paths) throws URISyntaxException, IOException {
         ViewerPane.progressBarWindow.clearBar();
         URIBuilder builder = new URIBuilder(URI_LOCALHOST + "/addImages");
         HttpPost httpPost = new HttpPost(builder.build());
-        int pathsSize = paths.size();
-        for(String path : paths){
-            TaskThreadPools.executeOnCachedThreadPool(()->{
-                FileBody fileBody = new FileBody(new File(path));
-                StringBody stringBody = new StringBody("",ContentType.TEXT_PLAIN);
-                HttpEntity httpEntity = MultipartEntityBuilder.create()
-                        .addPart("fileBody",fileBody)
-                        .addPart("stringBody",stringBody).build();
-                httpPost.setEntity(httpEntity);
-                CloseableHttpResponse response;
-                try {
-                    response = client.execute(httpPost);
-                    System.out.println("POST状态" + response.getStatusLine().getStatusCode());
-                    if(response.getStatusLine().getStatusCode() != HttpStatus.SC_OK)
-                        throw new ConnectException();
-                } catch (IOException exception) {
-                    exception.printStackTrace();
-                }
-                /*
-                互斥抢锁修改上传的进度条
-                 */
-                synchronized (ViewerPane.progressBarWindow.getProgressBar()){
-                    Platform.runLater(()->{
-                        ProgressBar progressBar = ViewerPane.progressBarWindow.getProgressBar();
-                        double progress = progressBar.progressProperty().doubleValue();
-                        System.out.println("上传进度条百分比：" + progress);
-                        ViewerPane.progressBarWindow.getProgressBar().setProgress(progress + 1.0/pathsSize);
-                    });
-                }
-            });
+        MultipartEntityBuilder entityBuilder = MultipartEntityBuilder.create();
+        entityBuilder.setMode(HttpMultipartMode.RFC6532);
+        for (String path : paths){
+            ContentBody fileBody = new FileBody(new File(path));
+            entityBuilder.addPart("files", fileBody);
+        }
+        HttpEntity httpEntity = entityBuilder.build();
+        httpPost.setEntity(httpEntity);
+        CloseableHttpResponse response = client.execute(httpPost);
+        System.out.println("POST状态" + response.getStatusLine().getStatusCode());
+        if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK){
+            throw new ConnectException();
         }
     }
 
-    public static void doDelete(){
+    public static void doDelete(List<CloudImageNote> deleteCloudImageNoteList){
 
     }
 }

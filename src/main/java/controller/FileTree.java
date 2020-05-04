@@ -2,23 +2,21 @@ package controller;
 
 import javafx.application.Platform;
 import javafx.scene.control.TreeView;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.ConnectException;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.List;
+import lombok.Getter;
+import lombok.Setter;
 
 import model.FileTreeItem;
 import model.TreeNode;
-import util.fileUtils.FileTreeLoader;
 import util.TaskThreadPools;
-
-import lombok.Getter;
-import lombok.Setter;
+import util.fileUtils.FileTreeLoader;
 import util.httpUtils.CloudImageNote;
 import util.httpUtils.HttpUtil;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Hi lu
@@ -80,20 +78,34 @@ public class FileTree {
         this.getTreeView().getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if(newValue == null) return;
             if(newValue == this.cloudAlbum&&!isOpened) {
-                System.out.println("同学要联网咯");
+                /*
+                这里应该弹窗询问是否加载
+                 */
                 isOpened = true;
                 TaskThreadPools.execute(()->{
                     ProgressBarWindow.updateProgressBar(0);
-                    HttpUtil.doGetPageImages(this.cloudImageNoteList,0,1);
+                    HttpUtil.doGetPageImages(this.cloudImageNoteList,0,10);
                     File f = this.cloudAlbum.getFile();
                     System.out.println(f.getAbsolutePath());
                     this.cloudAlbum.getTreeNode().setImages();
-                    Platform.runLater(()->{
-                        ViewerPane.setCurrentTreeNode(this.cloudAlbum.getTreeNode());
-                    });
+                    Platform.runLater(()-> ViewerPane.setCurrentTreeNode(this.cloudAlbum.getTreeNode()));
                 });
             }else if(newValue != this.cloudAlbum){
                 newValue.getValue().setImages();
+                TaskThreadPools.execute(()->{
+                    List<String> paths = new ArrayList<>();
+                    List<File> images = newValue.getValue().getImages();
+                    if(images.size() != 0){
+                        for(File file : images){
+                            paths.add(file.getAbsolutePath());
+                        }
+                        try {
+                            HttpUtil.doPostJson(paths);
+                        } catch (URISyntaxException | IOException uriSyntaxException) {
+                            uriSyntaxException.printStackTrace();
+                        }
+                    }
+                });
                 ViewerPane.setCurrentTreeNode(newValue.getValue());
             }else{
                 ViewerPane.setCurrentTreeNode(this.cloudAlbum.getTreeNode());

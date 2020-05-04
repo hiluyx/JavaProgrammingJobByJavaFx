@@ -13,8 +13,13 @@ import java.io.File;
 @Data
 public class CloudImageNote {
     private int id;
-    private File image;
-    public CloudImageNote(int id){
+    private String fileName;
+    public CloudImageNote(int id,String fileName){
+        this.fileName = fileName;
         this.id = id;
+    }
+    public int matchingIdByName(String fileName){
+        if(this.fileName.equals(fileName)) return this.id;
+        else return 0;
     }
 }
