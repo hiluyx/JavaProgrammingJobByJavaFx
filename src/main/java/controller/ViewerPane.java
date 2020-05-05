@@ -2,10 +2,10 @@ package controller;
 
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseButton;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.control.ScrollPane;
@@ -13,7 +13,6 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.HBox;
 import model.PictureNode;
 import model.TreeNode;
-import util.httpUtils.HttpUtil;
 
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
@@ -23,7 +22,7 @@ public class ViewerPane extends BorderPane {
     public static SimpleObjectProperty<TreeNode> currentTreeNode = new SimpleObjectProperty<>();
 
     public static FlowPane flowPane = new FlowPane();
-    public static FunctionBar functionBar = new FunctionBar(10);
+    public static FunctionBar functionBar = new FunctionBar();
     public static HBox bottom = new HBox();
     public static Label massageOfPictures = new Label();
     public static Label selectedNumberOfPicture = new Label();
@@ -42,12 +41,16 @@ public class ViewerPane extends BorderPane {
         createPreview();
         //图片信息(共几张，选中几张)
         progressBarWindow.getProgressBar().setProgress(0);
-        bottom.getChildren().addAll(massageOfPictures,selectedNumberOfPicture,progressBarWindow.getProgressBar());
+        //控制布局
+        selectedNumberOfPicture.setPadding(new Insets(0,710,0,0));
+        bottom.getChildren().addAll(massageOfPictures,selectedNumberOfPicture);
         this.setBottom(bottom);
         //点击空白处取消选中
         clickOutsideTurnWhite();
         keyboradShortCut();
         mouseListener();
+
+
     }
 
     //生成图片预览窗口
@@ -79,6 +82,9 @@ public class ViewerPane extends BorderPane {
             //统计图片张数与图片大小
             if (newValue.getImages() != null) {
                 progressBarWindow.getProgressIndicator().setProgress(0);
+                if (newValue.getImages().size()==0){
+                    progressBarWindow.getProgressIndicator().setProgress(1);
+                }
                 long totalByte = 0;
                 for (int i = 0; i < newValue.getImages().size(); i++) {
                     //添加图片
@@ -110,31 +116,13 @@ public class ViewerPane extends BorderPane {
     //点击空白处取消选中
     private void clickOutsideTurnWhite() {
         ViewerPane.flowPane.setOnMouseClicked(e -> {
-//            double width = ViewerPane.flowPane.getWidth();
-//            double height = ViewerPane.flowPane.getHeight();
-//            //计算最后一行还有多少图片
-//            int rowNum = 1+ViewerPane.flowPane.getChildren()
-//                    .size() / ((int) width / 120);
-//            int lastPicNum=0;
-//            if (ViewerPane.flowPane.getChildren().size() != 0) {
-//                lastPicNum = ViewerPane.flowPane.getChildren()
-//                        .size() % ((int) width / 120);
-//                if (lastPicNum == 0) {
-//                    lastPicNum = (int) width / 120;
-//                }
-//            }if(lastPicNum==0||lastPicNum== (int) width / 120){
-//                rowNum--;
-//            }
-//            if ((e.getX()>lastPicNum*120&&e.getY()>(rowNum-1)*150)||e.getY()>rowNum*150||e.getX()>((int)width/120)*120)
-//            {
             if (e.getPickResult().getIntersectedNode() instanceof FlowPane) {
-
+                FunctionBar.upLoad.setDisable(true);
                 this.noSelectedMenuPane = new NoSelectedMenuPane(
                         ViewerPane.flowPane);
                 PictureNode.getSelectedPictures().clear();//清空PIctureNode中被选中的图片
-                ViewerPane.selectedNumberOfPicture.setText(new String("-选中0张"));
-                for (int i = 0; i < ViewerPane.flowPane.getChildren()
-                                                       .size(); i++) {//把所有子节点背景设置为白色
+                ViewerPane.selectedNumberOfPicture.setText("-选中0张");
+                for (int i = 0; i < ViewerPane.flowPane.getChildren().size(); i++) {//把所有子节点背景设置为白色
                     ViewerPane.flowPane.getChildren().get(i).setStyle(
                             "-fx-background-color: White;");
                 }
@@ -148,16 +136,13 @@ public class ViewerPane extends BorderPane {
     }
 
     private void keyboradShortCut() {
-        this.setOnKeyPressed(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent event) {
-                if (event.getCode() == KeyCode.A) {
-                    noSelectedMenuPane.allSelectedFunction();
-                } else if (event.getCode() == KeyCode.V) {
-                    noSelectedMenuPane.pasteFunction();
-                } else if (event.getCode() == KeyCode.Z) {
-                    noSelectedMenuPane.revocationFunction();
-                }
+        this.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.A) {
+                noSelectedMenuPane.allSelectedFunction();
+            } else if (event.getCode() == KeyCode.V) {
+                noSelectedMenuPane.pasteFunction();
+            } else if (event.getCode() == KeyCode.Z) {
+                noSelectedMenuPane.revocationFunction();
             }
         });
     }
@@ -210,6 +195,15 @@ public class ViewerPane extends BorderPane {
         flowPane.setOnMouseDragExited(event -> {
             System.out.println("结束");
             System.out.println(PictureNode.getSelectedPictures().size());
+            //设置上传按钮可用性
+            if(PictureNode.getSelectedPictures().size()>0){
+                FunctionBar.upLoad.setDisable(false);
+            }
+            else {
+                FunctionBar.upLoad.setDisable(true);
+            }
+            //更新选中了多少张
+            ViewerPane.selectedNumberOfPicture.setText("-选中" + PictureNode.getSelectedPictures().size() + "张");
         });
     }
 }

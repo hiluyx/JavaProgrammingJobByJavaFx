@@ -11,12 +11,17 @@ import util.ButtonUtil;
 public class FunctionBar extends HBox {
     //按钮
     private Button seePicture = ButtonUtil.createButton("seePicture");
-    private Button upLoad = ButtonUtil.createButton("upLoad");
+    public static Button upLoad = ButtonUtil.createButton("upLoad");
     private final Label path = new Label();
 
-    public FunctionBar(double spacing) {
+    public FunctionBar() {
         super(10);
         //设置padding
+
+        path.setMaxWidth(800);
+        path.setMinWidth(800);
+        path.setPadding(new Insets(15,0,0,0));
+
         this.setPadding(new Insets(10, 10, 10, 10));
         this.setStyle("-fx-background-color: White;");
         //把buttons加到ToolBar
@@ -43,6 +48,7 @@ public class FunctionBar extends HBox {
     //初始化button不可用
     private void setButtonDisable(){
         this.seePicture.setDisable(true);
+        this.upLoad.setDisable(true);
     }
 
     private void seePictureFunction(){

@@ -1,5 +1,6 @@
 package model;
 
+import controller.FunctionBar;
 import controller.MenuPane;
 import controller.SeePicture;
 import controller.ViewerPane;
@@ -50,14 +51,6 @@ public class PictureNode extends Label{
         //为图片节点添加监听器
         addListener2PictureNode();
     }
-    public PictureNode(File aPictureFile,Image image) {
-        this.setWrapText(true);
-        this.file = aPictureFile;
-        //初始化图片
-        initializeAPicture(aPictureFile,image);
-        //为图片节点添加监听器
-        addListener2PictureNode();
-    }
     //为图片节点添加监听器
     private void addListener2PictureNode(){
         this.setContextMenu(menuPane.getContextMenu());
@@ -100,6 +93,12 @@ public class PictureNode extends Label{
                 System.out.println("双击了:"+this.file.getName());
                 new SeePicture(this.file, this.file.getName());
             }
+            if(this.selectedPictures.size()>0){
+                FunctionBar.upLoad.setDisable(false);
+            }
+            else {
+                FunctionBar.upLoad.setDisable(true);
+            }
         });
     }
 
@@ -110,21 +109,6 @@ public class PictureNode extends Label{
 
     //初始化一张图片
     private void initializeAPicture(File aPictureFile){
-        this.setPickOnBounds(true);
-        this.setGraphicTextGap(10);
-        this.setPadding(new Insets(10, 10, 10, 10));
-        this.setContentDisplay(ContentDisplay.TOP);
-        this.setPrefSize(110, 110);
-
-        this.image = new Image("file:" + aPictureFile.getAbsolutePath(), 100, 100,
-                               true, true);
-        this.imageView = new ImageView(image);
-        this.pictureName = new Text(aPictureFile.getName());
-        this.setText(pictureName.getText());
-        this.setGraphic(imageView);
-    }
-
-    private void initializeAPicture(File aPictureFile,Image image){
         if(!aPictureFile.exists()){
             aPictureFile.mkdir();
         }
@@ -134,7 +118,8 @@ public class PictureNode extends Label{
         this.setContentDisplay(ContentDisplay.TOP);
         this.setMaxSize(120,150);
         this.setMinSize(120,150);
-        this.image = image;
+        this.image = new Image("file:" + aPictureFile.getAbsolutePath(), 100, 100,
+                true, true);
         this.imageView = new ImageView(image);
         this.pictureName = new Text(aPictureFile.getName());
         this.setText(pictureName.getText());

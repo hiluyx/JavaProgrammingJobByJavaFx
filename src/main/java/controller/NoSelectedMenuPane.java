@@ -3,47 +3,32 @@ package controller;
 import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
-import javafx.scene.image.Image;
 import javafx.scene.input.*;
 import javafx.scene.layout.FlowPane;
-import javafx.scene.text.Text;
+import lombok.Getter;
+import lombok.Setter;
 import model.PictureNode;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author helefeng
  * @date 2020/5/1 5:08 下午
  */
+@Getter
+@Setter
 public class NoSelectedMenuPane {
     private MenuPane menuPane = new MenuPane();
 
-    public MenuItem getPaste() {
-        return paste;
-    }
-
-    public void setPaste(MenuItem paste) {
-        this.paste = paste;
-    }
-
-    public MenuItem getRevocation() {
-        return revocation;
-    }
     private static int index =0;
-
-    public void setRevocation(MenuItem revocation) {
-        this.revocation = revocation;
-    }
 
     private MenuItem allSelected = new MenuItem("全选");
     private MenuItem paste = new MenuItem("粘贴");
     private MenuItem revocation = new MenuItem("撤销");
     private ContextMenu contextMenu = new ContextMenu();
 
-//    public static ArrayList<String>revocationPicturePath = new ArrayList<>();
     public static ArrayList<File>revocationPictureFiles = new ArrayList<>();
     public static ArrayList<Integer>everyRevocationNum = new ArrayList<>();
 
@@ -67,23 +52,6 @@ public class NoSelectedMenuPane {
                     contextMenu.hide();
                 }
             }
-//            if (e.getPickResult().getIntersectedNode() instanceof FlowPane) {
-//                if (e.getButton() == MouseButton.SECONDARY) {
-//                    contextMenu.show(node, e.getScreenX(), e.getScreenY());
-//                } else {
-//                    if (contextMenu.isShowing()) {
-//                        contextMenu.hide();
-//                    }
-//                }
-//            } else {
-//                if (contextMenu.isShowing()) {
-//                    contextMenu.hide();
-//                }
-//            }
-
-//            else{
-//                contextMenu.
-//            }
         });
     }
 
@@ -106,7 +74,6 @@ public class NoSelectedMenuPane {
     }
 
     public void allSelectedFunction() {
-//        allSelected.setOnAction(event -> {
         System.out.println("allselected");
         for (Node each : ViewerPane.flowPane.getChildren()) {
             if (PictureNode.getSelectedPictures()
@@ -115,7 +82,9 @@ public class NoSelectedMenuPane {
                 PictureNode.getSelectedPictures().add((PictureNode) each);
             }
         }
-//        });
+        //设置上传按钮可用性，更新选中的张数
+        FunctionBar.upLoad.setDisable(false);
+        ViewerPane.selectedNumberOfPicture.setText(new String("-选中"+PictureNode.getSelectedPictures().size()+"张"));
     }
 
     public void revocationFunction() {
@@ -138,44 +107,9 @@ public class NoSelectedMenuPane {
             System.out.println("目标文件是否存在："+new File(destPath).exists());
         }
         everyRevocationNum.remove(index);
-
-
-//        for(int i=0;i<files.length;i++){
-//            String destPath = revocationPictureFiles.get(0).getAbsolutePath();
-//            System.out.println(new File(destPath).exists());
-//        }
-
-//        System.out.println(MenuPane.recycleBinContents.size());
-//        if(revocationPicturePath!=null){
-
-//            for(String destPath:revocationPicturePath){
-//
-//            }
-//        }
-//        if(revocationPictureFiles!=null&&index<NoSelectedMenuPane.everyRevocationNum.size()){
-//
-//            for(int i=0
-//                    ;i<NoSelectedMenuPane.everyRevocationNum.get(index);i++){
-//                System.out.println(NoSelectedMenuPane.revocationPictureFiles.get(i).getAbsolutePath());
-//                String destPath =
-//                        NoSelectedMenuPane.revocationPictureFiles.get(i).getAbsolutePath();
-//                String srcPath =
-//                        MenuPane.recycleBinContents.get(i).getAbsolutePath();
-//                System.out.println(srcPath);
-//                System.out.println(new File(srcPath).exists());
-//                try {
-//                    menuPane.copyFile(srcPath,destPath);
-//                    index++;
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//                System.out.println(new File(srcPath).exists());
-//            }
-//        }
     }
 
     public void pasteFunction() {
-//        this.paste.setOnAction(event -> {
         System.out.println("paste");
         Clipboard clipboard = Clipboard.getSystemClipboard();
         if (clipboard != null) {
@@ -227,6 +161,5 @@ public class NoSelectedMenuPane {
         } catch (IOException e) {
             e.printStackTrace();
         }
-//        });
     }
 }

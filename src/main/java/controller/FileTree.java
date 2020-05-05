@@ -84,6 +84,11 @@ public class FileTree {
                 这里应该弹窗询问是否加载
                  */
                 isOpened = true;
+                /*
+                有修改
+                当点击了cloudAlbum时才把进度条加上去(加载结束后应该去掉)
+                 */
+                ViewerPane.bottom.getChildren().add(ViewerPane.progressBarWindow.getProgressBar());
                 TaskThreadPools.execute(()->{
                     while (true) {
                         ProgressBarWindow.updateProgressBar(0);

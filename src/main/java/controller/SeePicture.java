@@ -1,29 +1,38 @@
 package controller;
 
 import javafx.geometry.Insets;
+import javafx.geometry.NodeOrientation;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
+import javafx.scene.control.ToolBar;
+import javafx.scene.effect.BlendMode;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import model.TreeNode;
 import util.ButtonUtil;
 
+import java.awt.*;
 import java.io.File;
 
 public class SeePicture extends BorderPane {
     private final TreeNode treeNode;
+    private StackPane stackPane;
+    private BorderPane borderPane;
+    private ToolBar toolBar;
     private int clickCount;                     // 计数器
     private int changeNum = 0;                  //缩放系数
     private int currentRotate = 0;              //当前角度
     private boolean isRotate;                   //左转为false，右转为true
-
+    int w = 800;
+    int h = 800;
     public SeePicture(File file, String nodePane) {
         this.setStyle("-fx-background-color:#ffffff;");
 
@@ -41,7 +50,7 @@ public class SeePicture extends BorderPane {
         }   //判断图片
 
         ///////////////组件////////////
-        ImageView iv = new ImageView(new Image("file:" + this.treeNode.getImages().get(clickCount), 600, 600, true, true));
+        ImageView iv = new ImageView(new Image("file:" + this.treeNode.getImages().get(clickCount),w,h,true,true));
         //modified by sky
         Button previous = ButtonUtil.createButton("previous");
 
@@ -59,9 +68,17 @@ public class SeePicture extends BorderPane {
 
         Button screenshot = ButtonUtil.createButton("screenshot");
 
+        borderPane = new BorderPane();
+        borderPane.setCenter(iv);
+        stackPane = new StackPane(borderPane);
+        StackPane.setAlignment(borderPane,Pos.CENTER);
         HBox hBox = new HBox(10);
         hBox.setAlignment(Pos.BOTTOM_CENTER);
         hBox.getChildren().addAll(small, left_rotate, ppt, screenshot, right_rotate, enlarge);
+        toolBar = new ToolBar(hBox);
+        toolBar.setStyle("-fx-background-color:#ffffff;");
+        hBox.minWidthProperty().bind(toolBar.widthProperty());
+
 
         ///////////////监听器//////////////////
         previous.setOnMouseClicked(e -> { this.clickCount--;previous_next_action(); });
@@ -73,15 +90,18 @@ public class SeePicture extends BorderPane {
         right_rotate.setOnMouseClicked(e->{ this.isRotate=true;rotate(); } );
         screenshot.setOnAction( e-> new Screen_shot(treeNode.getFile()) );
 
-        this.setCenter(iv);
-        this.setLeft(previous);
-        this.setRight(next);
-        this.setTop(hBox);
-        setAlignment(this.getLeft(), Pos.CENTER);
-        setAlignment(this.getRight(), Pos.CENTER);
-        previous.setContentDisplay(ContentDisplay.CENTER);
-        next.setContentDisplay(ContentDisplay.CENTER);
-        Scene scene = new Scene(this, 1000, 1000);
+        this.setCenter(stackPane);
+        this.getChildren().addAll(previous,next);
+        this.setTop(toolBar);
+        previous.layoutYProperty().bind(this.heightProperty().divide(2).subtract(previous.heightProperty()));
+        next.layoutYProperty().bind(this.heightProperty().divide(2).subtract(next.heightProperty()));
+        next.layoutXProperty().bind(this.widthProperty().subtract(next.widthProperty()).subtract(8));
+//        previous.setLayoutY(360.0);
+        previous.setLayoutX(8.0);
+//        next.setLayoutY(360.0);
+//        next.setLayoutX(1192);
+
+        Scene scene = new Scene(this, 1350, 1350 * 0.65);
         Stage stage = new Stage();
         stage.getIcons().add(new Image("file:"+new File("icon/图标.png"),30, 30,
                 true, true));
@@ -117,8 +137,9 @@ public class SeePicture extends BorderPane {
             this.currentRotate = 0;
             this.changeNum = 0;
             System.out.println(this.clickCount);
-            ImageView iv = new ImageView(new Image("file:" + this.treeNode.getImages().get(clickCount), 600, 600, true, true));
-            this.setCenter(iv);
+            ImageView iv = new ImageView(new Image("file:" + this.treeNode.getImages().get(clickCount),w,h,true,true));
+
+            borderPane.setCenter(iv);
         }
     }
 
@@ -145,10 +166,13 @@ public class SeePicture extends BorderPane {
             Stage.show();
             this.changeNum = 0;
         }
-        ImageView iv = (ImageView) this.getCenter();
-        iv.setFitWidth(600 * (changeNum * 0.1 + 1));
-        iv.setFitHeight(600 * (changeNum * 0.1 + 1));
+        ImageView iv = (ImageView) borderPane.getCenter();
+        iv.setFitWidth(w * (changeNum * 0.1 + 1));
+        iv.setFitHeight(h * (changeNum * 0.1 + 1));
+        System.out.println(iv.prefHeight(-1));
+        iv.setSmooth(true);
         iv.setPreserveRatio(true);
+
     }
 
     //旋转
@@ -158,12 +182,17 @@ public class SeePicture extends BorderPane {
         }else{
             currentRotate -= 90;
         }
-        ImageView iv = new ImageView(new Image("file:" + this.treeNode.getImages().get(clickCount), 500, 500, true, true));
+
+        ImageView iv = (ImageView) borderPane.getCenter();
+
+
         iv.setRotate(this.currentRotate % 360);
-        iv.setFitWidth(600 * (changeNum * 0.1 + 1));
-        iv.setFitHeight(600 * (changeNum * 0.1 + 1));
+
+
+        iv.setFitWidth(w * (changeNum * 0.1 + 1));
+        iv.setFitHeight(h * (changeNum * 0.1 + 1));
+        iv.setSmooth(true);
         iv.setPreserveRatio(true);
-        this.setCenter(iv);
     }
 
 }

@@ -25,18 +25,20 @@ public class Main extends Application {
             for(int i=0;i<files.length;i++){
                 files[i].delete();
             }
+            int width = 1350;
+            int height = (int) (width*0.65);
             SplitPane root = new SplitPane();
             ViewerPane vi = new ViewerPane();
             FileTree fileTree = new FileTree(vi);
             root.getItems().addAll(fileTree.getTreeView(), vi);
             root.setDividerPositions(0.25);
             SplitPane.setResizableWithParent(fileTree.getTreeView(), false);
-            Scene scene = new Scene(root, 800, 600);
+            Scene scene = new Scene(root, width, height);
             scene.getStylesheets().add(getClass().getResource("test.css").toExternalForm());
             primaryStage.setScene(scene);
             primaryStage.getIcons().add(new Image("file:"+new File("icon/图标.png"),30, 30,
                     true, true));
-            primaryStage.setTitle("互抱大腿的小弟制作的——丑图看看");
+            primaryStage.setTitle("电子图片管理程序--by互抱大腿的小弟们");
             //设置关闭程序时要执行的操作
             primaryStage.setOnCloseRequest(event -> {
                 System.out.println("即将关闭程序");
