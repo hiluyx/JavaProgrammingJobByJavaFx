@@ -23,7 +23,7 @@ public class FileCode {
             throws IOException {
         byte[] buffer = new BASE64Decoder().decodeBuffer(BASE64);
         CountingOutputStream countingOutputStream = new CountingOutputStream(targetPath, transferredBytes -> {
-            ProgressBarWindow.updateProgressBar(3,transferredBytes,targetFileLength);
+            ProgressBarWindow.updateProgressBar(2,transferredBytes,targetFileLength);
         });
         countingOutputStream.write(buffer);
     }

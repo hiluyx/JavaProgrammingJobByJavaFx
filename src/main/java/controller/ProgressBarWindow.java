@@ -35,6 +35,10 @@ public class ProgressBarWindow {
         progressBar.setProgress(0);
     }
 
+    public void setErrorBar(){
+        progressBar.setProgress(-1);
+    }
+
     public void clearIndicator(){
         progressIndicator.setProgress(0);
     }
@@ -68,7 +72,7 @@ public class ProgressBarWindow {
                 Platform.runLater(() -> {
                     if (step == 0) {
                         ViewerPane.progressBarWindow.getProgressBar().setProgress(0.15);
-                    }else if(step == 3) {
+                    }else if(step == 2) {
                         double inputProgress = (int) (100 * transferredBytes / targetFileLength);
                         ViewerPane.progressBarWindow.getProgressBar().setProgress(inputProgress * 0.2 + 0.8);
                     }

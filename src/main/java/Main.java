@@ -12,6 +12,7 @@ import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.scene.control.SplitPane;
 import org.apache.http.util.Asserts;
+import util.httpUtils.HttpUtil;
 
 import java.io.File;
 
@@ -40,6 +41,8 @@ public class Main extends Application {
             primaryStage.setOnCloseRequest(event -> {
                 System.out.println("即将关闭程序");
                 try {
+                    System.out.println("关闭网络连接");
+                    HttpUtil.client.close();
                     //删除云相册数据
                     File cloudAlbum = new File("cloudAlbum");
                     File[] filesOfCloudAlbum = cloudAlbum.listFiles();

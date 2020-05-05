@@ -1,4 +1,4 @@
-package util.httpUtils;
+package model;
 
 import lombok.Data;
 

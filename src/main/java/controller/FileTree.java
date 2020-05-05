@@ -1,6 +1,9 @@
 package controller;
 
 import javafx.application.Platform;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.TreeView;
 import lombok.Getter;
 import lombok.Setter;
@@ -9,14 +12,16 @@ import model.FileTreeItem;
 import model.TreeNode;
 import util.TaskThreadPools;
 import util.fileUtils.FileTreeLoader;
-import util.httpUtils.CloudImageNote;
+import model.CloudImageNote;
 import util.httpUtils.HttpUtil;
+import util.httpUtils.exception.RequestConnectException;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Hi lu
@@ -41,6 +46,7 @@ public class FileTree {
      */
     private List<CloudImageNote> cloudImageNoteList;
     private boolean isOpened;
+    public static final DialogSel dialog = new DialogSel();
 
     public FileTree(ViewerPane viewerPane) throws IOException {
         this.viewerPane = viewerPane;
@@ -83,12 +89,19 @@ public class FileTree {
                  */
                 isOpened = true;
                 TaskThreadPools.execute(()->{
-                    ProgressBarWindow.updateProgressBar(0);
-                    HttpUtil.doGetPageImages(this.cloudImageNoteList,0,10);
-                    File f = this.cloudAlbum.getFile();
-                    System.out.println(f.getAbsolutePath());
-                    this.cloudAlbum.getTreeNode().setImages();
-                    Platform.runLater(()-> ViewerPane.setCurrentTreeNode(this.cloudAlbum.getTreeNode()));
+                    while (true) {
+                        ProgressBarWindow.updateProgressBar(0);
+                        try {
+                            HttpUtil.doGetPageImages(this.cloudImageNoteList,0,10);
+                        } catch (RequestConnectException | URISyntaxException exception) {
+                            /*
+                            连接出现错误，退出提示框
+                             */
+                            if(dialog.errorDialog(exception)) break;
+                        }
+                        this.cloudAlbum.getTreeNode().setImages();
+                        Platform.runLater(()-> ViewerPane.setCurrentTreeNode(this.cloudAlbum.getTreeNode()));
+                    }
                 });
             }else if(newValue != this.cloudAlbum){
                 newValue.getValue().setImages();
@@ -99,10 +112,13 @@ public class FileTree {
 //                        for(File file : images){
 //                            paths.add(file.getAbsolutePath());
 //                        }
-//                        try {
-//                            HttpUtil.doPostJson(paths);
-//                        } catch (URISyntaxException | IOException uriSyntaxException) {
-//                            uriSyntaxException.printStackTrace();
+//                        while(true){
+//                            try {
+//                                HttpUtil.doPostJson(paths);
+//                            } catch (URISyntaxException | RequestConnectException exception) {
+//                                exception.printStackTrace();
+//                                if(dialog.errorDialog(exception)) break;
+//                            }
 //                        }
 //                    }
 //                });
@@ -123,5 +139,37 @@ public class FileTree {
         this.cloudAlbum = new FileTreeItem(cloudAlbumFile,cloudAlbumFile.getName());
         this.cloudImageNoteList = new ArrayList<>();
         this.isOpened = false;
+    }
+    /*
+    重连对话框
+     */
+    public static class DialogSel{
+        @Getter
+        private boolean yes = false;
+        public void setYes(String p_message){
+            Platform.runLater(()->{
+                synchronized (dialog){
+                    Alert _alert = new Alert(Alert.AlertType.CONFIRMATION, p_message,new ButtonType("取消", ButtonBar.ButtonData.NO),
+                            new ButtonType("确定", ButtonBar.ButtonData.YES));
+                    Optional<ButtonType> _buttonType = _alert.showAndWait();
+                    _buttonType.ifPresent(buttonType -> {
+                        this.yes = (buttonType.getButtonData().equals(ButtonBar.ButtonData.YES));
+                    });
+                    FileTree.dialog.notifyAll();
+                }
+            });
+        }
+        public boolean errorDialog(Exception exception){
+            synchronized (dialog){
+                if (exception instanceof RequestConnectException){
+                    try {((RequestConnectException) exception).errorDialog();
+                        dialog.wait();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    return !dialog.isYes();
+                }else return true;
+            }
+        }
     }
 }
