@@ -41,7 +41,7 @@ public class FileTree {
      * 每次do get cloudImageNoteList会自动增长
      * ，记录id，以便删除
      */
-    private List<CloudImageNote> cloudImageNoteList;
+    public static List<CloudImageNote> cloudImageNoteList;
     private boolean isOpened;
 
     public FileTree(ViewerPane viewerPane) throws IOException {

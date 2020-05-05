@@ -31,7 +31,9 @@ public class RequestConnectException extends Exception {
         public void setSel(String p_message){
             Platform.runLater(()->{
                 synchronized (dialog){
-                    Alert _alert = new Alert(Alert.AlertType.CONFIRMATION, p_message,new ButtonType("取消", ButtonBar.ButtonData.NO),
+                    Alert _alert = new Alert(Alert.AlertType.CONFIRMATION,
+                            p_message,
+                            new ButtonType("取消", ButtonBar.ButtonData.NO),
                             new ButtonType("确定", ButtonBar.ButtonData.YES));
                     Optional<ButtonType> _buttonType = _alert.showAndWait();
                     _buttonType.ifPresent(buttonType -> this.yes = (buttonType.getButtonData().equals(ButtonBar.ButtonData.YES)));

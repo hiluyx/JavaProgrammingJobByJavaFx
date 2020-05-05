@@ -20,6 +20,6 @@ public class CloudImageNote {
     }
     public int matchingIdByName(String fileName){
         if(this.fileName.equals(fileName)) return this.id;
-        else return 0;
+        else return -1;
     }
 }

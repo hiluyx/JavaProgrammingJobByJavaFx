@@ -3,6 +3,7 @@ package util.httpUtils;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
+import controller.FileTree;
 import controller.ProgressBarWindow;
 import controller.ViewerPane;
 import javafx.application.Platform;
@@ -13,6 +14,7 @@ import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URIBuilder;
@@ -28,6 +30,7 @@ import util.httpUtils.exception.RequestConnectException;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
@@ -124,7 +127,34 @@ public class HttpUtil {
         }
     }
 
-    public static void doDelete(List<CloudImageNote> deleteCloudImageNoteList){
+    public static void doDelete(List<File> deleteCloudImageFiles) throws URISyntaxException, RequestConnectException {
+        if (deleteCloudImageFiles != null &&deleteCloudImageFiles.size() > 0){
+            StringBuilder deleteImagesString = new StringBuilder();
+            URIBuilder builder = new URIBuilder(URI_LOCALHOST + "/deleteImages");
+            List<CloudImageNote> fileTreeCloudImageNotes = FileTree.cloudImageNoteList;
+            for(File file : deleteCloudImageFiles){
+                int id = -1;
+                for (CloudImageNote note : fileTreeCloudImageNotes){
+                    id = note.matchingIdByName(file.getName());
+                    if (id != -1) break;
+                }
+                deleteImagesString.append(",").append(id);
+            }
+            List<NameValuePair> params= new ArrayList<>();
+            params.add(new BasicNameValuePair("ids",deleteImagesString.toString()));
+            builder.addParameters(params);
 
+            System.out.println(builder.build().toString());
+
+            HttpDelete httpDelete = new HttpDelete(builder.build());
+            try (CloseableHttpResponse response = client.execute(httpDelete)){
+                if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
+                    response.close();
+                    throw new RequestConnectException(response.getStatusLine().getStatusCode() + "/t删除失败，是否重试？");
+                }
+            }catch (IOException exception){
+                throw new RequestConnectException("连接失败，是否重试？");
+            }
+        }
     }
 }
