@@ -1,9 +1,6 @@
 package controller;
 
 import javafx.application.Platform;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonBar;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.TreeView;
 import lombok.Getter;
 import lombok.Setter;
@@ -46,7 +43,6 @@ public class FileTree {
      */
     private List<CloudImageNote> cloudImageNoteList;
     private boolean isOpened;
-    public static final DialogSel dialog = new DialogSel();
 
     public FileTree(ViewerPane viewerPane) throws IOException {
         this.viewerPane = viewerPane;
@@ -97,7 +93,10 @@ public class FileTree {
                             /*
                             连接出现错误，退出提示框
                              */
-                            if(dialog.errorDialog(exception)) break;
+                            if(exception instanceof RequestConnectException)
+                                if (((RequestConnectException) exception).
+                                        getDialogSel((RequestConnectException) exception))
+                                    break;
                         }
                         this.cloudAlbum.getTreeNode().setImages();
                         Platform.runLater(()-> ViewerPane.setCurrentTreeNode(this.cloudAlbum.getTreeNode()));
@@ -139,37 +138,5 @@ public class FileTree {
         this.cloudAlbum = new FileTreeItem(cloudAlbumFile,cloudAlbumFile.getName());
         this.cloudImageNoteList = new ArrayList<>();
         this.isOpened = false;
-    }
-    /*
-    重连对话框
-     */
-    public static class DialogSel{
-        @Getter
-        private boolean yes = false;
-        public void setYes(String p_message){
-            Platform.runLater(()->{
-                synchronized (dialog){
-                    Alert _alert = new Alert(Alert.AlertType.CONFIRMATION, p_message,new ButtonType("取消", ButtonBar.ButtonData.NO),
-                            new ButtonType("确定", ButtonBar.ButtonData.YES));
-                    Optional<ButtonType> _buttonType = _alert.showAndWait();
-                    _buttonType.ifPresent(buttonType -> {
-                        this.yes = (buttonType.getButtonData().equals(ButtonBar.ButtonData.YES));
-                    });
-                    FileTree.dialog.notifyAll();
-                }
-            });
-        }
-        public boolean errorDialog(Exception exception){
-            synchronized (dialog){
-                if (exception instanceof RequestConnectException){
-                    try {((RequestConnectException) exception).errorDialog();
-                        dialog.wait();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    return !dialog.isYes();
-                }else return true;
-            }
-        }
     }
 }
