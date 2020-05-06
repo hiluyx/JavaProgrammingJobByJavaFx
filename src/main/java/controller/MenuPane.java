@@ -55,7 +55,7 @@ public class MenuPane extends MenuItem {
 
     public MenuPane() {
         //把所有功能加进contextMenu
-        contextMenu.getItems().addAll(copy, cut, delete, reName, seePicture,upLoad,attribute);
+        contextMenu.getItems().addAll(copy, cut, delete, reName, seePicture,upLoad,attribute,lock);
         addFunction2Button();
         shortcut();
         recycleBin.mkdir();
@@ -69,6 +69,7 @@ public class MenuPane extends MenuItem {
         reNameFunction();
         attributeFunction();
         upLoadFunction();
+        lockFunction();
     }
 
     private void upLoadFunction(){
@@ -156,11 +157,42 @@ public class MenuPane extends MenuItem {
     }
 
     private void attributeFunction(){
-
+        attribute.setOnAction(event -> {
+            GridPane 属性面板 = new GridPane();
+            PictureNode e = PictureNode.getSelectedPictures().get(0);
+            Label 类型 = new Label("类型:"+e.getFile().getName().substring(e.getFile().getName().lastIndexOf(".")));
+            Label 大小 = new Label("大小");
+            Label 位置 = new Label("位置");
+            属性面板.add(类型,0,0);
+            Scene scene = new Scene(属性面板);
+            Stage stage = new Stage();
+            stage.setScene(scene);
+            stage.show();
+        });
     }
 
     private void lockFunction(){
+        lock.setOnAction(event -> {
+            if (this.lock.getText().equals("锁定")){
+                for(PictureNode each:PictureNode.getSelectedPictures()){
+                    each.setLocked(true);
+                    this.lock.setText("解锁");
+                    each.setStyle("-fx-background-color:#cdcdcd;");
+                    PictureNode.getLockedPictures().add(each);
+                }
+                PictureNode.getSelectedPictures().clear();
+            }
+            else {
+                for (PictureNode each:PictureNode.getLockedPictures()){
+                    each.setLocked(false);
+                    this.lock.setText("锁定");
+                    each.setStyle("-fx-background-color:White;");
 
+                }
+                PictureNode.getLockedPictures().clear();
+            }
+
+        });
     }
 
     private void reNameFunction() {
@@ -339,7 +371,7 @@ public class MenuPane extends MenuItem {
         reName.setAccelerator(KeyCombination.valueOf("shift+r"));
         seePicture.setAccelerator(KeyCombination.valueOf("shift+o"));
         upLoad.setAccelerator(KeyCombination.valueOf("shift+u"));
-        attribute.setAccelerator(KeyCombination.valueOf("shift+a"));
+        attribute.setAccelerator(KeyCombination.valueOf("shift+i"));
 //        allSelectedMenuItem.setAccelerator(KeyCombination.valueOf("shift+a"));
     }
 

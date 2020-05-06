@@ -6,6 +6,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import lombok.Getter;
 import util.ButtonUtil;
+import util.fileUtils.FileTreeLoader;
 
 @Getter
 public class FunctionBar extends HBox {
@@ -43,6 +44,7 @@ public class FunctionBar extends HBox {
     //给button加上功能
     private void addFunction2Button(){
         seePictureFunction();
+        upLoadFunction();
     }
 
     //初始化button不可用
@@ -57,6 +59,11 @@ public class FunctionBar extends HBox {
         });
     }
 
+    private void upLoadFunction(){
+        this.upLoad.setOnAction(event -> {
+            FileTreeLoader.postCloudImages();
+        });
+    }
 
 
 }

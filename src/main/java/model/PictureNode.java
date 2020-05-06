@@ -26,18 +26,13 @@ public class PictureNode extends Label{
     private Text pictureName;
     private MenuPane menuPane = new MenuPane();
     public int count = 0;//点击次数
-
+    private boolean isLocked = false;
     //保存所以被选中的图片节点，图片节点中包含图片数据
     protected static ArrayList<PictureNode> selectedPictures = new ArrayList<>();
-
+    private static ArrayList<PictureNode> lockedPicture = new ArrayList<>();
 
     public static ArrayList<File> getSelectedPictureFiles() {
         return selectedPictureFiles;
-    }
-
-    public static void setSelectedPictureFiles(
-            ArrayList<File> selectedPictureFiles) {
-        PictureNode.selectedPictureFiles = selectedPictureFiles;
     }
 
     protected static ArrayList<File> selectedPictureFiles =
@@ -73,15 +68,18 @@ public class PictureNode extends Label{
                 }
 
                 //判断当前节点是否被选中
-                if (!selectedPictures.contains(this)&&this.count % 2 == 1) {
-                    this.setStyle("-fx-background-color: #8bb9ff;");
-                    this.count=0;
-                    selectedPictures.add(this);
-                } else {
-                    this.setStyle("-fx-background-color: White;");
-                    selectedPictures.remove(this);
-                    this.count=0;
+                if(this.isLocked==false){
+                    if (!selectedPictures.contains(this)&&this.count % 2 == 1) {
+                        this.setStyle("-fx-background-color: #8bb9ff;");
+                        this.count=0;
+                        selectedPictures.add(this);
+                    } else {
+                        this.setStyle("-fx-background-color: White;");
+                        selectedPictures.remove(this);
+                        this.count=0;
+                    }
                 }
+
                 System.out.println("选中的数量：" + selectedPictures.size());
 
                 showSelectedPictureNumber();//更新被选中的数量
@@ -129,6 +127,10 @@ public class PictureNode extends Label{
 
     public static ArrayList<PictureNode> getSelectedPictures() {
         return selectedPictures;
+    }
+
+    public static ArrayList<PictureNode> getLockedPictures() {
+        return lockedPicture;
     }
 
 }

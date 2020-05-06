@@ -121,12 +121,16 @@ public class ViewerPane extends BorderPane {
                 FunctionBar.upLoad.setDisable(true);
                 this.noSelectedMenuPane = new NoSelectedMenuPane(
                         ViewerPane.flowPane);
+                for (PictureNode each:PictureNode.getSelectedPictures()){
+                    each.setStyle("-fx-background-color: White;");
+                }
                 PictureNode.getSelectedPictures().clear();//清空PIctureNode中被选中的图片
                 ViewerPane.selectedNumberOfPicture.setText("-选中0张");
-                for (int i = 0; i < ViewerPane.flowPane.getChildren().size(); i++) {//把所有子节点背景设置为白色
-                    ViewerPane.flowPane.getChildren().get(i).setStyle(
-                            "-fx-background-color: White;");
-                }
+//                for (int i = 0; i < ViewerPane.flowPane.getChildren().size(); i++) {//把所有子节点背景设置为白色
+//                    ViewerPane.flowPane.getChildren().get(i).setStyle(
+//                            "-fx-background-color: White;");
+//                }
+
             }
         });
     }
