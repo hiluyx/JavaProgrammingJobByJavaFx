@@ -43,11 +43,13 @@ public class MenuPane extends MenuItem {
     private MenuItem reName = new MenuItem("重命名");
     private MenuItem seePicture = new MenuItem("查看");
     private MenuItem upLoad = new MenuItem("上传");
+    private MenuItem attribute = new MenuItem("属性");
+    private MenuItem lock = new MenuItem("锁定");
     private ContextMenu contextMenu = new ContextMenu();
 
     public MenuPane() {
         //把所有功能加进contextMenu
-        contextMenu.getItems().addAll(copy, cut, delete, reName, seePicture,upLoad);
+        contextMenu.getItems().addAll(copy, cut, delete, reName, seePicture,upLoad,attribute);
         addFunction2Button();
         shortcut();
         recycleBin.mkdir();
@@ -59,10 +61,21 @@ public class MenuPane extends MenuItem {
         deleteFunction();
         seePictureFunction();
         reNameFunction();
+        attributeFunction();
+        upLoadFunction();
     }
 
 
     //六大功能
+
+    private void upLoadFunction(){
+        this.upLoad.setOnAction(event -> {
+            /*
+            * 这里插入点击upLoad之后的代码
+            */
+        });
+    }
+
     private void copyFunction(){
         this.copy.setOnAction(event -> {
             if(PictureNode.getSelectedPictures().size()>0){
@@ -140,6 +153,15 @@ public class MenuPane extends MenuItem {
             new SeePicture(ViewerPane.currentTreeNode.getValue().getImages().get(0),ViewerPane.currentTreeNode.getValue().getImages().get(0).getName());
         });
     }
+
+    private void attributeFunction(){
+
+    }
+
+    private void lockFunction(){
+
+    }
+
     private void reNameFunction() {
         this.reName.setOnAction(event -> {
             boolean single;
@@ -288,14 +310,7 @@ public class MenuPane extends MenuItem {
         }
         return true;
     }
-    //创建一个Button，button的文字为函数参数
-    private Button createButton(String buttonName) {
-        Button button = new Button();
-        button.setId(buttonName);
-        button.setPadding(new Insets(10, 10, 10, 10));
-        button.setText(buttonName);
-        return button;
-    }
+
 
     //复制文件的函数
     public void copyFile(String srcPath, String destPath) throws IOException {

@@ -78,8 +78,9 @@ public class PictureNode extends Label{
                     this.count=0;
                     selectedPictures.add(this);
                 } else {
-                    this.setStyle("-fx-background-color: transparent;");
+                    this.setStyle("-fx-background-color: White;");
                     selectedPictures.remove(this);
+                    this.count=0;
                 }
                 System.out.println("选中的数量：" + selectedPictures.size());
 
