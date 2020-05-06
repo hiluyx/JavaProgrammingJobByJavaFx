@@ -1,7 +1,9 @@
 import controller.FileTree;
 import controller.MenuPane;
+import controller.ProgressBarWindow;
 import controller.ViewerPane;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -19,10 +21,14 @@ import model.FileTreeItem;
 import model.TreeNode;
 import org.apache.http.util.Asserts;
 import util.ButtonUtil;
+import util.TaskThreadPools;
+import util.fileUtils.FileTreeLoader;
 import util.httpUtils.HttpUtil;
+import util.httpUtils.exception.RequestConnectException;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 public class Main extends Application {
     @Override
@@ -59,7 +65,7 @@ public class Main extends Application {
         Button could = ButtonUtil.createButton("could");
         could.setPadding(new Insets(5,0,0,0));
         could.setText("云相册");
-        addListener2Could(could);
+        addListener2Could(could,fileTree);
 
         myComputer.getChildren().addAll(computer,myCom,could);
         left.setTop(myComputer);
@@ -124,9 +130,9 @@ public class Main extends Application {
     }
 
     //云相册下载
-    private static void addListener2Could(Button could){
+    private static void addListener2Could(Button could,FileTree fileTree){
         could.setOnAction(event -> {
-
+            if (!fileTree.isOpened()) FileTreeLoader.getCloudImages(fileTree);
         });
     }
 

@@ -65,7 +65,6 @@ public class FileTree {
             this.rootFileTreeItems.add(item);
             this.rootTree.getChildren().add(item);
         }
-        this.rootTree.getChildren().add(this.cloudAlbum);
         this.treeView = new TreeView<>(rootTree);
         this.treeView.setShowRoot(false);
     }
@@ -76,58 +75,8 @@ public class FileTree {
          */
         this.getTreeView().getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if(newValue == null) return;
-            if(newValue == this.cloudAlbum&&!isOpened) {
-                /*
-                这里应该弹窗询问是否加载
-                 */
-                isOpened = true;
-                /*
-                有修改
-                当点击了cloudAlbum时才把进度条加上去(加载结束后应该去掉)
-                 */
-                ViewerPane.bottom.getChildren().add(ViewerPane.progressBarWindow.getProgressBar());
-                TaskThreadPools.execute(()->{
-                    while (true) {
-                        ProgressBarWindow.updateProgressBar(0);
-                        try {
-                            HttpUtil.doGetPageImages(this.cloudImageNoteList,0,10);
-                        } catch (RequestConnectException | URISyntaxException exception) {
-                            /*
-                            连接出现错误，退出提示框
-                             */
-                            if(exception instanceof RequestConnectException)
-                                if (((RequestConnectException) exception).
-                                        getDialogSel((RequestConnectException) exception))
-                                    break;
-                        }
-                        this.cloudAlbum.getTreeNode().setImages();
-                        Platform.runLater(()-> ViewerPane.setCurrentTreeNode(this.cloudAlbum.getTreeNode()));
-                    }
-                });
-            }else if(newValue != this.cloudAlbum){
                 newValue.getValue().setImages();
-//                TaskThreadPools.execute(()->{
-//                    List<String> paths = new ArrayList<>();
-//                    List<File> images = newValue.getValue().getImages();
-//                    if(images.size() != 0){
-//                        for(File file : images){
-//                            paths.add(file.getAbsolutePath());
-//                        }
-//                        while(true){
-//                            try {
-//                                HttpUtil.doPostJson(paths);
-//                            } catch (URISyntaxException | RequestConnectException exception) {
-//                                exception.printStackTrace();
-//                                if(dialog.errorDialog(exception)) break;
-//                            }
-//                        }
-//                    }
-//                });
                 ViewerPane.setCurrentTreeNode(newValue.getValue());
-            }else{
-                ViewerPane.setCurrentTreeNode(this.cloudAlbum.getTreeNode());
-                System.out.println("云相册已经开始加载或者已经完成！");
-            }
         });
     }
 
@@ -138,7 +87,7 @@ public class FileTree {
                 Runtime.getRuntime().exec("attrib +H \"" + cloudAlbumFile.getAbsolutePath() + "\"");
         }
         this.cloudAlbum = new FileTreeItem(cloudAlbumFile,cloudAlbumFile.getName());
-        this.cloudImageNoteList = new ArrayList<>();
+        cloudImageNoteList = new ArrayList<>();
         this.isOpened = false;
     }
 }

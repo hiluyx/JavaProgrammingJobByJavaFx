@@ -1,5 +1,6 @@
 package controller;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -19,8 +20,13 @@ import lombok.Setter;
 import model.PictureNode;
 import util.ButtonUtil;
 import util.ClipboardUtil;
+import util.TaskThreadPools;
+import util.fileUtils.FileTreeLoader;
+import util.httpUtils.HttpUtil;
+import util.httpUtils.exception.RequestConnectException;
 
 import java.io.*;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -65,12 +71,9 @@ public class MenuPane extends MenuItem {
         upLoadFunction();
     }
 
-
     private void upLoadFunction(){
         this.upLoad.setOnAction(event -> {
-            /*
-            * 这里插入点击upLoad之后的代码
-            */
+            FileTreeLoader.postCloudImages();
         });
     }
 
