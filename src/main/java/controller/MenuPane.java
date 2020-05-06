@@ -66,8 +66,6 @@ public class MenuPane extends MenuItem {
     }
 
 
-    //六大功能
-
     private void upLoadFunction(){
         this.upLoad.setOnAction(event -> {
             /*
@@ -338,6 +336,7 @@ public class MenuPane extends MenuItem {
         reName.setAccelerator(KeyCombination.valueOf("shift+r"));
         seePicture.setAccelerator(KeyCombination.valueOf("shift+o"));
         upLoad.setAccelerator(KeyCombination.valueOf("shift+u"));
+        attribute.setAccelerator(KeyCombination.valueOf("shift+a"));
 //        allSelectedMenuItem.setAccelerator(KeyCombination.valueOf("shift+a"));
     }
 

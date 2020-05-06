@@ -3,7 +3,7 @@ import controller.MenuPane;
 import controller.ViewerPane;
 import javafx.application.Application;
 import javafx.geometry.Insets;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -15,8 +15,10 @@ import javafx.scene.layout.HBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
-import javafx.scene.control.SplitPane;
+import model.FileTreeItem;
+import model.TreeNode;
 import org.apache.http.util.Asserts;
+import util.ButtonUtil;
 import util.httpUtils.HttpUtil;
 
 import java.io.File;
@@ -52,9 +54,14 @@ public class Main extends Application {
                 true, true));
         Label myCom = new Label("我的电脑");
         myCom.setFont(new Font(18));
-        myCom.setPadding(new Insets(5,0,0,0));
-        System.out.println(myCom.getFont().getSize());
-        myComputer.getChildren().addAll(computer,myCom);
+        myCom.setPadding(new Insets(5,30,0,0));
+
+        Button could = ButtonUtil.createButton("could");
+        could.setPadding(new Insets(5,0,0,0));
+        could.setText("云相册");
+        addListener2Could(could);
+
+        myComputer.getChildren().addAll(computer,myCom,could);
         left.setTop(myComputer);
         fileTree.getTreeView().setStyle("-fx-background-color:#ffffff;");
         left.setCenter(fileTree.getTreeView());
@@ -115,6 +122,14 @@ public class Main extends Application {
             }
         });
     }
+
+    //云相册下载
+    private static void addListener2Could(Button could){
+        could.setOnAction(event -> {
+
+        });
+    }
+
     public static void main(String[] args) {
         launch(args);
     }

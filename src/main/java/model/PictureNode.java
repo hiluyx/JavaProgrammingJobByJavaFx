@@ -27,7 +27,7 @@ public class PictureNode extends Label{
     private MenuPane menuPane = new MenuPane();
     public int count = 0;//点击次数
 
-    //保存被点击图片节点，图片节点中包含图片数据
+    //保存所以被选中的图片节点，图片节点中包含图片数据
     protected static ArrayList<PictureNode> selectedPictures = new ArrayList<>();
 
 
