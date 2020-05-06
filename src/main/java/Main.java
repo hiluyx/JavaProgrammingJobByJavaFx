@@ -102,7 +102,7 @@ public class Main extends Application {
             System.out.println("即将关闭程序");
             try {
                 System.out.println("关闭网络连接");
-                HttpUtil.client.close();
+
                 //删除云相册数据
                 File cloudAlbum = new File("cloudAlbum");
                 File[] filesOfCloudAlbum = cloudAlbum.listFiles();
@@ -112,7 +112,7 @@ public class Main extends Application {
                     }
                 }
                 System.out.println("云相册删除："+cloudAlbum.delete());
-
+                HttpUtil.client.close();
                 //删除回收站数据
                 File recycleBin = new File("recycleBin");
                 File[] filesOfRecycleBin = recycleBin.listFiles();

@@ -40,6 +40,7 @@ public class FileTree {
      * ，记录id，以便删除
      */
     public static List<CloudImageNote> cloudImageNoteList;
+    public static List<File> deletedCloudImages;
     private boolean isOpened;
 
     public FileTree() throws IOException {
