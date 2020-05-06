@@ -30,7 +30,7 @@ public class ViewerPane extends BorderPane {
     public static ProgressBarWindow progressBarWindow = new ProgressBarWindow();
 
     public ViewerPane() {
-        flowPane.setId("flowPane");
+        flowPane.setStyle("-fx-background-color:White;");
         //添加监听器
         addListener();
         //预览区上方的功能按键
@@ -57,11 +57,12 @@ public class ViewerPane extends BorderPane {
     private void createPreview() {
         flowPane.setHgap(5); flowPane.setVgap(5);
         ScrollPane scrollPane = new ScrollPane();
-        scrollPane.setFitToHeight(true); scrollPane.setFitToWidth(true);
+        scrollPane.setStyle("-fx-background-color:White;");
+        scrollPane.setFitToHeight(true);
+        scrollPane.setFitToWidth(true);
         scrollPane.setContent(flowPane);
         //flow背景设置为白色
         scrollPane.setStyle("-fx-background-color: White;");
-        //    flowPane.setStyle("-fx-background-color: White;");
         this.setCenter(scrollPane);
     }
 

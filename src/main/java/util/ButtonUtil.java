@@ -15,10 +15,16 @@ public class ButtonUtil {
         button.setId(buttonName);
         button.setPadding(new Insets(10, 10, 10, 10));
         //button.setText(buttonName);
-        button.setStyle("-fx-background-color:#ffffff;");
+        button.setStyle("-fx-background-color:White;");
         button.setGraphic(new ImageView(new Image("file:"+new File("icon/"+buttonName+".png"),30, 30,
                 true, true)));
         button.setTooltip(new Tooltip(buttonName));
+        button.setOnMouseEntered(event -> {
+            button.setStyle("-fx-background-color:#e6e6e6;");
+        });
+        button.setOnMouseExited(event -> {
+            button.setStyle("-fx-background-color:White;");
+        });
         return button;
     }
 }

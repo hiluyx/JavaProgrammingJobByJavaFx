@@ -6,15 +6,18 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Font;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import lombok.Getter;
 import lombok.Setter;
 import model.PictureNode;
+import util.ButtonUtil;
 import util.ClipboardUtil;
 
 import java.io.*;
@@ -39,11 +42,12 @@ public class MenuPane extends MenuItem {
     private MenuItem delete = new MenuItem("删除");
     private MenuItem reName = new MenuItem("重命名");
     private MenuItem seePicture = new MenuItem("查看");
+    private MenuItem upLoad = new MenuItem("上传");
     private ContextMenu contextMenu = new ContextMenu();
 
     public MenuPane() {
         //把所有功能加进contextMenu
-        contextMenu.getItems().addAll(copy, cut, delete, reName, seePicture);
+        contextMenu.getItems().addAll(copy, cut, delete, reName, seePicture,upLoad);
         addFunction2Button();
         shortcut();
         recycleBin.mkdir();
@@ -79,33 +83,34 @@ public class MenuPane extends MenuItem {
     private void deleteFunction(){
         this.delete.setOnAction(event -> {
             MenuPane.status = 3;
-            AtomicBoolean isDelete = new AtomicBoolean(false);
 
             //以下为一些页面布局，具体功能就是实现删除时的确认
             BorderPane root = new BorderPane();
             root.setStyle("-fx-background-color: White;");
             Label label = new Label("是否删除");
-            label.setFont(new Font(35));
+            label.setFont(new Font(30));
             HBox hBox = new HBox(25);
-            Button yes = new Button("是");
-            Button no = new Button("否");
+            Button yes = ButtonUtil.createButton("submit");
+            Button no = ButtonUtil.createButton("cancel");
             yes.setPrefWidth(50);
             no.setPrefWidth(50);
             hBox.getChildren().add(yes);
             hBox.getChildren().add(no);
             hBox.setAlignment(Pos.BOTTOM_CENTER);
-            hBox.setPadding(new Insets(5,5,15,5));
+            hBox.setPadding(new Insets(5,5,10,5));
             root.setCenter(label);
             root.setBottom(hBox);
             Scene scene = new Scene(root,450,150);
             Stage stage = new Stage();
             stage.setScene(scene);
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.getIcons().add(new Image("file:"+new File("icon/stageIcon.png"),30, 30,
+                    true, true));
+            stage.setTitle("删除确认");
             stage.show();
             yes.setOnMouseClicked(event1 -> {
-                isDelete.set(true);
                 stage.close();
                 int num = 0;
-
                 NoSelectedMenuPane.everyRevocationNum.add(PictureNode.getSelectedPictures().size());
                 for(PictureNode each:PictureNode.getSelectedPictures()){
 
@@ -139,7 +144,7 @@ public class MenuPane extends MenuItem {
         this.reName.setOnAction(event -> {
             boolean single;
             GridPane grid = new GridPane();
-            Button submit = new Button("完成");
+            Button submit = ButtonUtil.createButton("submit");
             Label msg = new Label();
             Label label1 = new Label("名称");
             Stage anotherStage = new Stage();
@@ -159,10 +164,10 @@ public class MenuPane extends MenuItem {
             name.getText();
             GridPane.setConstraints(name, 1, 0);
             grid.getChildren().addAll(label1, name);
-
+            grid.setStyle("-fx-background-color:White;");
             if (single) {
-                GridPane.setConstraints(msg, 0, 1);
-                GridPane.setConstraints(submit, 0, 2);
+                GridPane.setConstraints(msg, 1, 1);
+                GridPane.setConstraints(submit, 2, 1);
                 grid.getChildren().addAll(submit, msg);
             } else {
                 Label label2 = new Label("起始编号");
@@ -178,7 +183,7 @@ public class MenuPane extends MenuItem {
                 bitNum.getText();
                 GridPane.setConstraints(bitNum, 1, 2);
                 GridPane.setConstraints(msg, 1, 3);
-                GridPane.setConstraints(submit, 0, 4);
+                GridPane.setConstraints(submit, 2, 4);
                 grid.getChildren().addAll(label2, startNum, submit, msg,label3,bitNum);
             }
 
@@ -212,7 +217,10 @@ public class MenuPane extends MenuItem {
             });
             Scene scene = new Scene(grid);
             anotherStage.setTitle("重命名");
+            anotherStage.getIcons().add(new Image("file:"+new File("icon/stageIcon.png"),30, 30,
+                    true, true));
             anotherStage.setScene(scene);
+            anotherStage.initModality(Modality.APPLICATION_MODAL);
             anotherStage.show();
 
         });
@@ -314,6 +322,7 @@ public class MenuPane extends MenuItem {
         delete.setAccelerator(KeyCombination.valueOf("shift+d"));
         reName.setAccelerator(KeyCombination.valueOf("shift+r"));
         seePicture.setAccelerator(KeyCombination.valueOf("shift+o"));
+        upLoad.setAccelerator(KeyCombination.valueOf("shift+u"));
 //        allSelectedMenuItem.setAccelerator(KeyCombination.valueOf("shift+a"));
     }
 

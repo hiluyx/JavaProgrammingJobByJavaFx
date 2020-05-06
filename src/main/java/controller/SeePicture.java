@@ -15,6 +15,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import model.TreeNode;
 import util.ButtonUtil;
@@ -34,7 +35,7 @@ public class SeePicture extends BorderPane {
     int w = 800;
     int h = 800;
     public SeePicture(File file, String nodePane) {
-        this.setStyle("-fx-background-color:#ffffff;");
+        this.setStyle("-fx-background-color:White;");
 
         treeNode = new TreeNode(file.getParentFile(), file.getParentFile().getName());
         treeNode.setImages();
@@ -76,7 +77,7 @@ public class SeePicture extends BorderPane {
         hBox.setAlignment(Pos.BOTTOM_CENTER);
         hBox.getChildren().addAll(small, left_rotate, ppt, screenshot, right_rotate, enlarge);
         toolBar = new ToolBar(hBox);
-        toolBar.setStyle("-fx-background-color:#ffffff;");
+        toolBar.setStyle("-fx-background-color:White;");
         hBox.minWidthProperty().bind(toolBar.widthProperty());
 
 
@@ -103,7 +104,7 @@ public class SeePicture extends BorderPane {
 
         Scene scene = new Scene(this, 1350, 1350 * 0.65);
         Stage stage = new Stage();
-        stage.getIcons().add(new Image("file:"+new File("icon/图标.png"),30, 30,
+        stage.getIcons().add(new Image("file:"+new File("icon/stageIcon.png"),30, 30,
                 true, true));
         stage.setTitle("图片查看界面");
         stage.setScene(scene);
@@ -116,22 +117,27 @@ public class SeePicture extends BorderPane {
             Label label = new Label("这是第一张图片");
             Pane root = new Pane(label);
             Scene scene = new Scene(root);
-            Stage Stage;
-            Stage = new Stage();
-            Stage.setTitle("提示");
-            Stage.setScene(scene);
-            Stage.show();
+            Stage stage;
+            stage = new Stage();
+            stage.setTitle("提示");
+            stage.getIcons().add(new Image("file:"+new File("icon/stageIcon.png"),30, 30,
+                    true, true));
+            stage.setScene(scene);
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.show();
             this.clickCount++;
         } else if (this.clickCount > this.treeNode.getImages().size() - 1) {
             Label label = new Label("这是最后一张图片");
             Pane root = new Pane(label);
             Scene scene = new Scene(root);
-            //modified by sky
-            Stage Stage;
-            Stage = new Stage();
-            Stage.setTitle("提示");
-            Stage.setScene(scene);
-            Stage.show();
+            Stage stage;
+            stage = new Stage();
+            stage.setTitle("提示");
+            stage.getIcons().add(new Image("file:"+new File("icon/stageIcon.png"),30, 30,
+                    true, true));
+            stage.setScene(scene);
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.show();
             this.clickCount--;
         } else {
             this.currentRotate = 0;
@@ -149,21 +155,27 @@ public class SeePicture extends BorderPane {
             Label label = new Label("已是最小");
             Pane root = new Pane(label);
             Scene scene = new Scene(root);
-            Stage Stage;
-            Stage = new Stage();
-            Stage.setTitle("提示");
-            Stage.setScene(scene);
-            Stage.show();
+            Stage stage;
+            stage = new Stage();
+            stage.setTitle("提示");
+            stage.getIcons().add(new Image("file:"+new File("icon/stageIcon.png"),30, 30,
+                    true, true));
+            stage.setScene(scene);
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.show();
             this.changeNum = 0;
         } else if (this.changeNum >= 5) {
             Label label = new Label("已是最大");
             Pane root = new Pane(label);
             Scene scene = new Scene(root);
-            Stage Stage;
-            Stage = new Stage();
-            Stage.setTitle("提示");
-            Stage.setScene(scene);
-            Stage.show();
+            Stage stage;
+            stage = new Stage();
+            stage.setTitle("提示");
+            stage.getIcons().add(new Image("file:"+new File("icon/stageIcon.png"),30, 30,
+                    true, true));
+            stage.setScene(scene);
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.show();
             this.changeNum = 0;
         }
         ImageView iv = (ImageView) borderPane.getCenter();

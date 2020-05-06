@@ -18,7 +18,6 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * @author Hi lu
@@ -29,7 +28,6 @@ import java.util.Optional;
 public class FileTree {
     private TreeView<TreeNode> treeView;
     private FileTreeItem rootTree;
-    private ViewerPane viewerPane;
     private List<FileTreeItem> rootFileTreeItems;
     /**
      * 隐藏的虚拟根目录
@@ -44,8 +42,7 @@ public class FileTree {
     public static List<CloudImageNote> cloudImageNoteList;
     private boolean isOpened;
 
-    public FileTree(ViewerPane viewerPane) throws IOException {
-        this.viewerPane = viewerPane;
+    public FileTree() throws IOException {
         this.setRootFileTreeItems();
         TaskThreadPools.execute(new FileTreeLoader(this));
         addListener();
