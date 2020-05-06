@@ -185,13 +185,19 @@ public class ViewerPane extends BorderPane {
 
                 if(pictureRow < startRow || pictureRow > endRow || picyureCol < startCol || picyureCol > endCol){
                     if(PictureNode.getSelectedPictures().indexOf(ViewerPane.flowPane.getChildren().get(i)) != -1){
-                        PictureNode.getSelectedPictures().remove(ViewerPane.flowPane.getChildren().get(i));
-                        ViewerPane.flowPane.getChildren().get(i).setStyle("-fx-background-color: White;");
+                        if(((PictureNode) ViewerPane.flowPane.getChildren().get(i)).getLocked()==false){
+                            PictureNode.getSelectedPictures().remove(ViewerPane.flowPane.getChildren().get(i));
+                            ViewerPane.flowPane.getChildren().get(i).setStyle("-fx-background-color: White;");
+                        }
+
                     }
                 }else{
                     if(PictureNode.getSelectedPictures().indexOf(ViewerPane.flowPane.getChildren().get(i)) == -1){
-                        PictureNode.getSelectedPictures().add((PictureNode) ViewerPane.flowPane.getChildren().get(i));
-                        ViewerPane.flowPane.getChildren().get(i).setStyle("-fx-background-color: #8bb9ff;");
+                        if(((PictureNode) ViewerPane.flowPane.getChildren().get(i)).getLocked()==false){
+                            PictureNode.getSelectedPictures().add((PictureNode) ViewerPane.flowPane.getChildren().get(i));
+                            ViewerPane.flowPane.getChildren().get(i).setStyle("-fx-background-color: #8bb9ff;");
+                        }
+
                     }
                 }
             }

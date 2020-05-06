@@ -13,12 +13,16 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.text.Text;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.File;
 import java.util.ArrayList;
 
 @EqualsAndHashCode(callSuper = true)//调用父类构造方法
 @Data
+@Setter
+@Getter
 public class PictureNode extends Label{
     private File file;//图片对应的文件
     private Image image;//由文件加载出来的Image
@@ -131,6 +135,13 @@ public class PictureNode extends Label{
 
     public static ArrayList<PictureNode> getLockedPictures() {
         return lockedPicture;
+    }
+    public void setLocked(Boolean value){
+        this.isLocked = value;
+    }
+
+    public boolean getLocked(){
+        return this.isLocked;
     }
 
 }
