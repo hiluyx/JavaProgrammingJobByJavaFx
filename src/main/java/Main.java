@@ -101,17 +101,17 @@ public class Main extends Application {
         primaryStage.setOnCloseRequest(event -> {
             System.out.println("即将关闭程序");
             try {
-                System.out.println("关闭网络连接");
-
                 //删除云相册数据
+                HttpUtil.doDelete(FileTree.deletedCloudImages);
                 File cloudAlbum = new File("cloudAlbum");
                 File[] filesOfCloudAlbum = cloudAlbum.listFiles();
                 if(filesOfCloudAlbum != null){
                     for(File each:filesOfCloudAlbum){
-                        System.out.println("删除"+each.getName()+":"+each.delete());
+                        System.out.println("删除本地"+each.getName()+":"+each.delete());
                     }
                 }
-                System.out.println("云相册删除："+cloudAlbum.delete());
+                System.out.println("本地云相册删除："+cloudAlbum.delete());
+                System.out.println("关闭网络连接");
                 HttpUtil.client.close();
                 //删除回收站数据
                 File recycleBin = new File("recycleBin");
