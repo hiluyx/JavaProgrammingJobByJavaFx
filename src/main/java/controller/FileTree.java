@@ -89,6 +89,7 @@ public class FileTree {
         }
         this.cloudAlbum = new FileTreeItem(cloudAlbumFile,cloudAlbumFile.getName());
         cloudImageNoteList = new ArrayList<>();
+        deletedCloudImages = new ArrayList<>();
         this.isOpened = false;
     }
 }

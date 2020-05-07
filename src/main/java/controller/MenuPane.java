@@ -462,7 +462,6 @@ public class MenuPane extends MenuItem {
             stage.close();
             int num = 0;
             //把要删除的照片移动到回收站
-            ViewerPane.bottom.getChildren().add(ViewerPane.progressBarWindow.getProgressBar());
             NoSelectedMenuPane.everyRevocationNum.add(PictureNode.getSelectedPictures().size());
 
             for (PictureNode each : PictureNode.getSelectedPictures()) {
