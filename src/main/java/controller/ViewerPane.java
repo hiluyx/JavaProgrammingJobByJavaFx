@@ -72,20 +72,20 @@ public class ViewerPane extends BorderPane {
         currentTreeNode.addListener((observable, oldValue, newValue) -> {
 
             //清空flowPane的子节点
-//            try {
-//                int size = flowPane.getChildren().size();
-//                int index = 0;
-//                for (int i=0;i<size;i++){
-//                    if(((PictureNode)flowPane.getChildren().get(index)).getLocked()==false){
-//                        flowPane.getChildren().remove(index);
-//                    }
-//                    else {
-//                        index++;
-//                    }
-//                }
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
+            try {
+                int size = flowPane.getChildren().size();
+                int index = 0;
+                for (int i=0;i<size;i++){
+                    if(((PictureNode)flowPane.getChildren().get(index)).getLocked()==false){
+                        flowPane.getChildren().remove(index);
+                    }
+                    else {
+                        index++;
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
             //更新当前路径
             functionBar.getPath().setText(newValue.getFile().getAbsolutePath());

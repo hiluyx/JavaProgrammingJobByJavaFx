@@ -237,9 +237,11 @@ public class MenuPane extends MenuItem {
                     if (each.getLocked() == false) {
                         each.setLocked(true); each.getMenuPane().lock.setText("解锁");
                         each.setStyle("-fx-background-color: lightgray");
+                        each.getMenuPane().disableFunction();
                     }else{
                         each.setLocked(false);each.getMenuPane().lock.setText("锁定");
                         each.setStyle("-fx-background-color: transparent");
+                        each.getMenuPane().enableFunction();
                     }
                 }
 
@@ -460,7 +462,9 @@ public class MenuPane extends MenuItem {
             stage.close();
             int num = 0;
             //把要删除的照片移动到回收站
+            ViewerPane.bottom.getChildren().add(ViewerPane.progressBarWindow.getProgressBar());
             NoSelectedMenuPane.everyRevocationNum.add(PictureNode.getSelectedPictures().size());
+
             for (PictureNode each : PictureNode.getSelectedPictures()) {
                 if(each.getFile().getParent().equals(new File("cloudAlbum").getAbsolutePath())){
                     FileTree.deletedCloudImages.add(each.getFile());
