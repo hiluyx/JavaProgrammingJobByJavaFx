@@ -28,17 +28,23 @@ public class PictureNode extends Label{
     private Image image;//由文件加载出来的Image
     private ImageView imageView;
     private Text pictureName;
-    private MenuPane menuPane = new MenuPane(this);
+    private MenuPane menuPane = new MenuPane();
     public int count = 0;//点击次数
     private boolean isLocked = false;
     //保存所以被选中的图片节点，图片节点中包含图片数据
     protected static ArrayList<PictureNode> selectedPictures = new ArrayList<>();
-    private static ArrayList<PictureNode> lockedPicture = new ArrayList<>();
+//    private static ArrayList<PictureNode> lockedPicture = new ArrayList<>();
 
     public static ArrayList<File> getSelectedPictureFiles() {
         return selectedPictureFiles;
     }
+    public boolean isLocked() {
+        return isLocked;
+    }
 
+    public void setLocked(boolean locked) {
+        isLocked = locked;
+    }
     protected static ArrayList<File> selectedPictureFiles =
             new ArrayList<>();
 
@@ -65,26 +71,44 @@ public class PictureNode extends Label{
                 //如果control键没有按下，先清空所有被选择的图片
                 if (!e.isControlDown()) {
                     for (PictureNode each : selectedPictures) {
-                        each.setStyle("-fx-background-color: transparent;");
-                        each.setCount(0);
+//                        each.setStyle("-fx-background-color: transparent;");
+//                        each.setCount(0);
+                        if (each.getLocked() == false) {
+                            each.setStyle("-fx-background-color: transparent;");
+                            each.setCount(0);
+                        }else{
+                            each.setStyle("-fx-background-color: lightgray;");
+                            each.setCount(0);
+                        }
                     }
                     selectedPictures.clear();
                 }
 
                 //判断当前节点是否被选中
-                if(this.isLocked==false){
-                    if (!selectedPictures.contains(this)&&this.count % 2 == 1) {
-                        this.setStyle("-fx-background-color: #8bb9ff;");
-                        this.count=0;
-                        selectedPictures.add(this);
+//                if(this.isLocked==false){
+//                    if (!selectedPictures.contains(this)&&this.count % 2 == 1) {
+//                        this.setStyle("-fx-background-color: #8bb9ff;");
+//                        this.count=0;
+//                        selectedPictures.add(this);
+//                    } else {
+//                        this.setStyle("-fx-background-color: White;");
+//                        selectedPictures.remove(this);
+//                        this.count=0;
+//                    }
+//                }
+                if (!selectedPictures.contains(this) && this.count % 2 == 1) {
+                    this.setStyle("-fx-background-color: #8bb9ff;");
+                    this.count = 0; selectedPictures.add(this);
+                } else {
+                    if (this.isLocked == false) {
+                        this.setStyle("-fx-background-color: transparent;");
                     } else {
-                        this.setStyle("-fx-background-color: White;");
-                        selectedPictures.remove(this);
-                        this.count=0;
+                        this.setStyle("-fx-background-color: lightgray");
                     }
+                    selectedPictures.remove(this);
                 }
 
-                System.out.println("选中的数量：" + selectedPictures.size());
+                    System.out.println("选中的数量：" + selectedPictures.size());
 
                 showSelectedPictureNumber();//更新被选中的数量
             }
@@ -96,7 +120,7 @@ public class PictureNode extends Label{
                 System.out.println("双击了:"+this.file.getName());
                 new SeePicture(this.file, this.file.getName());
             }
-            if(this.selectedPictures.size()>0){
+            if(selectedPictures.size()>0){
                 FunctionBar.upLoad.setDisable(false);
             }
             else {
@@ -133,9 +157,9 @@ public class PictureNode extends Label{
         return selectedPictures;
     }
 
-    public static ArrayList<PictureNode> getLockedPictures() {
-        return lockedPicture;
-    }
+//    public static ArrayList<PictureNode> getLockedPictures() {
+//        return lockedPicture;
+//    }
     public void setLocked(Boolean value){
         this.isLocked = value;
     }

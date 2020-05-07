@@ -215,22 +215,34 @@ public class MenuPane extends MenuItem {
     //设置锁定与解锁功能
     private void lockFunction(){
         lock.setOnAction(event -> {
-            if (this.lock.getText().equals("锁定")){
-                for(PictureNode each:PictureNode.getSelectedPictures()){
-                    each.setLocked(true);
-                    each.getMenuPane().lock.setText("解锁");
-                    each.getMenuPane().disableFunction();
-                    each.setStyle("-fx-background-color:#cdcdcd;");
-                    PictureNode.getLockedPictures().add(each);
+//            if (this.lock.getText().equals("锁定")){
+//                for(PictureNode each:PictureNode.getSelectedPictures()){
+//                    each.setLocked(true);
+//                    each.getMenuPane().lock.setText("解锁");
+//                    each.getMenuPane().disableFunction();
+//                    each.setStyle("-fx-background-color:#cdcdcd;");
+//                    PictureNode.getLockedPictures().add(each);
+//                }
+//                PictureNode.getSelectedPictures().clear();
+//            }
+//            else {
+//                this.pictureNodeOfThisMenu.setLocked(false);
+//                this.pictureNodeOfThisMenu.getMenuPane().lock.setText("锁定");
+//                this.pictureNodeOfThisMenu.getMenuPane().enableFunction();
+//                this.pictureNodeOfThisMenu.setStyle("-fx-background-color:White;");
+//                PictureNode.getLockedPictures().remove(this.pictureNodeOfThisMenu);
+//            }
+            if (PictureNode.getSelectedPictures().size() > 0) {
+                for (PictureNode each : PictureNode.getSelectedPictures()) {
+                    if (each.getLocked() == false) {
+                        each.setLocked(true); each.getMenuPane().lock.setText("解锁");
+                        each.setStyle("-fx-background-color: lightgray");
+                    }else{
+                        each.setLocked(false);each.getMenuPane().lock.setText("锁定");
+                        each.setStyle("-fx-background-color: transparent");
+                    }
                 }
-                PictureNode.getSelectedPictures().clear();
-            }
-            else {
-                this.pictureNodeOfThisMenu.setLocked(false);
-                this.pictureNodeOfThisMenu.getMenuPane().lock.setText("锁定");
-                this.pictureNodeOfThisMenu.getMenuPane().enableFunction();
-                this.pictureNodeOfThisMenu.setStyle("-fx-background-color:White;");
-                PictureNode.getLockedPictures().remove(this.pictureNodeOfThisMenu);
+
             }
         });
     }

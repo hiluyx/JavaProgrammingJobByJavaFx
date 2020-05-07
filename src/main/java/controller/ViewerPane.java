@@ -3,6 +3,7 @@ package controller;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -71,20 +72,20 @@ public class ViewerPane extends BorderPane {
         currentTreeNode.addListener((observable, oldValue, newValue) -> {
 
             //清空flowPane的子节点
-            try {
-                int size = flowPane.getChildren().size();
-                int index = 0;
-                for (int i=0;i<size;i++){
-                    if(((PictureNode)flowPane.getChildren().get(index)).getLocked()==false){
-                        flowPane.getChildren().remove(index);
-                    }
-                    else {
-                        index++;
-                    }
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+//            try {
+//                int size = flowPane.getChildren().size();
+//                int index = 0;
+//                for (int i=0;i<size;i++){
+//                    if(((PictureNode)flowPane.getChildren().get(index)).getLocked()==false){
+//                        flowPane.getChildren().remove(index);
+//                    }
+//                    else {
+//                        index++;
+//                    }
+//                }
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
 
             //更新当前路径
             functionBar.getPath().setText(newValue.getFile().getAbsolutePath());
@@ -146,12 +147,21 @@ public class ViewerPane extends BorderPane {
                 }
                 PictureNode.getSelectedPictures().clear();//清空PIctureNode中被选中的图片
                 ViewerPane.selectedNumberOfPicture.setText("-选中0张");
+                for(Node each:ViewerPane.flowPane.getChildren()){
+                    PictureNode pictureNode = (PictureNode)each;
+                    if(pictureNode.getLocked()==false){
+                        pictureNode.setStyle("-fx-background-color: transparent");
+                    }else{
+                        pictureNode.setStyle("-fx-background-color: lightgray");
+                    }
+                }
+            }
 //                for (int i = 0; i < ViewerPane.flowPane.getChildren().size(); i++) {//把所有子节点背景设置为白色
 //                    ViewerPane.flowPane.getChildren().get(i).setStyle(
 //                            "-fx-background-color: White;");
 //                }
 
-            }
+//            }
         });
     }
 
