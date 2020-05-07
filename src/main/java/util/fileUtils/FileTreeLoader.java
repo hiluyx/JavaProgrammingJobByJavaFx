@@ -98,22 +98,25 @@ public class FileTreeLoader implements Runnable {
             while (true) {
                 ProgressBarWindow.updateProgressBar(0);
                 try {
-                    HttpUtil.doGetPageImages(FileTree.cloudImageNoteList,0,10);
+                    HttpUtil.doGetPageImages(FileTree.cloudImageNoteList,0,4);
                 } catch (RequestConnectException | URISyntaxException exception) {
                     /*
                     连接出现错误，退出提示框
                     */
-                    if(exception instanceof RequestConnectException)
+                    if(exception instanceof RequestConnectException){
                         if (((RequestConnectException) exception).
                                 getDialogSel((RequestConnectException) exception)){
                             Platform.runLater(
                                     ()->ViewerPane.bottom.getChildren().
                                             remove(ViewerPane.progressBarWindow.getProgressBar()));
                             break;
-                        }
+                        } else continue;
+                    }
                 }
                 fileTree.getCloudAlbum().getTreeNode().setImages();
                 Platform.runLater(()-> ViewerPane.setCurrentTreeNode(fileTree.getCloudAlbum().getTreeNode()));
+                Platform.runLater(()->ViewerPane.bottom.getChildren().remove(ViewerPane.progressBarWindow.getProgressBar()));
+                break;
             }
         });
     }
@@ -138,15 +141,18 @@ public class FileTreeLoader implements Runnable {
                             /*
                              连接出现错误，退出提示框
                             */
-                        if(exception instanceof RequestConnectException)
+                        if(exception instanceof RequestConnectException){
                             if (((RequestConnectException) exception).
                                     getDialogSel((RequestConnectException) exception)){
                                 Platform.runLater(
                                         ()->ViewerPane.bottom.getChildren().
                                                 remove(ViewerPane.progressBarWindow.getProgressBar()));
                                 break;
-                            }
+                            } else continue;
+                        }
                     }
+                    Platform.runLater(()->ViewerPane.bottom.getChildren().remove(ViewerPane.progressBarWindow.getProgressBar()));
+                    break;
                 }
             }
         });

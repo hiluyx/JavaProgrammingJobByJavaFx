@@ -123,8 +123,20 @@ public class Main extends Application {
                 }
                 System.out.println("回收站删除："+recycleBin.delete());
 
-            }catch (Exception e){
-                e.printStackTrace();
+            }catch (Exception exception){
+                exception.printStackTrace();
+            }
+            while(true){
+                try {
+                    HttpUtil.doDelete(FileTree.deletedCloudImages);
+                } catch (URISyntaxException uriSyntaxException) {
+                    uriSyntaxException.printStackTrace();
+                } catch (RequestConnectException exception) {
+                    if (exception.getDialogSel(exception))
+                        break;
+                    else continue;
+                }
+                break;
             }
         });
     }
