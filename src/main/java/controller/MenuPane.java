@@ -52,15 +52,22 @@ public class MenuPane extends MenuItem {
     private MenuItem attribute = new MenuItem("属性");
     private MenuItem lock = new MenuItem("锁定");
     private ContextMenu contextMenu = new ContextMenu();
-
-    public MenuPane() {
+    private PictureNode pictureNodeOfThisMenu;
+    public MenuPane(PictureNode pictureNodeOfThisMenu) {
         //把所有功能加进contextMenu
         contextMenu.getItems().addAll(copy, cut, delete, reName, seePicture,upLoad,attribute,lock);
         addFunction2Button();
         shortcut();
         recycleBin.mkdir();
+        this.pictureNodeOfThisMenu = pictureNodeOfThisMenu;
     }
 
+    public MenuPane(){
+        contextMenu.getItems().addAll(copy, cut, delete, reName, seePicture,upLoad,attribute,lock);
+        addFunction2Button();
+        shortcut();
+        recycleBin.mkdir();
+    }
     private void addFunction2Button(){
         copyFunction();
         cutFunction();
@@ -176,20 +183,24 @@ public class MenuPane extends MenuItem {
             if (this.lock.getText().equals("锁定")){
                 for(PictureNode each:PictureNode.getSelectedPictures()){
                     each.setLocked(true);
-                    this.lock.setText("解锁");
+                    each.getMenuPane().lock.setText("解锁");
                     each.setStyle("-fx-background-color:#cdcdcd;");
                     PictureNode.getLockedPictures().add(each);
                 }
                 PictureNode.getSelectedPictures().clear();
             }
             else {
-                for (PictureNode each:PictureNode.getLockedPictures()){
+                this.pictureNodeOfThisMenu.setLocked(false);
+                this.pictureNodeOfThisMenu.getMenuPane().lock.setText("锁定");
+                this.pictureNodeOfThisMenu.setStyle("-fx-background-color:White;");
+                PictureNode.getLockedPictures().remove(this.pictureNodeOfThisMenu);
+                /*for (PictureNode each:PictureNode.getLockedPictures()){
                     each.setLocked(false);
-                    this.lock.setText("锁定");
+                    each.getMenuPane().lock.setText("锁定");
                     each.setStyle("-fx-background-color:White;");
 
                 }
-                PictureNode.getLockedPictures().clear();
+                PictureNode.getLockedPictures().clear();*/
             }
 
         });

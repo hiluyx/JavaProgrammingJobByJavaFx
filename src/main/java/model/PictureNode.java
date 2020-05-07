@@ -28,7 +28,7 @@ public class PictureNode extends Label{
     private Image image;//由文件加载出来的Image
     private ImageView imageView;
     private Text pictureName;
-    private MenuPane menuPane = new MenuPane();
+    private MenuPane menuPane = new MenuPane(this);
     public int count = 0;//点击次数
     private boolean isLocked = false;
     //保存所以被选中的图片节点，图片节点中包含图片数据

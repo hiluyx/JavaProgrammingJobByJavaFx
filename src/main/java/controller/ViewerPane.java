@@ -72,7 +72,16 @@ public class ViewerPane extends BorderPane {
 
             //清空flowPane的子节点
             try {
-                flowPane.getChildren().remove(0, flowPane.getChildren().size());
+                int size = flowPane.getChildren().size();
+                int index = 0;
+                for (int i=0;i<size;i++){
+                    if(((PictureNode)flowPane.getChildren().get(index)).getLocked()==false){
+                        flowPane.getChildren().remove(index);
+                    }
+                    else {
+                        index++;
+                    }
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
