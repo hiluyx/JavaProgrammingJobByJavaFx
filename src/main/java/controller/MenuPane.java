@@ -211,8 +211,8 @@ public class MenuPane extends MenuItem {
             single = PictureNode.getSelectedPictures().size() == 1;
 
             grid.setPadding(new Insets(10, 10, 10, 10));
-            grid.setVgap(5);
-            grid.setHgap(5);
+            grid.setVgap(4);
+            grid.setHgap(4);
             GridPane.setConstraints(label1, 0, 0);
             name.setPromptText("请输入新名字");
             name.setPrefColumnCount(20);
@@ -238,7 +238,7 @@ public class MenuPane extends MenuItem {
                 bitNum.getText();
                 GridPane.setConstraints(bitNum, 1, 2);
                 GridPane.setConstraints(msg, 1, 3);
-                GridPane.setConstraints(submit, 2, 4);
+                GridPane.setConstraints(submit, 2, 3);
                 grid.getChildren().addAll(label2, startNum, submit, msg,label3,bitNum);
             }
 
@@ -284,16 +284,16 @@ public class MenuPane extends MenuItem {
     //创建名字
     private String createName(String newFileName,int id,int bit) {
         StringBuilder newName = new StringBuilder(newFileName);
-        int tt = id;
-        int cnt=0;
-        while(tt!=0) {
-            cnt++;
-            tt/=10;
+        int startNum = id;
+        int linBit = 0;
+        if(startNum == 0)  linBit++;
+        while(startNum!=0) {
+            linBit++;
+            startNum/=10;
         }
-        if(id==0)  cnt++;
-        while(bit>cnt) {
+        while(bit>linBit) {
             newName.append(0);
-            cnt++;
+            linBit++;
         }
         newName.append(id);
         return newName.toString();
