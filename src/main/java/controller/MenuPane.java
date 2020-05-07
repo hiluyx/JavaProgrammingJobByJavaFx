@@ -27,7 +27,15 @@ import util.httpUtils.exception.RequestConnectException;
 
 import java.io.*;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.LinkOption;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributeView;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -162,19 +170,74 @@ public class MenuPane extends MenuItem {
             new SeePicture(ViewerPane.currentTreeNode.getValue().getImages().get(0),ViewerPane.currentTreeNode.getValue().getImages().get(0).getName());
         });
     }
-
     private void attributeFunction(){
-        attribute.setOnAction(event -> {
-            GridPane 属性面板 = new GridPane();
-            PictureNode e = PictureNode.getSelectedPictures().get(0);
-            Label 类型 = new Label("类型:"+e.getFile().getName().substring(e.getFile().getName().lastIndexOf(".")));
-            Label 大小 = new Label("大小");
-            Label 位置 = new Label("位置");
-            属性面板.add(类型,0,0);
-            Scene scene = new Scene(属性面板);
-            Stage stage = new Stage();
-            stage.setScene(scene);
-            stage.show();
+        this.attribute.setOnAction(event -> {
+            if(PictureNode.getSelectedPictures().size()>0){
+                for(PictureNode each:PictureNode.getSelectedPictures()){
+                    GridPane gridPane = new GridPane();
+                    /*后缀名*/
+                    String fileName = each.getFile().getName();
+                    String[] strArray = fileName.split("\\.");
+                    int suffixIndex = strArray.length-1;
+
+                    Label name =
+                            new Label("文件名："+fileName.substring(0,
+                                    fileName.lastIndexOf(".")));
+                    Label type = new Label("种类："+strArray[suffixIndex]);
+                    /*大小*/
+                    Label size = new Label("大小："+each.getFile().length()+"字节");
+                    /*位置*/
+                    Label path =
+                            new Label("位置："+each.getFile().getParent());
+                    /*创建时间与修改时间*/
+                    Date createTimeDate = null;
+                    Date lastModfiyTimeDate = null;
+                    Path filePath = Paths.get(each.getFile().getAbsolutePath());
+                    BasicFileAttributeView basicFileAttributeView = Files
+                            .getFileAttributeView(filePath,
+                                    BasicFileAttributeView.class,
+                                    LinkOption.NOFOLLOW_LINKS);
+                    BasicFileAttributes attr;
+
+                    try{
+                        attr = basicFileAttributeView.readAttributes();
+                        lastModfiyTimeDate =
+                                new Date(attr.lastModifiedTime().toMillis());
+                        createTimeDate = new Date(attr.creationTime().toMillis());
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+
+                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");//12小时制
+                    Date createDate = new Date();
+                    Date lastModifyDate = new Date();
+                    createDate.setTime(createTimeDate.getTime());
+                    lastModifyDate.setTime(lastModfiyTimeDate.getTime());
+                    Label createdTime =
+                            new Label("创建时间："+simpleDateFormat.format(createDate));
+                    Label lastModfiyTime =
+                            new Label("修改时间："+simpleDateFormat.format(lastModifyDate));
+                    System.out.println(each.getLocked());
+                    String eachStatus= each.getLocked()?"不可更改": "可更改";
+                    Label status = new Label("状态："+eachStatus);
+                    gridPane.setAlignment(Pos.CENTER);
+                    gridPane.setPadding(new Insets(10, 10, 10, 10));
+                    gridPane.setVgap(5);
+                    gridPane.setHgap(5);
+                    gridPane.add(name,0,0);
+
+                    gridPane.add(type,0,1);
+                    gridPane.add(size,0,2);
+                    gridPane.add(path,0,3);
+                    gridPane.add(createdTime,0,4);
+                    gridPane.add(lastModfiyTime,0,5);
+                    gridPane.add(status,0,6);
+                    Scene scene = new Scene(gridPane);
+                    Stage stage = new Stage();
+                    stage.setScene(scene);
+                    stage.show();
+                }
+            }
         });
     }
 
@@ -383,6 +446,7 @@ public class MenuPane extends MenuItem {
         seePicture.setAccelerator(KeyCombination.valueOf("shift+o"));
         upLoad.setAccelerator(KeyCombination.valueOf("shift+u"));
         attribute.setAccelerator(KeyCombination.valueOf("shift+i"));
+        lock.setAccelerator(KeyCombination.valueOf("shift+l"));
 //        allSelectedMenuItem.setAccelerator(KeyCombination.valueOf("shift+a"));
     }
 
