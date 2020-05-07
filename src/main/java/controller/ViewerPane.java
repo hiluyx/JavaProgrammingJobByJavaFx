@@ -91,16 +91,27 @@ public class ViewerPane extends BorderPane {
 
             //统计图片张数与图片大小
             if (newValue.getImages() != null) {
+                //设置进度条
                 progressBarWindow.getProgressIndicator().setProgress(0);
+                //如果没有图片，设置为完成
                 if (newValue.getImages().size()==0){
                     progressBarWindow.getProgressIndicator().setProgress(1);
                 }
+                //总大小
                 long totalByte = 0;
                 for (int i = 0; i < newValue.getImages().size(); i++) {
                     //添加图片
-                    PictureNode iv = new PictureNode(
-                            newValue.getImages().get(i));
-                    flowPane.getChildren().add(iv);
+                    PictureNode iv = new PictureNode(newValue.getImages().get(i));
+                    boolean isExit = false;
+                    for(int j=0;j<flowPane.getChildren().size();j++){
+                        PictureNode pictureInFlowPane = (PictureNode)flowPane.getChildren().get(j);
+                        if(iv.getFile().getAbsolutePath().equals(pictureInFlowPane.getFile().getAbsolutePath())){
+                            isExit = true;
+                        }
+                    }
+                    if(!isExit){
+                        flowPane.getChildren().add(iv);
+                    }
                     //统计图片大小
                     totalByte += newValue.getImages().get(i).length();
                     progressBarWindow.getProgressIndicator().setProgress(

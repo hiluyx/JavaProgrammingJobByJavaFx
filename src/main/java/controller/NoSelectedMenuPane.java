@@ -73,11 +73,12 @@ public class NoSelectedMenuPane {
         });
     }
 
+    //全选图片
     public void allSelectedFunction() {
         System.out.println("allselected");
         for (Node each : ViewerPane.flowPane.getChildren()) {
-            if (PictureNode.getSelectedPictures()
-                           .contains((PictureNode) each) == false) {
+            if (!PictureNode.getSelectedPictures()
+                    .contains(each)&&((PictureNode)each).getLocked()==false) {
                 each.setStyle("-fx-background-color: #8bb9ff;");
                 PictureNode.getSelectedPictures().add((PictureNode) each);
             }

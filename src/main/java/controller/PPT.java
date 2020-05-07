@@ -67,8 +67,6 @@ public class PPT {
 
         KeyValue keyValue1 = new KeyValue(imageView.opacityProperty(),1);
         KeyValue keyValue2 = new KeyValue(imageView.opacityProperty(),0.1);
-        KeyValue keyValue3 = new KeyValue(imageView.scaleXProperty(), 2);
-        KeyValue keyValue4 = new KeyValue(imageView.scaleYProperty(), 2);
         Duration duration = Duration.seconds(3);
 
 
@@ -78,8 +76,8 @@ public class PPT {
                 pagination.setCurrentPageIndex(count);//设置当前页面索引
                 pagination.setPickOnBounds(false);
                 imageView.setImage(new Image("file:" + selectedFolderProperty.getValue().getImages().get(count)));
-                imageView.setFitHeight(500);
-                imageView.setFitWidth(600);
+                imageView.setFitWidth(1350);
+                imageView.setFitHeight(1350*0.65);
             } else if (count == selectedFolderProperty.getValue().getImages().size()) {
                 count = 0;
                 imageView.setOpacity(1);

@@ -111,12 +111,14 @@ public class SeePicture extends BorderPane {
             stage.getIcons().add(new Image("file:"+new File("icon/stageIcon.png"),30, 30,
                     true, true));
             stage.setTitle("提示");
-            stage.setMinWidth(250);
+            stage.setMinWidth(300);
+            stage.setMaxHeight(200);
             Label label = new Label("这是第一张图片");
-            Button closeButton = new Button("关闭");
+            Button closeButton = ButtonUtil.createButton("cancel");
             closeButton.setOnAction(e ->stage.close());
 
             VBox vBox = new VBox(10);
+            vBox.setStyle("-fx-background-color: White");
             vBox.getChildren().addAll(label, closeButton);
             vBox.setAlignment(Pos.CENTER);
             Scene scene = new Scene (vBox);
@@ -129,12 +131,14 @@ public class SeePicture extends BorderPane {
             stage.getIcons().add(new Image("file:"+new File("icon/stageIcon.png"),30, 30,
                     true, true));
             stage.setTitle("提示");
-            stage.setMinWidth(250);
+            stage.setMinWidth(300);
+            stage.setMaxHeight(200);
             Label label = new Label("这是最后一张图片");
-            Button closeButton = new Button("关闭");
+            Button closeButton = ButtonUtil.createButton("cancel");
             closeButton.setOnAction(e ->stage.close());
 
             VBox vBox = new VBox(10);
+            vBox.setStyle("-fx-background-color: White");
             vBox.getChildren().addAll(label, closeButton);
             vBox.setAlignment(Pos.CENTER);
             Scene scene = new Scene (vBox);
@@ -158,12 +162,14 @@ public class SeePicture extends BorderPane {
             stage.getIcons().add(new Image("file:"+new File("icon/stageIcon.png"),30, 30,
                     true, true));
             stage.setTitle("提示");
-            stage.setMinWidth(250);
+            stage.setMinWidth(300);
+            stage.setMaxHeight(200);
             Label label = new Label("已是最小");
-            Button closeButton = new Button("关闭");
+            Button closeButton = ButtonUtil.createButton("cancel");
             closeButton.setOnAction(e ->stage.close());
 
             VBox vBox = new VBox(10);
+            vBox.setStyle("-fx-background-color: White");
             vBox.getChildren().addAll(label, closeButton);
             vBox.setAlignment(Pos.CENTER);
             Scene scene = new Scene (vBox);
@@ -176,12 +182,14 @@ public class SeePicture extends BorderPane {
             stage.getIcons().add(new Image("file:"+new File("icon/stageIcon.png"),30, 30,
                     true, true));
             stage.setTitle("提示");
-            stage.setMinWidth(250);
-            Button closeButton = new Button("关闭");
+            stage.setMinWidth(300);
+            stage.setMaxHeight(200);
+            Button closeButton = ButtonUtil.createButton("cancel");
             closeButton.setOnAction(e ->stage.close());
 
             Label label = new Label("已是最大");
             VBox vBox = new VBox(10);
+            vBox.setStyle("-fx-background-color: White");
             vBox.getChildren().addAll(label, closeButton);
             vBox.setAlignment(Pos.CENTER);
             Scene scene = new Scene (vBox);

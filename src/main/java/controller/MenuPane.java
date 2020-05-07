@@ -1,6 +1,5 @@
 package controller;
 
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -20,13 +19,8 @@ import lombok.Setter;
 import model.PictureNode;
 import util.ButtonUtil;
 import util.ClipboardUtil;
-import util.TaskThreadPools;
 import util.fileUtils.FileTreeLoader;
-import util.httpUtils.HttpUtil;
-import util.httpUtils.exception.RequestConnectException;
-
 import java.io.*;
-import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
@@ -36,8 +30,6 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @author helefeng
@@ -47,10 +39,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Setter
 public class MenuPane extends MenuItem {
 
+    //用于信息交互
     public static int status = -1;
+    private PictureNode pictureNodeOfThisMenu;
     public static File recycleBin = new File("recycleBin");
 
-
+    //功能按钮
     private MenuItem copy = new MenuItem("复制");
     private MenuItem cut = new MenuItem("剪切");
     private MenuItem delete = new MenuItem("删除");
@@ -59,23 +53,26 @@ public class MenuPane extends MenuItem {
     private MenuItem upLoad = new MenuItem("上传");
     private MenuItem attribute = new MenuItem("属性");
     private MenuItem lock = new MenuItem("锁定");
+
     private ContextMenu contextMenu = new ContextMenu();
-    private PictureNode pictureNodeOfThisMenu;
-    public MenuPane(PictureNode pictureNodeOfThisMenu) {
+
+    //构造方法
+    public MenuPane(){
         //把所有功能加进contextMenu
-        contextMenu.getItems().addAll(copy, cut, delete, reName, seePicture,upLoad,attribute,lock);
+        contextMenu.getItems().addAll(copy,cut,delete,reName,seePicture,upLoad,attribute,lock);
+        //把功能加到对应的按钮中
         addFunction2Button();
+        //设置快捷键
         shortcut();
         recycleBin.mkdir();
+    }
+
+    public MenuPane(PictureNode pictureNodeOfThisMenu) {
+        this();
         this.pictureNodeOfThisMenu = pictureNodeOfThisMenu;
     }
 
-    public MenuPane(){
-        contextMenu.getItems().addAll(copy, cut, delete, reName, seePicture,upLoad,attribute,lock);
-        addFunction2Button();
-        shortcut();
-        recycleBin.mkdir();
-    }
+    //把功能加到对应的按钮中
     private void addFunction2Button(){
         copyFunction();
         cutFunction();
@@ -87,22 +84,29 @@ public class MenuPane extends MenuItem {
         lockFunction();
     }
 
+    //设置上传功能
     private void upLoadFunction(){
         this.upLoad.setOnAction(event -> {
+            //跳转到另一个函数中
             FileTreeLoader.postCloudImages();
         });
     }
 
+    //设置复制功能
     private void copyFunction(){
         this.copy.setOnAction(event -> {
+            //改变状态位
             if(PictureNode.getSelectedPictures().size()>0){
                 status = 1;
                 new ClipboardUtil();
             }
         });
     }
+
+    //设置剪切功能
     private void cutFunction(){
         this.cut.setOnAction(event -> {
+            //改变状态位
             if(PictureNode.getSelectedPictures().size()>0){
                 status = 2;
                 new ClipboardUtil();
@@ -110,66 +114,28 @@ public class MenuPane extends MenuItem {
         });
     }
 
+    //设置删除功能
     private void deleteFunction(){
         this.delete.setOnAction(event -> {
+            //改变状态位
             MenuPane.status = 3;
 
-            //以下为一些页面布局，具体功能就是实现删除时的确认
-            BorderPane root = new BorderPane();
-            root.setStyle("-fx-background-color: White;");
-            Label label = new Label("是否删除");
-            label.setFont(new Font(30));
-            HBox hBox = new HBox(25);
-            Button yes = ButtonUtil.createButton("submit");
-            Button no = ButtonUtil.createButton("cancel");
-            yes.setPrefWidth(50);
-            no.setPrefWidth(50);
-            hBox.getChildren().add(yes);
-            hBox.getChildren().add(no);
-            hBox.setAlignment(Pos.BOTTOM_CENTER);
-            hBox.setPadding(new Insets(5,5,10,5));
-            root.setCenter(label);
-            root.setBottom(hBox);
-            Scene scene = new Scene(root,450,150);
-            Stage stage = new Stage();
-            stage.setScene(scene);
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.getIcons().add(new Image("file:"+new File("icon/stageIcon.png"),30, 30,
-                    true, true));
-            stage.setTitle("删除确认");
-            stage.show();
-            yes.setOnMouseClicked(event1 -> {
-                stage.close();
-                int num = 0;
-                NoSelectedMenuPane.everyRevocationNum.add(PictureNode.getSelectedPictures().size());
-                for(PictureNode each:PictureNode.getSelectedPictures()){
+            //生成一个询问框并给按钮设置相应的操作
+            Stage checkStage =  deleteCheckStage();
 
-                    String srcPath = each.getFile().getAbsolutePath();
-                    String destPath =
-                            recycleBin.getAbsolutePath()+"/"
-                                    +each.getFile().getName();
-                    NoSelectedMenuPane.revocationPictureFiles.add(each.getFile());
-                    try {
-                        copyFile(srcPath,destPath);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    if(each.getFile().delete()){
-                        System.out.printf("第%d张图片删除成功",++num);
-                        ViewerPane.flowPane.getChildren().remove(each);
-                    }
-                }
-            });
-            no.setOnMouseClicked(event1 -> {
-                stage.close();
-            });
+            checkStage.show();
         });
     }
+
+    //设置图片查看功能
     private void seePictureFunction(){
         this.seePicture.setOnAction(event -> {
+            //调用图片查看窗口类
             new SeePicture(ViewerPane.currentTreeNode.getValue().getImages().get(0),ViewerPane.currentTreeNode.getValue().getImages().get(0).getName());
         });
     }
+
+    //设置属性查看功能
     private void attributeFunction(){
         this.attribute.setOnAction(event -> {
             if(PictureNode.getSelectedPictures().size()>0){
@@ -222,8 +188,8 @@ public class MenuPane extends MenuItem {
                     Label status = new Label("状态："+eachStatus);
                     gridPane.setAlignment(Pos.CENTER);
                     gridPane.setPadding(new Insets(10, 10, 10, 10));
-                    gridPane.setVgap(5);
-                    gridPane.setHgap(5);
+                    gridPane.setVgap(15);
+                    gridPane.setHgap(15);
                     gridPane.add(name,0,0);
 
                     gridPane.add(type,0,1);
@@ -232,8 +198,13 @@ public class MenuPane extends MenuItem {
                     gridPane.add(createdTime,0,4);
                     gridPane.add(lastModfiyTime,0,5);
                     gridPane.add(status,0,6);
+                    gridPane.setStyle("-fx-background-color: White;");
+                    gridPane.setMinSize(300,300);
                     Scene scene = new Scene(gridPane);
                     Stage stage = new Stage();
+                    stage.getIcons().add(new Image("file:" + new File("icon/stageIcon.png"), 30, 30,
+                            true, true));
+                    stage.setTitle("属性");
                     stage.setScene(scene);
                     stage.show();
                 }
@@ -241,12 +212,14 @@ public class MenuPane extends MenuItem {
         });
     }
 
+    //设置锁定与解锁功能
     private void lockFunction(){
         lock.setOnAction(event -> {
             if (this.lock.getText().equals("锁定")){
                 for(PictureNode each:PictureNode.getSelectedPictures()){
                     each.setLocked(true);
                     each.getMenuPane().lock.setText("解锁");
+                    each.getMenuPane().disableFunction();
                     each.setStyle("-fx-background-color:#cdcdcd;");
                     PictureNode.getLockedPictures().add(each);
                 }
@@ -255,20 +228,14 @@ public class MenuPane extends MenuItem {
             else {
                 this.pictureNodeOfThisMenu.setLocked(false);
                 this.pictureNodeOfThisMenu.getMenuPane().lock.setText("锁定");
+                this.pictureNodeOfThisMenu.getMenuPane().enableFunction();
                 this.pictureNodeOfThisMenu.setStyle("-fx-background-color:White;");
                 PictureNode.getLockedPictures().remove(this.pictureNodeOfThisMenu);
-                /*for (PictureNode each:PictureNode.getLockedPictures()){
-                    each.setLocked(false);
-                    each.getMenuPane().lock.setText("锁定");
-                    each.setStyle("-fx-background-color:White;");
-
-                }
-                PictureNode.getLockedPictures().clear();*/
             }
-
         });
     }
 
+    //设置重命名功能
     private void reNameFunction() {
         this.reName.setOnAction(event -> {
             boolean single;
@@ -355,7 +322,7 @@ public class MenuPane extends MenuItem {
         });
     }
 
-    //创建名字
+    //创建名字(重命名功能用到的函数)
     private String createName(String newFileName,int id,int bit) {
         StringBuilder newName = new StringBuilder(newFileName);
         int startNum = id;
@@ -372,6 +339,7 @@ public class MenuPane extends MenuItem {
         newName.append(id);
         return newName.toString();
     }
+
     //重命名单个文件
     private boolean renameSingle(String newFileName) {
         PictureNode oldNode = PictureNode.getSelectedPictures().get(0);
@@ -388,11 +356,11 @@ public class MenuPane extends MenuItem {
         ViewerPane.flowPane.getChildren().add(newNode);
         return true;
     }
+
     //重命名多个文件
     private boolean renameMore(String newFileName,String startNum,String bitNum) {
         File file;
         int id = Integer.parseInt(startNum);
-//        int bit = String.valueOf(PictureNode.getSelectedPictures().size()).length();
         int bit = Integer.valueOf(bitNum);
         ArrayList<PictureNode> oldList = new ArrayList<>();
         ArrayList<PictureNode> newList = new ArrayList<>();
@@ -418,7 +386,6 @@ public class MenuPane extends MenuItem {
         return true;
     }
 
-
     //复制文件的函数
     public void copyFile(String srcPath, String destPath) throws IOException {
         // 打开输入流
@@ -438,6 +405,7 @@ public class MenuPane extends MenuItem {
 
     }
 
+    //给功能加上快捷键
     private void shortcut(){
         copy.setAccelerator(KeyCombination.valueOf("shift+c"));
         cut.setAccelerator(KeyCombination.valueOf("shift+t"));
@@ -447,8 +415,87 @@ public class MenuPane extends MenuItem {
         upLoad.setAccelerator(KeyCombination.valueOf("shift+u"));
         attribute.setAccelerator(KeyCombination.valueOf("shift+i"));
         lock.setAccelerator(KeyCombination.valueOf("shift+l"));
-//        allSelectedMenuItem.setAccelerator(KeyCombination.valueOf("shift+a"));
     }
 
+    //生成删除时确认的Stage
+    private Stage deleteCheckStage() {
+        //以下为一些页面布局，具体功能就是实现删除时的确认
+        BorderPane root = new BorderPane();
+        root.setStyle("-fx-background-color: White;");
+        Label label = new Label("是否删除");
+        label.setFont(new Font(30));
+        HBox hBox = new HBox(25);
+        Button yes = ButtonUtil.createButton("submit");
+        Button no = ButtonUtil.createButton("cancel");
+        yes.setPrefWidth(50);
+        no.setPrefWidth(50);
+        hBox.getChildren().add(yes);
+        hBox.getChildren().add(no);
+        hBox.setAlignment(Pos.BOTTOM_CENTER);
+        hBox.setPadding(new Insets(5, 5, 10, 5));
+        root.setCenter(label);
+        root.setBottom(hBox);
+        Scene scene = new Scene(root, 450, 150);
+        Stage stage = new Stage();
+        stage.setScene(scene);
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.getIcons().add(new Image("file:" + new File("icon/stageIcon.png"), 30, 30,
+                true, true));
+        stage.setTitle("确认删除");
 
+        //确认删除
+        yes.setOnMouseClicked(event1 -> {
+            stage.close();
+            int num = 0;
+            //把要删除的照片移动到回收站
+            NoSelectedMenuPane.everyRevocationNum.add(PictureNode.getSelectedPictures().size());
+            for (PictureNode each : PictureNode.getSelectedPictures()) {
+                if(each.getFile().getParent().equals(new File("cloudAlbum").getAbsolutePath())){
+                    FileTree.deletedCloudImages.add(each.getFile());
+                }
+
+                String srcPath = each.getFile().getAbsolutePath();
+                String destPath =
+                        recycleBin.getAbsolutePath() + "/"
+                                + each.getFile().getName();
+                NoSelectedMenuPane.revocationPictureFiles.add(each.getFile());
+                try {
+                    copyFile(srcPath, destPath);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                if (each.getFile().delete()) {
+                    System.out.printf("第%d张图片删除成功\n", ++num);
+                    ViewerPane.flowPane.getChildren().remove(each);
+                }
+            }
+        });
+
+        //取消删除
+        no.setOnMouseClicked(event1 -> {
+            stage.close();
+        });
+
+        return stage;
+    }
+
+    private void disableFunction(){
+        this.copy.setDisable(true);
+        this.cut.setDisable(true);
+        this.delete.setDisable(true);
+        this.reName.setDisable(true);
+        this.seePicture.setDisable(true);
+        this.upLoad.setDisable(true);
+        this.attribute.setDisable(true);
+    }
+
+    private void enableFunction(){
+        this.copy.setDisable(false);
+        this.cut.setDisable(false);
+        this.delete.setDisable(false);
+        this.reName.setDisable(false);
+        this.seePicture.setDisable(false);
+        this.upLoad.setDisable(false);
+        this.attribute.setDisable(false);
+    }
 }
