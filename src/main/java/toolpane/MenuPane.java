@@ -368,9 +368,11 @@ public class MenuPane extends MenuItem {
                 for (PictureNode each : PictureNode.getSelectedPictures())
                     Platform.runLater(()->ViewerPane.flowPane.getChildren().remove(each));
                 for (PictureNode each : PictureNode.getSelectedPictures()) {
+                    //云相册的删除
                     if(each.getFile().getParent().equals(new File("cloudAlbum").getAbsolutePath())){
                         FileTreePane.deletedCloudImages.add(each.getFile());
                         int tail = PictureNode.getSelectedPictures().size();
+                        //最后一张云相册
                         if(each == PictureNode.getSelectedPictures().get(tail - 1)){
                             while(true){
                                 try {
