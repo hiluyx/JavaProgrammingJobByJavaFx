@@ -1,5 +1,6 @@
 package toolpane;
 
+import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
@@ -9,6 +10,7 @@ import lombok.Getter;
 import lombok.Setter;
 import mainpane.ViewerPane;
 import model.PictureNode;
+import util.TaskThreadPools;
 import util.fileUtils.CopyFileUtil;
 
 import java.io.File;
@@ -69,9 +71,9 @@ public class NoSelectedMenuPane {
         this.allSelected.setOnAction(event -> {
             allSelectedFunction();
         }); this.revocation.setOnAction(event -> {
-            revocationFunction();
+            TaskThreadPools.execute(this::revocationFunction);
         }); this.paste.setOnAction(event -> {
-            pasteFunction();
+            TaskThreadPools.execute(this::pasteFunction);
         });
     }
 
@@ -106,7 +108,7 @@ public class NoSelectedMenuPane {
             String destPath = revocationPictureFiles.get(curIndex).getAbsolutePath();
             files[i].renameTo(new File(destPath));
             revocationPictureFiles.remove(revocationPictureFiles.get(curIndex));
-            ViewerPane.flowPane.getChildren().add(new PictureNode(new File(destPath)));
+            Platform.runLater(()->ViewerPane.flowPane.getChildren().add(new PictureNode(new File(destPath))));
             System.out.println("目标文件是否存在："+new File(destPath).exists());
         }
         everyRevocationNum.remove(index);
@@ -124,7 +126,18 @@ public class NoSelectedMenuPane {
         ArrayList<PictureNode> processedPictures = new ArrayList<>();
         for (File each : picFiles) {
             processedPictures.add(new PictureNode(each));
-        } System.out.println(processedPictures.size()); clipboard.clear(); try {
+        }
+        System.out.println(processedPictures.size());
+        clipboard.clear();
+        try {
+            if (MenuPane.status == 2) {//如果为剪切状态，删除原路径下的图片
+                int num = 0; for (PictureNode each : processedPictures) {
+                    if (each.getFile().delete()) {
+                        System.out.printf("第%d张图片删除成功\n", ++num);
+                        Platform.runLater(()->ViewerPane.flowPane.getChildren().remove(each));
+                    }
+                }
+            }
             //srcPath是原路径，destPath是构造出来的目标路径
             //例如srcPath=G:\0tjx\2.png  destPath =G:\计算机二级\2.png
             for (PictureNode each : processedPictures) {
@@ -151,13 +164,6 @@ public class NoSelectedMenuPane {
                 File file = new File(destPath);
                 PictureNode p = new PictureNode(file);
                 ViewerPane.flowPane.getChildren().add(p);
-            } if (MenuPane.status == 2) {//如果为剪切状态，删除原路径下的图片
-                int num = 0; for (PictureNode each : processedPictures) {
-                    if (each.getFile().delete()) {
-                        System.out.printf("第%d张图片删除成功\n", ++num);
-                        ViewerPane.flowPane.getChildren().remove(each);
-                    }
-                }
             }
             //粘贴一次之后设置为不可用
             paste.setDisable(true);

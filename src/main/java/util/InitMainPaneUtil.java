@@ -77,7 +77,6 @@ public class InitMainPaneUtil {
             System.out.println("即将关闭程序");
             try {
                 //删除云相册数据
-                HttpUtil.doDelete(FileTreePane.deletedCloudImages);
                 File cloudAlbum = new File("cloudAlbum");
                 File[] filesOfCloudAlbum = cloudAlbum.listFiles();
                 if(filesOfCloudAlbum != null){

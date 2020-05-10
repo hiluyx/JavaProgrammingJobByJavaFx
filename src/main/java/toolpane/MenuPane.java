@@ -1,5 +1,6 @@
 package toolpane;
 
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -20,11 +21,15 @@ import mainpane.ViewerPane;
 import model.PictureNode;
 import util.ButtonUtil;
 import util.ClipboardUtil;
+import util.TaskThreadPools;
 import util.fileUtils.CopyFileUtil;
 import util.fileUtils.FileTreeLoader;
 import util.fileUtils.ReNameFileUtil;
+import util.httpUtils.HttpUtil;
+import util.httpUtils.exception.RequestConnectException;
 
 import java.io.*;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
@@ -67,6 +72,7 @@ public class MenuPane extends MenuItem {
         addFunction2Button();
         //设置快捷键
         shortcut();
+        recycleBin.mkdir();
     }
 
     //把功能加到对应的按钮中
@@ -354,30 +360,48 @@ public class MenuPane extends MenuItem {
         //确认删除
         yes.setOnMouseClicked(event -> {
             stage.close();
-            int num = 0;
-            //把要删除的照片移动到回收站
-            NoSelectedMenuPane.everyRevocationNum.add(PictureNode.getSelectedPictures().size());
+            TaskThreadPools.execute(()->{
+                int num = 0;
+                //把要删除的照片移动到回收站
+                NoSelectedMenuPane.everyRevocationNum.add(PictureNode.getSelectedPictures().size());
 
-            for (PictureNode each : PictureNode.getSelectedPictures()) {
-                if(each.getFile().getParent().equals(new File("cloudAlbum").getAbsolutePath())){
-                    FileTreePane.deletedCloudImages.add(each.getFile());
-                }
+                for (PictureNode each : PictureNode.getSelectedPictures())
+                    Platform.runLater(()->ViewerPane.flowPane.getChildren().remove(each));
+                for (PictureNode each : PictureNode.getSelectedPictures()) {
+                    if(each.getFile().getParent().equals(new File("cloudAlbum").getAbsolutePath())){
+                        FileTreePane.deletedCloudImages.add(each.getFile());
+                        int tail = PictureNode.getSelectedPictures().size();
+                        if(each == PictureNode.getSelectedPictures().get(tail - 1)){
+                            while(true){
+                                try {
+                                    HttpUtil.doDelete(FileTreePane.deletedCloudImages);
+                                } catch (URISyntaxException | RequestConnectException exception) {
+                                    if (exception instanceof RequestConnectException){
+                                        if (((RequestConnectException) exception).getDialogSel((RequestConnectException) exception)){
+                                            break;
+                                        } else continue;
+                                    }
+                                }
+                                break;
+                            }
+                        }
+                    }
 
-                String srcPath = each.getFile().getAbsolutePath();
-                String destPath =
-                        recycleBin.getAbsolutePath() + "/"
-                                + each.getFile().getName();
-                NoSelectedMenuPane.revocationPictureFiles.add(each.getFile());
-                try {
-                    CopyFileUtil.copyFile(srcPath, destPath);
-                } catch (IOException e) {
-                    e.printStackTrace();
+                    String srcPath = each.getFile().getAbsolutePath();
+                    String destPath =
+                            recycleBin.getAbsolutePath() + "/"
+                                    + each.getFile().getName();
+                    NoSelectedMenuPane.revocationPictureFiles.add(each.getFile());
+                    try {
+                        CopyFileUtil.copyFile(srcPath, destPath);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    if (each.getFile().delete()) {
+                        System.out.printf("第%d张图片删除成功\n", ++num);
+                    }
                 }
-                if (each.getFile().delete()) {
-                    System.out.printf("第%d张图片删除成功\n", ++num);
-                    ViewerPane.flowPane.getChildren().remove(each);
-                }
-            }
+            });
         });
 
         //取消删除

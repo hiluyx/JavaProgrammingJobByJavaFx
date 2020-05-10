@@ -98,7 +98,7 @@ public class FileTreeLoader implements Runnable {
             while (true) {
                 ProgressBarWindow.updateProgressBar(0);
                 try {
-                    HttpUtil.doGetPageImages(FileTreePane.cloudImageNoteList,0,4);
+                    HttpUtil.doGetPageImages(FileTreePane.cloudImageNoteList,0,100);
                 } catch (RequestConnectException | URISyntaxException exception) {
                     /*
                     连接出现错误，退出提示框
@@ -114,8 +114,10 @@ public class FileTreeLoader implements Runnable {
                     }
                 }
                 fileTree.getCloudAlbum().getTreeNode().setImages();
-                Platform.runLater(()-> ViewerPane.setCurrentTreeNode(fileTree.getCloudAlbum().getTreeNode()));
-                Platform.runLater(()->ViewerPane.bottom.getChildren().remove(ViewerPane.progressBarWindow.getProgressBar()));
+                Platform.runLater(()-> {
+                    ViewerPane.bottom.getChildren().remove(ViewerPane.progressBarWindow.getProgressBar());
+                    ViewerPane.setCurrentTreeNode(fileTree.getCloudAlbum().getTreeNode());
+                });
                 break;
             }
         });
