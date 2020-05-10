@@ -1,15 +1,9 @@
 package util.httpUtils;
 
-import controller.ProgressBarWindow;
-import controller.ViewerPane;
-import javafx.application.Platform;
-import javafx.scene.control.ProgressBar;
+import toolpane.ProgressBarWindow;
 import sun.misc.BASE64Decoder;
-import sun.misc.BASE64Encoder;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @since 2020/4/26

@@ -1,8 +1,8 @@
 package util.fileUtils;
 
-import controller.FileTree;
-import controller.ProgressBarWindow;
-import controller.ViewerPane;
+import mainpane.FileTreePane;
+import toolpane.ProgressBarWindow;
+import mainpane.ViewerPane;
 import model.FileTreeItem;
 
 import javafx.application.Platform;
@@ -24,9 +24,9 @@ import java.util.List;
  */
 public class FileTreeLoader implements Runnable {
 
-    private final FileTree fileTree;
+    private final FileTreePane fileTree;
 
-    public FileTreeLoader(FileTree fileTree) {
+    public FileTreeLoader(FileTreePane fileTree) {
         this.fileTree = fileTree;
     }
 
@@ -91,14 +91,14 @@ public class FileTreeLoader implements Runnable {
      *
      * @param fileTree fileTree
      */
-    public static void getCloudImages(FileTree fileTree){
+    public static void getCloudImages(FileTreePane fileTree){
         fileTree.setOpened(true);
         ViewerPane.bottom.getChildren().add(ViewerPane.progressBarWindow.getProgressBar());
         TaskThreadPools.execute(()->{
             while (true) {
                 ProgressBarWindow.updateProgressBar(0);
                 try {
-                    HttpUtil.doGetPageImages(FileTree.cloudImageNoteList,0,4);
+                    HttpUtil.doGetPageImages(FileTreePane.cloudImageNoteList,0,4);
                 } catch (RequestConnectException | URISyntaxException exception) {
                     /*
                     连接出现错误，退出提示框

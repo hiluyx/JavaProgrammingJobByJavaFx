@@ -1,7 +1,5 @@
-package controller;
+package toolpane;
 
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -16,10 +14,16 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import lombok.Getter;
 import lombok.Setter;
+import mainpane.FileTreePane;
+import mainpane.SeePicturePane;
+import mainpane.ViewerPane;
 import model.PictureNode;
 import util.ButtonUtil;
 import util.ClipboardUtil;
+import util.fileUtils.CopyFileUtil;
 import util.fileUtils.FileTreeLoader;
+import util.fileUtils.ReNameFileUtil;
+
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
@@ -28,7 +32,6 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributeView;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 
 /**
@@ -64,12 +67,6 @@ public class MenuPane extends MenuItem {
         addFunction2Button();
         //设置快捷键
         shortcut();
-        recycleBin.mkdir();
-    }
-
-    public MenuPane(PictureNode pictureNodeOfThisMenu) {
-        this();
-        this.pictureNodeOfThisMenu = pictureNodeOfThisMenu;
     }
 
     //把功能加到对应的按钮中
@@ -131,7 +128,7 @@ public class MenuPane extends MenuItem {
     private void seePictureFunction(){
         this.seePicture.setOnAction(event -> {
             //调用图片查看窗口类
-            new SeePicture(ViewerPane.currentTreeNode.getValue().getImages().get(0),ViewerPane.currentTreeNode.getValue().getImages().get(0).getName());
+            new SeePicturePane(ViewerPane.currentTreeNode.getValue().getImages().get(0),ViewerPane.currentTreeNode.getValue().getImages().get(0).getName());
         });
     }
 
@@ -215,26 +212,9 @@ public class MenuPane extends MenuItem {
     //设置锁定与解锁功能
     private void lockFunction(){
         lock.setOnAction(event -> {
-//            if (this.lock.getText().equals("锁定")){
-//                for(PictureNode each:PictureNode.getSelectedPictures()){
-//                    each.setLocked(true);
-//                    each.getMenuPane().lock.setText("解锁");
-//                    each.getMenuPane().disableFunction();
-//                    each.setStyle("-fx-background-color:#cdcdcd;");
-//                    PictureNode.getLockedPictures().add(each);
-//                }
-//                PictureNode.getSelectedPictures().clear();
-//            }
-//            else {
-//                this.pictureNodeOfThisMenu.setLocked(false);
-//                this.pictureNodeOfThisMenu.getMenuPane().lock.setText("锁定");
-//                this.pictureNodeOfThisMenu.getMenuPane().enableFunction();
-//                this.pictureNodeOfThisMenu.setStyle("-fx-background-color:White;");
-//                PictureNode.getLockedPictures().remove(this.pictureNodeOfThisMenu);
-//            }
             if (PictureNode.getSelectedPictures().size() > 0) {
                 for (PictureNode each : PictureNode.getSelectedPictures()) {
-                    if (each.getLocked() == false) {
+                    if (!each.getLocked()) {
                         each.setLocked(true); each.getMenuPane().lock.setText("解锁");
                         each.setStyle("-fx-background-color: lightgray");
                         each.getMenuPane().disableFunction();
@@ -297,31 +277,28 @@ public class MenuPane extends MenuItem {
                 grid.getChildren().addAll(label2, startNum, submit, msg,label3,bitNum);
             }
 
-            submit.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent e) {
-                    if (single) {
-                        if ((name.getText() != null && !name.getText().isEmpty())) {
-                            if (renameSingle(name.getText())) {
-                                anotherStage.close();
-                            } else {
-                                msg.setText("已有该名字的图片存在，请重新输入");
-                            }
+            submit.setOnAction(e -> {
+                if (single) {
+                    if ((name.getText() != null && !name.getText().isEmpty())) {
+                        if (ReNameFileUtil.renameSingle(name.getText())) {
+                            anotherStage.close();
                         } else {
-                            msg.setText("请输入!");
+                            msg.setText("已有该名字的图片存在，请重新输入");
                         }
                     } else {
-                        if ((name.getText() != null && !name.getText().isEmpty())
-                                && (startNum.getText() != null && !startNum.getText().isEmpty())
-                                &&(bitNum.getText() != null && !bitNum.getText().isEmpty())){
-                            if (renameMore(name.getText(),startNum.getText(),bitNum.getText())) {
-                                anotherStage.close();
-                            } else {
-                                msg.setText("错误！请重新输入");
-                            }
+                        msg.setText("请输入!");
+                    }
+                } else {
+                    if ((name.getText() != null && !name.getText().isEmpty())
+                            && (startNum.getText() != null && !startNum.getText().isEmpty())
+                            &&(bitNum.getText() != null && !bitNum.getText().isEmpty())){
+                        if (ReNameFileUtil.renameMore(name.getText(),startNum.getText(),bitNum.getText())) {
+                            anotherStage.close();
                         } else {
-                            msg.setText("你没有输入，请输入!");
+                            msg.setText("错误！请重新输入");
                         }
+                    } else {
+                        msg.setText("你没有输入，请输入!");
                     }
                 }
             });
@@ -336,89 +313,6 @@ public class MenuPane extends MenuItem {
         });
     }
 
-    //创建名字(重命名功能用到的函数)
-    private String createName(String newFileName,int id,int bit) {
-        StringBuilder newName = new StringBuilder(newFileName);
-        int startNum = id;
-        int linBit = 0;
-        if(startNum == 0)  linBit++;
-        while(startNum!=0) {
-            linBit++;
-            startNum/=10;
-        }
-        while(bit>linBit) {
-            newName.append(0);
-            linBit++;
-        }
-        newName.append(id);
-        return newName.toString();
-    }
-
-    //重命名单个文件
-    private boolean renameSingle(String newFileName) {
-        PictureNode oldNode = PictureNode.getSelectedPictures().get(0);
-        File file = oldNode.getFile();
-        String FileName = file.getParent()+"\\" + newFileName + file.getName().substring(file.getName().lastIndexOf("."));
-        File newFile = new File(FileName);
-        if(!file.renameTo(newFile)) {
-            newFile.delete();
-            return false;
-        }
-        PictureNode newNode = new PictureNode(newFile);
-        PictureNode.getSelectedPictures().remove(0);
-        ViewerPane.flowPane.getChildren().remove(oldNode);
-        ViewerPane.flowPane.getChildren().add(newNode);
-        return true;
-    }
-
-    //重命名多个文件
-    private boolean renameMore(String newFileName,String startNum,String bitNum) {
-        File file;
-        int id = Integer.parseInt(startNum);
-        int bit = Integer.valueOf(bitNum);
-        ArrayList<PictureNode> oldList = new ArrayList<>();
-        ArrayList<PictureNode> newList = new ArrayList<>();
-
-        for (PictureNode picture : PictureNode.getSelectedPictures()) {
-            file = picture.getFile();
-            String newname = createName(newFileName, id++, bit);
-            String FileName = file.getParent()+ "\\" + newname +file.getName().substring(file.getName().lastIndexOf("."));
-            File newFile = new File(FileName);
-            if(!file.renameTo(newFile)) {
-                newFile.delete();
-                return false;
-            }
-            oldList.add(picture);
-            PictureNode newImage = new PictureNode(newFile);
-            newList.add(newImage);
-        }
-        for(int i=0; i<oldList.size(); i++) {
-            PictureNode.getSelectedPictures().remove(0);
-            ViewerPane.flowPane.getChildren().remove(oldList.get(i));
-            ViewerPane.flowPane.getChildren().add(newList.get(i));
-        }
-        return true;
-    }
-
-    //复制文件的函数
-    public void copyFile(String srcPath, String destPath) throws IOException {
-        // 打开输入流
-        FileInputStream fis = new FileInputStream(srcPath);
-        // 打开输出流
-        FileOutputStream fos = new FileOutputStream(destPath);
-
-        // 读取和写入信息
-        int len = 0;
-        while ((len = fis.read()) != -1) {
-            fos.write(len);
-        }
-
-        // 关闭流  先开后关  后开先关
-        fos.close(); // 后开先关
-        fis.close(); // 先开后关
-
-    }
-
     //给功能加上快捷键
     private void shortcut(){
         copy.setAccelerator(KeyCombination.valueOf("shift+c"));
@@ -431,7 +325,7 @@ public class MenuPane extends MenuItem {
         lock.setAccelerator(KeyCombination.valueOf("shift+l"));
     }
 
-    //生成删除时确认的Stage
+    //删除时确认的Stage与删除操作
     private Stage deleteCheckStage() {
         //以下为一些页面布局，具体功能就是实现删除时的确认
         BorderPane root = new BorderPane();
@@ -458,7 +352,7 @@ public class MenuPane extends MenuItem {
         stage.setTitle("确认删除");
 
         //确认删除
-        yes.setOnMouseClicked(event1 -> {
+        yes.setOnMouseClicked(event -> {
             stage.close();
             int num = 0;
             //把要删除的照片移动到回收站
@@ -466,7 +360,7 @@ public class MenuPane extends MenuItem {
 
             for (PictureNode each : PictureNode.getSelectedPictures()) {
                 if(each.getFile().getParent().equals(new File("cloudAlbum").getAbsolutePath())){
-                    FileTree.deletedCloudImages.add(each.getFile());
+                    FileTreePane.deletedCloudImages.add(each.getFile());
                 }
 
                 String srcPath = each.getFile().getAbsolutePath();
@@ -475,7 +369,7 @@ public class MenuPane extends MenuItem {
                                 + each.getFile().getName();
                 NoSelectedMenuPane.revocationPictureFiles.add(each.getFile());
                 try {
-                    copyFile(srcPath, destPath);
+                    CopyFileUtil.copyFile(srcPath, destPath);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -487,13 +381,12 @@ public class MenuPane extends MenuItem {
         });
 
         //取消删除
-        no.setOnMouseClicked(event1 -> {
-            stage.close();
-        });
+        no.setOnMouseClicked(event -> stage.close());
 
         return stage;
     }
 
+    //使按钮不可用
     private void disableFunction(){
         this.copy.setDisable(true);
         this.cut.setDisable(true);
@@ -504,6 +397,7 @@ public class MenuPane extends MenuItem {
         this.attribute.setDisable(true);
     }
 
+    //使按钮可用
     private void enableFunction(){
         this.copy.setDisable(false);
         this.cut.setDisable(false);

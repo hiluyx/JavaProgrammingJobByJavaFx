@@ -1,4 +1,4 @@
-package controller;
+package toolpane;
 
 import java.awt.Rectangle;
 import java.awt.Robot;
@@ -22,6 +22,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import mainpane.ViewerPane;
 import model.PictureNode;
 
 public class Screen_shot {
@@ -35,7 +36,7 @@ public class Screen_shot {
     static double sceneX_end;       //截图终点
     static double sceneY_end;
 
-    Screen_shot(File file) {
+    public Screen_shot(File file) {
         iv = new ImageView();
         nodeFile = file;
         show();

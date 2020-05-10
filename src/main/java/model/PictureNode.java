@@ -1,9 +1,9 @@
 package model;
 
-import controller.FunctionBar;
-import controller.MenuPane;
-import controller.SeePicture;
-import controller.ViewerPane;
+import toolpane.FunctionBar;
+import toolpane.MenuPane;
+import mainpane.SeePicturePane;
+import mainpane.ViewerPane;
 import javafx.geometry.Insets;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
@@ -31,31 +31,25 @@ public class PictureNode extends Label{
     private MenuPane menuPane = new MenuPane();
     public int count = 0;//点击次数
     private boolean isLocked = false;
+
     //保存所以被选中的图片节点，图片节点中包含图片数据
     protected static ArrayList<PictureNode> selectedPictures = new ArrayList<>();
-//    private static ArrayList<PictureNode> lockedPicture = new ArrayList<>();
 
     public static ArrayList<File> getSelectedPictureFiles() {
         return selectedPictureFiles;
     }
-    public boolean isLocked() {
-        return isLocked;
-    }
 
-    public void setLocked(boolean locked) {
-        isLocked = locked;
-    }
-    protected static ArrayList<File> selectedPictureFiles =
-            new ArrayList<>();
+    protected static ArrayList<File> selectedPictureFiles = new ArrayList<>();
 
     public PictureNode(File aPictureFile) {
-        this.setWrapText(true);
-        this.file = aPictureFile;
+
         //初始化图片
         initializeAPicture(aPictureFile);
+
         //为图片节点添加监听器
         addListener2PictureNode();
     }
+
     //为图片节点添加监听器
     private void addListener2PictureNode(){
         this.setContextMenu(menuPane.getContextMenu());
@@ -73,38 +67,27 @@ public class PictureNode extends Label{
                     for (PictureNode each : selectedPictures) {
 //                        each.setStyle("-fx-background-color: transparent;");
 //                        each.setCount(0);
-                        if (each.getLocked() == false) {
+                        if (!each.getLocked()) {
                             each.setStyle("-fx-background-color: transparent;");
-                            each.setCount(0);
                         }else{
                             each.setStyle("-fx-background-color: lightgray;");
-                            each.setCount(0);
                         }
+                        each.setCount(0);
                     }
                     selectedPictures.clear();
                 }
 
                 //判断当前节点是否被选中
-//                if(this.isLocked==false){
-//                    if (!selectedPictures.contains(this)&&this.count % 2 == 1) {
-//                        this.setStyle("-fx-background-color: #8bb9ff;");
-//                        this.count=0;
-//                        selectedPictures.add(this);
-//                    } else {
-//                        this.setStyle("-fx-background-color: White;");
-//                        selectedPictures.remove(this);
-//                        this.count=0;
-//                    }
-//                }
                 if (!selectedPictures.contains(this) && this.count % 2 == 1) {
                     this.setStyle("-fx-background-color: #8bb9ff;");
                     this.count = 0; selectedPictures.add(this);
                 } else {
-                    if (this.isLocked == false) {
+                    if (!this.isLocked) {
                         this.setStyle("-fx-background-color: transparent;");
                     } else {
                         this.setStyle("-fx-background-color: lightgray");
                     }
+                    this.setCount(0);
                     selectedPictures.remove(this);
                 }
 
@@ -118,7 +101,7 @@ public class PictureNode extends Label{
                 //e.getClickCount() == 2,双击
                 //创建一个SeePicture类，传参数进去
                 System.out.println("双击了:"+this.file.getName());
-                new SeePicture(this.file, this.file.getName());
+                new SeePicturePane(this.file, this.file.getName());
             }
             if(selectedPictures.size()>0){
                 FunctionBar.upLoad.setDisable(false);
@@ -136,8 +119,10 @@ public class PictureNode extends Label{
 
     //初始化一张图片
     private void initializeAPicture(File aPictureFile){
+        this.setWrapText(true);
+        this.file = aPictureFile;
         if(!aPictureFile.exists()){
-            aPictureFile.mkdir();
+            System.out.println(aPictureFile.getAbsolutePath()+"不存在");
         }
         this.setPickOnBounds(true);
         this.setGraphicTextGap(10);
@@ -157,15 +142,12 @@ public class PictureNode extends Label{
         return selectedPictures;
     }
 
-//    public static ArrayList<PictureNode> getLockedPictures() {
-//        return lockedPicture;
-//    }
-    public void setLocked(Boolean value){
-        this.isLocked = value;
-    }
-
     public boolean getLocked(){
         return this.isLocked;
+    }
+
+    public void setLocked(boolean locked) {
+        isLocked = locked;
     }
 
 }

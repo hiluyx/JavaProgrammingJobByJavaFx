@@ -1,6 +1,5 @@
-package controller;
+package mainpane;
 
-import javafx.application.Platform;
 import javafx.scene.control.TreeView;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,12 +9,9 @@ import model.TreeNode;
 import util.TaskThreadPools;
 import util.fileUtils.FileTreeLoader;
 import model.CloudImageNote;
-import util.httpUtils.HttpUtil;
-import util.httpUtils.exception.RequestConnectException;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +21,7 @@ import java.util.List;
  */
 @Getter
 @Setter
-public class FileTree {
+public class FileTreePane {
     private TreeView<TreeNode> treeView;
     private FileTreeItem rootTree;
     private List<FileTreeItem> rootFileTreeItems;
@@ -43,7 +39,7 @@ public class FileTree {
     public static List<File> deletedCloudImages;
     private boolean isOpened;
 
-    public FileTree() throws IOException {
+    public FileTreePane() throws IOException {
         this.setRootFileTreeItems();
         TaskThreadPools.execute(new FileTreeLoader(this));
         addListener();

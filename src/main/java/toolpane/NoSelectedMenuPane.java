@@ -1,4 +1,4 @@
-package controller;
+package toolpane;
 
 import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
@@ -7,7 +7,9 @@ import javafx.scene.input.*;
 import javafx.scene.layout.FlowPane;
 import lombok.Getter;
 import lombok.Setter;
+import mainpane.ViewerPane;
 import model.PictureNode;
+import util.fileUtils.CopyFileUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -144,7 +146,7 @@ public class NoSelectedMenuPane {
                 //观察路径
                 System.out.println(srcPath); System.out.println(destPath);
                 //直接从文件层面复制
-                menuPane.copyFile(srcPath, destPath);
+                CopyFileUtil.copyFile(srcPath, destPath);
                 //添加到flowPane
                 File file = new File(destPath);
                 PictureNode p = new PictureNode(file);

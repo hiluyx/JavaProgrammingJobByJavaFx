@@ -3,9 +3,9 @@ package util.httpUtils;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
-import controller.FileTree;
-import controller.ProgressBarWindow;
-import controller.ViewerPane;
+import mainpane.FileTreePane;
+import toolpane.ProgressBarWindow;
+import mainpane.ViewerPane;
 import javafx.application.Platform;
 import javafx.scene.control.ProgressBar;
 import model.CloudImageNote;
@@ -30,7 +30,6 @@ import util.httpUtils.exception.RequestConnectException;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
@@ -131,7 +130,7 @@ public class HttpUtil {
         if (deleteCloudImageFiles != null &&deleteCloudImageFiles.size() > 0){
             StringBuilder deleteImagesString = new StringBuilder();
             URIBuilder builder = new URIBuilder(URI_SPRINGBOOT + "/deleteImages");
-            List<CloudImageNote> fileTreeCloudImageNotes = FileTree.cloudImageNoteList;
+            List<CloudImageNote> fileTreeCloudImageNotes = FileTreePane.cloudImageNoteList;
             for(File file : deleteCloudImageFiles){
                 int id = -1;
                 for (CloudImageNote note : fileTreeCloudImageNotes){

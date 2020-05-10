@@ -1,4 +1,4 @@
-package controller;
+package toolpane;
 
 
 import javafx.application.Platform;
@@ -6,6 +6,7 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ProgressIndicator;
 import lombok.Getter;
 import lombok.Setter;
+import mainpane.ViewerPane;
 import util.TaskThreadPools;
 
 /**

@@ -1,26 +1,23 @@
-package controller;
+package mainpane;
 
-import javafx.geometry.Insets;
-import javafx.geometry.NodeOrientation;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToolBar;
-import javafx.scene.effect.BlendMode;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import model.TreeNode;
+import toolpane.Screen_shot;
 import util.ButtonUtil;
 
-import java.awt.*;
 import java.io.File;
 
-public class SeePicture extends BorderPane {
+public class SeePicturePane extends BorderPane {
+
     private final TreeNode treeNode;
     private StackPane stackPane;
     private BorderPane borderPane;
@@ -31,7 +28,8 @@ public class SeePicture extends BorderPane {
     private boolean isRotate;                   //左转为false，右转为true
     int w = 800;
     int h = 800;
-    public SeePicture(File file, String nodePane) {
+
+    public SeePicturePane(File file, String nodePane) {
         //前提判断
         treeNode = new TreeNode(file.getParentFile(), file.getParentFile().getName());
         treeNode.setImages();
@@ -46,8 +44,14 @@ public class SeePicture extends BorderPane {
             }
         }   //判断图片
 
-        ///////////////组件////////////
-        //modified by sky
+        //初始化界面以及添加监听器
+        initSeePicturePane();
+
+    }
+
+    //初始化界面以及添加监听器
+    private void initSeePicturePane(){
+        //组件
         Button previous = ButtonUtil.createButton("previous");
         Button next = ButtonUtil.createButton("next");
         Button enlarge = ButtonUtil.createButton("enlarge");
@@ -94,56 +98,21 @@ public class SeePicture extends BorderPane {
         ///////////////监听器//////////////////
         previous.setOnMouseClicked(e -> { this.clickCount--;previous_next_action(); });
         next.setOnMouseClicked(e -> { this.clickCount++;previous_next_action(); });
-        ppt.setOnMouseClicked(e -> new PPT(treeNode) );
+        ppt.setOnMouseClicked(e -> new PPTPane(treeNode) );
         small.setOnMouseClicked(e -> { this.changeNum--;enlarge_small_action(); });
         enlarge.setOnMouseClicked(e -> { this.changeNum++;enlarge_small_action(); });
         left_rotate.setOnMouseClicked(e->{ this.isRotate=false;rotate(); } );
         right_rotate.setOnMouseClicked(e->{ this.isRotate=true;rotate(); } );
         screenshot.setOnAction( e-> new Screen_shot(treeNode.getFile()) );
-
     }
 
     //上一张下一张
     private void previous_next_action() {
         if (this.clickCount < 0) {
-            Stage stage = new Stage();
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.getIcons().add(new Image("file:"+new File("icon/stageIcon.png"),30, 30,
-                    true, true));
-            stage.setTitle("提示");
-            stage.setMinWidth(300);
-            stage.setMaxHeight(200);
-            Label label = new Label("这是第一张图片");
-            Button closeButton = ButtonUtil.createButton("cancel");
-            closeButton.setOnAction(e ->stage.close());
-
-            VBox vBox = new VBox(10);
-            vBox.setStyle("-fx-background-color: White");
-            vBox.getChildren().addAll(label, closeButton);
-            vBox.setAlignment(Pos.CENTER);
-            Scene scene = new Scene (vBox);
-            stage.setScene(scene);
-            stage.show();
+            tipsBox("这是第一张图片");
             this.clickCount++;
         } else if (this.clickCount > this.treeNode.getImages().size() - 1) {
-            Stage stage = new Stage();
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.getIcons().add(new Image("file:"+new File("icon/stageIcon.png"),30, 30,
-                    true, true));
-            stage.setTitle("提示");
-            stage.setMinWidth(300);
-            stage.setMaxHeight(200);
-            Label label = new Label("这是最后一张图片");
-            Button closeButton = ButtonUtil.createButton("cancel");
-            closeButton.setOnAction(e ->stage.close());
-
-            VBox vBox = new VBox(10);
-            vBox.setStyle("-fx-background-color: White");
-            vBox.getChildren().addAll(label, closeButton);
-            vBox.setAlignment(Pos.CENTER);
-            Scene scene = new Scene (vBox);
-            stage.setScene(scene);
-            stage.show();
+            tipsBox("这是最后一张图片");
         } else {
             this.currentRotate = 0;
             this.changeNum = 0;
@@ -157,46 +126,13 @@ public class SeePicture extends BorderPane {
     //缩放功能
     private void enlarge_small_action() {
         if (this.changeNum <= -5) {
-            Stage stage = new Stage();
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.getIcons().add(new Image("file:"+new File("icon/stageIcon.png"),30, 30,
-                    true, true));
-            stage.setTitle("提示");
-            stage.setMinWidth(300);
-            stage.setMaxHeight(200);
-            Label label = new Label("已是最小");
-            Button closeButton = ButtonUtil.createButton("cancel");
-            closeButton.setOnAction(e ->stage.close());
-
-            VBox vBox = new VBox(10);
-            vBox.setStyle("-fx-background-color: White");
-            vBox.getChildren().addAll(label, closeButton);
-            vBox.setAlignment(Pos.CENTER);
-            Scene scene = new Scene (vBox);
-            stage.setScene(scene);
-            stage.show();
+            tipsBox("已是最小");
             changeNum++;
         } else if (this.changeNum >= 10) {
-            Stage stage = new Stage();
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.getIcons().add(new Image("file:"+new File("icon/stageIcon.png"),30, 30,
-                    true, true));
-            stage.setTitle("提示");
-            stage.setMinWidth(300);
-            stage.setMaxHeight(200);
-            Button closeButton = ButtonUtil.createButton("cancel");
-            closeButton.setOnAction(e ->stage.close());
-
-            Label label = new Label("已是最大");
-            VBox vBox = new VBox(10);
-            vBox.setStyle("-fx-background-color: White");
-            vBox.getChildren().addAll(label, closeButton);
-            vBox.setAlignment(Pos.CENTER);
-            Scene scene = new Scene (vBox);
-            stage.setScene(scene);
-            stage.show();
+            tipsBox("已是最大");
             changeNum--;
         }
+
         ImageView iv = (ImageView) borderPane.getCenter();
         iv.setScaleX(changeNum * 0.1 + 1);
         iv.setScaleY(changeNum * 0.1 + 1);
@@ -215,10 +151,33 @@ public class SeePicture extends BorderPane {
         }
         ImageView iv = (ImageView) borderPane.getCenter();
         iv.setRotate(this.currentRotate % 360);
-//        iv.setFitWidth(w * (changeNum * 0.1 + 1));
-//        iv.setFitHeight(h * (changeNum * 0.1 + 1));
         iv.setSmooth(true);
         iv.setPreserveRatio(true);
+    }
+
+    //提示框
+    private void tipsBox(String massageOfTips) {
+        Stage stage = new Stage();
+
+        //锁定当前提示框
+        stage.initModality(Modality.APPLICATION_MODAL);
+
+        stage.getIcons().add(new Image("file:"+new File("icon/stageIcon.png"),30, 30,
+                true, true));
+        stage.setTitle("提示");
+        stage.setMinWidth(300);
+        stage.setMaxHeight(200);
+        Label label = new Label(massageOfTips);
+        Button closeButton = ButtonUtil.createButton("cancel");
+        closeButton.setOnAction(e ->stage.close());
+
+        VBox vBox = new VBox(10);
+        vBox.setStyle("-fx-background-color: White");
+        vBox.getChildren().addAll(label, closeButton);
+        vBox.setAlignment(Pos.CENTER);
+        Scene scene = new Scene (vBox);
+        stage.setScene(scene);
+        stage.show();
     }
 
 }
