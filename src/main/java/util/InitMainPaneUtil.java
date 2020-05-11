@@ -71,31 +71,33 @@ public class InitMainPaneUtil {
         primaryStage.setScene(scene);
         primaryStage.getIcons().add(new Image("file:"+new File("icon/stageIcon.png"),30, 30,
                 true, true));
-        primaryStage.setTitle("电子图片管理程序--by互抱大腿的小弟们");
+        primaryStage.setTitle("电子图片管理程序--第三组 何乐烽 卢运喜 孙考毅 张宏林");
         //设置关闭程序时要执行的操作
         primaryStage.setOnCloseRequest(event -> {
-            System.out.println("即将关闭程序");
+            //System.out.println("即将关闭程序");
             try {
                 //删除云相册数据
                 File cloudAlbum = new File("cloudAlbum");
                 File[] filesOfCloudAlbum = cloudAlbum.listFiles();
                 if(filesOfCloudAlbum != null){
                     for(File each:filesOfCloudAlbum){
-                        System.out.println("删除本地"+each.getName()+":"+each.delete());
+                        //System.out.println("删除本地"+each.getName()+":"+each.delete());
+                        each.delete();
                     }
                 }
-                System.out.println("本地云相册删除："+cloudAlbum.delete());
-                System.out.println("关闭网络连接");
+               // System.out.println("本地云相册删除："+cloudAlbum.delete());
+               //  System.out.println("关闭网络连接");
                 HttpUtil.client.close();
                 //删除回收站数据
                 File recycleBin = new File("recycleBin");
                 File[] filesOfRecycleBin = recycleBin.listFiles();
                 if(filesOfRecycleBin != null){
                     for(File each:filesOfRecycleBin){
-                        System.out.println("删除"+each.getName()+":"+each.delete());
+                        //System.out.println("删除"+each.getName()+":"+each.delete());
+                        each.delete();
                     }
                 }
-                System.out.println("回收站删除："+recycleBin.delete());
+                //System.out.println("回收站删除："+recycleBin.delete());
 
             }catch (Exception exception){
                 exception.printStackTrace();

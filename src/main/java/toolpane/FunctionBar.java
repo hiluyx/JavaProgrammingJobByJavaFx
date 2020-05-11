@@ -16,7 +16,7 @@ public class FunctionBar extends HBox {
     private Button seePicture = ButtonUtil.createButton("seePicture");
     public static Button upLoad = ButtonUtil.createButton("upLoad");
     //当前文件夹路径
-    private final Label path = new Label();
+    public static Label path = new Label();
 
     public FunctionBar() {
         super(10);

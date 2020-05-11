@@ -57,7 +57,7 @@ public class PictureNode extends Label{
 
             //如果是左键点击
             if (e.getButton() == MouseButton.PRIMARY) {
-                System.out.println("单击了:"+this.file.getName());
+                System.out.println(this.file.getName());
 
                 //记录该节点被点击的总次数
                 this.count += e.getClickCount();
@@ -91,7 +91,7 @@ public class PictureNode extends Label{
                     selectedPictures.remove(this);
                 }
 
-                    System.out.println("选中的数量：" + selectedPictures.size());
+                    System.out.println("选中" + selectedPictures.size()+"张");
 
                 showSelectedPictureNumber();//更新被选中的数量
             }
@@ -100,7 +100,6 @@ public class PictureNode extends Label{
             if (e.getClickCount() == 2&&e.getButton()==MouseButton.PRIMARY) {
                 //e.getClickCount() == 2,双击
                 //创建一个SeePicture类，传参数进去
-                System.out.println("双击了:"+this.file.getName());
                 new SeePicturePane(this.file, this.file.getName());
             }
             if(selectedPictures.size()>0){

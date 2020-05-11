@@ -38,7 +38,9 @@ public class NoSelectedMenuPane {
 
     public NoSelectedMenuPane(Node node) {
         contextMenu.getItems().addAll(paste, allSelected, revocation);
-        setStatus(); show(node); setMenuItemFunction();
+        setStatus();
+        show(node);
+        setMenuItemFunction();
     }
 
     private void show(Node node) {
@@ -73,13 +75,13 @@ public class NoSelectedMenuPane {
         }); this.revocation.setOnAction(event -> {
             TaskThreadPools.execute(this::revocationFunction);
         }); this.paste.setOnAction(event -> {
-            TaskThreadPools.execute(this::pasteFunction);
+            pasteFunction();
         });
     }
 
     //全选图片
     public void allSelectedFunction() {
-        System.out.println("allselected");
+        this.contextMenu.hide();
         for (Node each : ViewerPane.flowPane.getChildren()) {
             if (!PictureNode.getSelectedPictures()
                     .contains(each)&&((PictureNode)each).getLocked()==false) {
@@ -93,7 +95,7 @@ public class NoSelectedMenuPane {
     }
 
     public void revocationFunction() {
-        System.out.println("revocation");
+        this.contextMenu.hide();
         System.out.println(everyRevocationNum.size());
         File[] files = MenuPane.recycleBin.listFiles();
 
@@ -108,21 +110,24 @@ public class NoSelectedMenuPane {
             String destPath = revocationPictureFiles.get(curIndex).getAbsolutePath();
             files[i].renameTo(new File(destPath));
             revocationPictureFiles.remove(revocationPictureFiles.get(curIndex));
-            Platform.runLater(()->ViewerPane.flowPane.getChildren().add(new PictureNode(new File(destPath))));
+            File file = new File(destPath).getParentFile();
+            if(file.getAbsolutePath().equals(FunctionBar.path.getText())){
+                Platform.runLater(()->ViewerPane.flowPane.getChildren().add(new PictureNode(new File(destPath))));
+            }
             System.out.println("目标文件是否存在："+new File(destPath).exists());
         }
         everyRevocationNum.remove(index);
     }
 
     public void pasteFunction() {
-        System.out.println("paste");
+        this.contextMenu.hide();
         Clipboard clipboard = Clipboard.getSystemClipboard();
         if (clipboard != null) {
             paste.setDisable(true);
         } else {
             paste.setDisable(false);
-        } ArrayList<File> picFiles = (ArrayList<File>) clipboard
-                .getContent(DataFormat.FILES);
+        }
+        ArrayList<File> picFiles = (ArrayList<File>) clipboard.getContent(DataFormat.FILES);
         ArrayList<PictureNode> processedPictures = new ArrayList<>();
         for (File each : picFiles) {
             processedPictures.add(new PictureNode(each));
@@ -131,9 +136,8 @@ public class NoSelectedMenuPane {
         clipboard.clear();
         try {
             if (MenuPane.status == 2) {//如果为剪切状态，删除原路径下的图片
-                int num = 0; for (PictureNode each : processedPictures) {
+                for (PictureNode each : processedPictures) {
                     if (each.getFile().delete()) {
-                        System.out.printf("第%d张图片删除成功\n", ++num);
                         Platform.runLater(()->ViewerPane.flowPane.getChildren().remove(each));
                     }
                 }
@@ -163,7 +167,7 @@ public class NoSelectedMenuPane {
                 //添加到flowPane
                 File file = new File(destPath);
                 PictureNode p = new PictureNode(file);
-                ViewerPane.flowPane.getChildren().add(p);
+                Platform.runLater(()-> ViewerPane.flowPane.getChildren().add(p));
             }
             //粘贴一次之后设置为不可用
             paste.setDisable(true);

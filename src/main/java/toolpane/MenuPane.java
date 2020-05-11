@@ -361,46 +361,46 @@ public class MenuPane extends MenuItem {
         yes.setOnMouseClicked(event -> {
             stage.close();
             TaskThreadPools.execute(()->{
-                int num = 0;
                 //把要删除的照片移动到回收站
                 NoSelectedMenuPane.everyRevocationNum.add(PictureNode.getSelectedPictures().size());
 
                 for (PictureNode each : PictureNode.getSelectedPictures())
                     Platform.runLater(()->ViewerPane.flowPane.getChildren().remove(each));
-                for (PictureNode each : PictureNode.getSelectedPictures()) {
-                    if(each.getFile().getParent().equals(new File("cloudAlbum").getAbsolutePath())){
-                        FileTreePane.deletedCloudImages.add(each.getFile());
-                        int tail = PictureNode.getSelectedPictures().size();
-                        if(each == PictureNode.getSelectedPictures().get(tail - 1)){
-                            while(true){
-                                try {
-                                    HttpUtil.doDelete(FileTreePane.deletedCloudImages);
-                                } catch (URISyntaxException | RequestConnectException exception) {
-                                    if (exception instanceof RequestConnectException){
-                                        if (((RequestConnectException) exception).getDialogSel((RequestConnectException) exception)){
-                                            break;
-                                        } else continue;
+                try {
+                    for (PictureNode each : PictureNode.getSelectedPictures()) {
+                        if(each.getFile().getParent().equals(new File("cloudAlbum").getAbsolutePath())){
+                            FileTreePane.deletedCloudImages.add(each.getFile());
+                            int tail = PictureNode.getSelectedPictures().size();
+                            if(each == PictureNode.getSelectedPictures().get(tail - 1)){
+                                while(true){
+                                    try {
+                                        HttpUtil.doDelete(FileTreePane.deletedCloudImages);
+                                    } catch (URISyntaxException | RequestConnectException exception) {
+                                        if (exception instanceof RequestConnectException){
+                                            if (((RequestConnectException) exception).getDialogSel((RequestConnectException) exception)){
+                                                break;
+                                            } else continue;
+                                        }
                                     }
+                                    break;
                                 }
-                                break;
                             }
                         }
-                    }
 
-                    String srcPath = each.getFile().getAbsolutePath();
-                    String destPath =
-                            recycleBin.getAbsolutePath() + "/"
-                                    + each.getFile().getName();
-                    NoSelectedMenuPane.revocationPictureFiles.add(each.getFile());
-                    try {
+                        String srcPath = each.getFile().getAbsolutePath();
+                        String destPath =
+                                recycleBin.getAbsolutePath() + "/"
+                                        + each.getFile().getName();
+                        NoSelectedMenuPane.revocationPictureFiles.add(each.getFile());
+
                         CopyFileUtil.copyFile(srcPath, destPath);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    if (each.getFile().delete()) {
-                        System.out.printf("第%d张图片删除成功\n", ++num);
+
                     }
                 }
+                catch (Exception e){
+
+                }
+
             });
         });
 

@@ -107,7 +107,7 @@ public class ViewerPane extends BorderPane {
             }
 
             //更新当前路径
-            functionBar.getPath().setText(newValue.getFile().getAbsolutePath());
+            functionBar.path.setText(newValue.getFile().getAbsolutePath());
 
             //统计图片张数与图片大小
             if (newValue.getImages() != null) {
@@ -225,7 +225,6 @@ public class ViewerPane extends BorderPane {
             sceneY_start.set(event.getY());
             width.set(ViewerPane.flowPane.getWidth());
             colNum.set((int) (width.get() / 120));
-            System.out.println("colNun:"+colNum);
         });
         ViewerPane.flowPane.setOnDragDetected(event -> flowPane.startFullDrag());
         ViewerPane.flowPane.setOnMouseDragOver(event -> {
@@ -265,8 +264,7 @@ public class ViewerPane extends BorderPane {
         });
 
         flowPane.setOnMouseDragExited(event -> {
-            System.out.println("结束");
-            System.out.println(PictureNode.getSelectedPictures().size());
+            System.out.println("鼠标拖拽结束,选中"+PictureNode.getSelectedPictures().size()+"张");
             //设置上传按钮可用性
             if(PictureNode.getSelectedPictures().size()>0){
                 FunctionBar.upLoad.setDisable(false);
