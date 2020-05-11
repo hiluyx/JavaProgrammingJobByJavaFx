@@ -32,8 +32,9 @@ public class NoSelectedMenuPane {
     private MenuItem paste = new MenuItem("粘贴");
     private MenuItem revocation = new MenuItem("撤销");
     private ContextMenu contextMenu = new ContextMenu();
-
+    /*存放要撤回的文件*/
     public static ArrayList<File>revocationPictureFiles = new ArrayList<>();
+    /*存每次撤回的图片数*/
     public static ArrayList<Integer>everyRevocationNum = new ArrayList<>();
 
     public NoSelectedMenuPane(Node node) {
@@ -42,7 +43,7 @@ public class NoSelectedMenuPane {
         show(node);
         setMenuItemFunction();
     }
-
+    /*显示菜单栏*/
     private void show(Node node) {
         node.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent e) -> {
             if (e.getPickResult().getIntersectedNode() instanceof FlowPane) {
@@ -60,7 +61,7 @@ public class NoSelectedMenuPane {
             }
         });
     }
-
+    /*设置撤回的可用性*/
     private void setStatus() {
         if (MenuPane.status == -1) {
             paste.setDisable(true); revocation.setDisable(true);
@@ -68,7 +69,7 @@ public class NoSelectedMenuPane {
             paste.setDisable(false); revocation.setDisable(false);
         }
     }
-
+    /*设置功能*/
     private void setMenuItemFunction() {
         this.allSelected.setOnAction(event -> {
             allSelectedFunction();
@@ -93,20 +94,19 @@ public class NoSelectedMenuPane {
         FunctionBar.upLoad.setDisable(false);
         ViewerPane.selectedNumberOfPicture.setText(new String("-选中"+PictureNode.getSelectedPictures().size()+"张"));
     }
-
+    /*撤回操作*/
     public void revocationFunction() {
         this.contextMenu.hide();
-        System.out.println(everyRevocationNum.size());
+//        System.out.println(everyRevocationNum.size());
         File[] files = MenuPane.recycleBin.listFiles();
-
+        /*要倒序进行*/
         index = everyRevocationNum.size()-1;
 
         int curIndex = files.length-1;
-        System.out.println(everyRevocationNum.get(index));
+//        System.out.println(everyRevocationNum.get(index));
         for(int i=0;i<everyRevocationNum.get(index);i++,curIndex--){
-            System.out.println(files[curIndex].exists());
-            System.out.println(files[curIndex].getAbsolutePath());
-
+//            System.out.println(files[curIndex].exists());
+//            System.out.println(files[curIndex].getAbsolutePath());
             String destPath = revocationPictureFiles.get(curIndex).getAbsolutePath();
             files[i].renameTo(new File(destPath));
             revocationPictureFiles.remove(revocationPictureFiles.get(curIndex));
@@ -114,11 +114,11 @@ public class NoSelectedMenuPane {
             if(file.getAbsolutePath().equals(FunctionBar.path.getText())){
                 Platform.runLater(()->ViewerPane.flowPane.getChildren().add(new PictureNode(new File(destPath))));
             }
-            System.out.println("目标文件是否存在："+new File(destPath).exists());
+//            System.out.println("目标文件是否存在："+new File(destPath).exists());
         }
         everyRevocationNum.remove(index);
     }
-
+    /*粘贴操作*/
     public void pasteFunction() {
         this.contextMenu.hide();
         Clipboard clipboard = Clipboard.getSystemClipboard();
@@ -127,12 +127,13 @@ public class NoSelectedMenuPane {
         } else {
             paste.setDisable(false);
         }
+        /*获取剪贴板内容*/
         ArrayList<File> picFiles = (ArrayList<File>) clipboard.getContent(DataFormat.FILES);
         ArrayList<PictureNode> processedPictures = new ArrayList<>();
         for (File each : picFiles) {
             processedPictures.add(new PictureNode(each));
         }
-        System.out.println(processedPictures.size());
+//        System.out.println(processedPictures.size());
         clipboard.clear();
         try {
             if (MenuPane.status == 2) {//如果为剪切状态，删除原路径下的图片

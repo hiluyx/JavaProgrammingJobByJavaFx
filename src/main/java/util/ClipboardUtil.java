@@ -11,6 +11,7 @@ import java.util.ArrayList;
  * @date 2020/5/3 10:34 上午
  */
 public class ClipboardUtil {
+    /*将复制、剪切后的内容进行处理存放到剪切板*/
     public static Clipboard clipboard = Clipboard.getSystemClipboard();
     public static ClipboardContent clipboardContent = new ClipboardContent();
 

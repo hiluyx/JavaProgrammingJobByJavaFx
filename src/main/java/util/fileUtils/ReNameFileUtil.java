@@ -12,7 +12,9 @@ public class ReNameFileUtil {
         StringBuilder newName = new StringBuilder(newFileName);
         int startNum = id;
         int linBit = 0;
-        if(startNum == 0)  linBit++;
+        if(startNum == 0) {
+            linBit++;
+        }
         while(startNum!=0) {
             linBit++;
             startNum/=10;
