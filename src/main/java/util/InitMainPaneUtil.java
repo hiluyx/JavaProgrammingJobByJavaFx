@@ -74,7 +74,6 @@ public class InitMainPaneUtil {
         primaryStage.setTitle("电子图片管理程序--第三组 何乐烽 卢运喜 孙考毅 张宏林");
         //设置关闭程序时要执行的操作
         primaryStage.setOnCloseRequest(event -> {
-            System.exit(0);
             //System.out.println("即将关闭程序");
             try {
                 //删除云相册数据
