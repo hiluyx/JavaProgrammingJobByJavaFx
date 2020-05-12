@@ -136,13 +136,6 @@ public class NoSelectedMenuPane {
 //        System.out.println(processedPictures.size());
         clipboard.clear();
         try {
-            if (MenuPane.status == 2) {//如果为剪切状态，删除原路径下的图片
-                for (PictureNode each : processedPictures) {
-                    if (each.getFile().delete()) {
-                        Platform.runLater(()->ViewerPane.flowPane.getChildren().remove(each));
-                    }
-                }
-            }
             //srcPath是原路径，destPath是构造出来的目标路径
             //例如srcPath=G:\0tjx\2.png  destPath =G:\计算机二级\2.png
             for (PictureNode each : processedPictures) {
@@ -170,6 +163,14 @@ public class NoSelectedMenuPane {
                 PictureNode p = new PictureNode(file);
                 Platform.runLater(()-> ViewerPane.flowPane.getChildren().add(p));
             }
+            if (MenuPane.status == 2) {//如果为剪切状态，删除原路径下的图片
+                for (PictureNode each : processedPictures) {
+                    if (each.getFile().delete()) {
+                        Platform.runLater(()->ViewerPane.flowPane.getChildren().remove(each));
+                    }
+                }
+            }
+
             //粘贴一次之后设置为不可用
             paste.setDisable(true);
         } catch (IOException e) {

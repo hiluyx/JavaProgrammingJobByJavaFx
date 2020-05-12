@@ -72,8 +72,9 @@ public class FileTreePane {
          */
         this.getTreeView().getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if(newValue == null) return;
-                newValue.getValue().setImages();
-                ViewerPane.setCurrentTreeNode(newValue.getValue());
+            System.out.println(newValue.getValue().getFile().getAbsolutePath());
+            newValue.getValue().setImages();
+            ViewerPane.setCurrentTreeNode(newValue.getValue());
         });
     }
 

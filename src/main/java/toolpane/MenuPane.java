@@ -134,7 +134,7 @@ public class MenuPane extends MenuItem {
     private void seePictureFunction(){
         this.seePicture.setOnAction(event -> {
             //调用图片查看窗口类
-            new SeePicturePane(ViewerPane.currentTreeNode.getValue().getImages().get(0),ViewerPane.currentTreeNode.getValue().getImages().get(0).getName());
+            new SeePicturePane(PictureNode.getSelectedPictures().get(0).getFile(),PictureNode.getSelectedPictures().get(0).getFile().getName());
         });
     }
 

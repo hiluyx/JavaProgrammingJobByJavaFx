@@ -86,6 +86,7 @@ public class InitMainPaneUtil {
                     }
                 }
                // System.out.println("本地云相册删除："+cloudAlbum.delete());
+                cloudAlbum.delete();
                //  System.out.println("关闭网络连接");
                 HttpUtil.client.close();
                 //删除回收站数据
@@ -98,6 +99,7 @@ public class InitMainPaneUtil {
                     }
                 }
                 //System.out.println("回收站删除："+recycleBin.delete());
+                recycleBin.delete();
 
             }catch (Exception exception){
                 exception.printStackTrace();
