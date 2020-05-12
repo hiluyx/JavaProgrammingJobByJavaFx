@@ -31,7 +31,7 @@ public class InitMainPaneUtil {
         HBox myComputer = new HBox(10);
         myComputer.setStyle("-fx-background-color:#ffffff;");
         myComputer.setPadding(new Insets(5,0,5,5));
-        ImageView computer = new ImageView(new Image("file:"+new File("computer.png"),30, 30,
+        ImageView computer = new ImageView(new Image(String.valueOf(ButtonUtil.class.getClassLoader().getResource("computer.png")),30, 30,
                 true, true));
         Label myCom = new Label("我的电脑");
         myCom.setFont(new Font(18));
@@ -69,11 +69,12 @@ public class InitMainPaneUtil {
         int height = (int) (width*0.65);
         Scene scene = new Scene(root, width, height);
         primaryStage.setScene(scene);
-        primaryStage.getIcons().add(new Image("file:"+new File("stageIcon.png"),30, 30,
+        primaryStage.getIcons().add(new Image(String.valueOf(ButtonUtil.class.getClassLoader().getResource("stageIcon.png")),30, 30,
                 true, true));
         primaryStage.setTitle("电子图片管理程序--第三组 何乐烽 卢运喜 孙考毅 张宏林");
         //设置关闭程序时要执行的操作
         primaryStage.setOnCloseRequest(event -> {
+            System.exit(0);
             //System.out.println("即将关闭程序");
             try {
                 //删除云相册数据
