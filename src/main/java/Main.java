@@ -1,8 +1,10 @@
+import javafx.event.EventHandler;
 import javafx.scene.control.SplitPane;
 import javafx.application.Application;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
+import javafx.stage.WindowEvent;
 import mainpane.ViewerPane;
 import util.InitMainPaneUtil;
 
@@ -18,6 +20,7 @@ public class Main extends Application {
             SplitPane root = InitMainPaneUtil.createRoot(left,right);
             //创建初始化primaryStage
             InitMainPaneUtil.initStage(primaryStage,root);
+            primaryStage.setOnCloseRequest(event -> System.exit(0));
             //show
             primaryStage.show();
         } catch (Exception e) {
