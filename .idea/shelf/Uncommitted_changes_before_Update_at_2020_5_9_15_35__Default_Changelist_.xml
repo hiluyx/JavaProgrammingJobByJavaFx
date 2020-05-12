@@ -1,0 +1,9 @@
+<changelist name="Uncommitted_changes_before_Update_at_2020_5_9_15_35_[Default_Changelist]" date="1589009728086" recycled="true" deleted="true">
+  <option name="PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_2020_5_9_15_35_[Default_Changelist]/shelved.patch" />
+  <option name="DESCRIPTION" value="Uncommitted changes before Update at 2020/5/9 15:35 [Default Changelist]" />
+  <binary>
+    <option name="BEFORE_PATH" value="target/classes/util/httpUtils/HttpUtil.class" />
+    <option name="AFTER_PATH" value="target/classes/util/httpUtils/HttpUtil.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_2020_5_9_15_35_[Default_Changelist]/HttpUtil.class" />
+  </binary>
+</changelist>

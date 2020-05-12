@@ -17,8 +17,8 @@ public class ButtonUtil {
         button.setPadding(new Insets(10, 10, 10, 10));
         //button.setText(buttonName);
         button.setStyle("-fx-background-color:White;");
-        URL url = ButtonUtil.class.getClassLoader().getResource(buttonName+".png");
-        button.setGraphic(new ImageView(new Image(String.valueOf(new File(String.valueOf(url))),30, 30,
+        button.setGraphic(new ImageView(new Image(String.valueOf(ButtonUtil.class.getClassLoader().getResource(buttonName+".png")),
+                30, 30,
                 true, true)));
         button.setTooltip(new Tooltip(buttonName));
         button.setOnMouseEntered(event -> {

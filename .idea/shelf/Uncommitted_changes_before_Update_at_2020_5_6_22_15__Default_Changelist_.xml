@@ -1,0 +1,9 @@
+<changelist name="Uncommitted_changes_before_Update_at_2020_5_6_22_15_[Default_Changelist]" date="1588774550605" recycled="true" deleted="true">
+  <option name="PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_2020_5_6_22_15_[Default_Changelist]/shelved.patch" />
+  <option name="DESCRIPTION" value="Uncommitted changes before Update at 2020/5/6 22:15 [Default Changelist]" />
+  <binary>
+    <option name="BEFORE_PATH" value="target/classes/util/fileUtils/FileTreeLoader.class" />
+    <option name="AFTER_PATH" value="target/classes/util/fileUtils/FileTreeLoader.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_2020_5_6_22_15_[Default_Changelist]/FileTreeLoader.class" />
+  </binary>
+</changelist>
