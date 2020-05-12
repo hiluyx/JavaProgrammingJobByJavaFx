@@ -75,6 +75,16 @@ public class FileTreePane {
             System.out.println(newValue.getValue().getFile().getAbsolutePath());
             newValue.getValue().setImages();
             ViewerPane.setCurrentTreeNode(newValue.getValue());
+            File cloudAlbum = new File("cloudAlbum");
+            File[] filesOfCloudAlbum = cloudAlbum.listFiles();
+            if (this.isOpened){
+                if(filesOfCloudAlbum != null){
+                    for(File each:filesOfCloudAlbum){
+                        System.out.println("删除本地"+each.getName()+":"+each.delete());
+                        each.delete();
+                    }
+                }
+            }
         });
     }
 

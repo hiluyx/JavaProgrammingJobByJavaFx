@@ -54,7 +54,7 @@ public class HttpUtil {
             throws RequestConnectException, URISyntaxException {
         ViewerPane.progressBarWindow.clearBar();
         List<CloudImageNote> cloudImageNoteList = new ArrayList<>();
-        URIBuilder builder = new URIBuilder(URI_SPRINGBOOT+ "/getImagesDivideIntoPages");
+        URIBuilder builder = new URIBuilder(URI_LOCALHOST+ "/getImagesDivideIntoPages");
         RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(10000).setConnectTimeout(60000).build();
         //set the params of PAGE
         List<NameValuePair> params= new ArrayList<>();
@@ -102,7 +102,7 @@ public class HttpUtil {
      */
     public static void doPostJson(List<String> paths) throws RequestConnectException, URISyntaxException {
         ViewerPane.progressBarWindow.clearBar();
-        URIBuilder builder = new URIBuilder(URI_SPRINGBOOT + "/addImages");
+        URIBuilder builder = new URIBuilder(URI_LOCALHOST + "/addImages");
         HttpPost httpPost = new HttpPost(builder.build());
         MultipartEntityBuilder entityBuilder = MultipartEntityBuilder.create();
         entityBuilder.setMode(HttpMultipartMode.RFC6532);
@@ -129,7 +129,7 @@ public class HttpUtil {
     public static void doDelete(List<File> deleteCloudImageFiles) throws URISyntaxException, RequestConnectException {
         if (deleteCloudImageFiles != null &&deleteCloudImageFiles.size() > 0){
             StringBuilder deleteImagesString = new StringBuilder();
-            URIBuilder builder = new URIBuilder(URI_SPRINGBOOT + "/deleteImages");
+            URIBuilder builder = new URIBuilder(URI_LOCALHOST + "/deleteImages");
             List<CloudImageNote> fileTreeCloudImageNotes = FileTreePane.cloudImageNoteList;
             for(File file : deleteCloudImageFiles){
                 int id = -1;

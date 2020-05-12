@@ -122,7 +122,7 @@ public class InitMainPaneUtil {
     //云相册下载
     private static void addListener2Could(Button could, FileTreePane fileTree){
         could.setOnAction(event -> {
-            if (!fileTree.isOpened()) FileTreeLoader.getCloudImages(fileTree);
+            FileTreeLoader.getCloudImages(fileTree);
         });
     }
 
