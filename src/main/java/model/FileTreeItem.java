@@ -22,7 +22,7 @@ public class FileTreeItem extends TreeItem<TreeNode> {
         this.file = file;
         this.treeNode = new TreeNode(file, name);
         this.setValue(treeNode);
-        this.setGraphic(new ImageView(new Image("file:"+new File("icon/folder.png"),20, 20,
+        this.setGraphic(new ImageView(new Image("file:"+new File("folder.png"),20, 20,
                 true, true)));
     }
 }

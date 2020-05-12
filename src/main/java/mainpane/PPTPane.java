@@ -67,7 +67,7 @@ public class PPTPane {
         stage.setScene(scene);
         stage.setFullScreen(true);
         stage.setFullScreenExitHint("");
-        stage.getIcons().add(new Image("file:"+new File("icon/stageIcon.png"),30, 30,
+        stage.getIcons().add(new Image("file:"+new File("stageIcon.png"),30, 30,
                 true, true));
         stage.setTitle("幻灯片播放");
         stage.show();

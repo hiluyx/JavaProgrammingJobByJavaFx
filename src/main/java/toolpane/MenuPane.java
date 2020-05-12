@@ -205,7 +205,7 @@ public class MenuPane extends MenuItem {
                     gridPane.setMinSize(300,300);
                     Scene scene = new Scene(gridPane);
                     Stage stage = new Stage();
-                    stage.getIcons().add(new Image("file:" + new File("icon/stageIcon.png"), 30, 30,
+                    stage.getIcons().add(new Image("file:" + new File("stageIcon.png"), 30, 30,
                             true, true));
                     stage.setTitle("属性");
                     stage.setScene(scene);
@@ -310,7 +310,7 @@ public class MenuPane extends MenuItem {
             });
             Scene scene = new Scene(grid);
             anotherStage.setTitle("重命名");
-            anotherStage.getIcons().add(new Image("file:"+new File("icon/stageIcon.png"),30, 30,
+            anotherStage.getIcons().add(new Image("file:"+new File("stageIcon.png"),30, 30,
                     true, true));
             anotherStage.setScene(scene);
             anotherStage.initModality(Modality.APPLICATION_MODAL);
@@ -353,7 +353,7 @@ public class MenuPane extends MenuItem {
         Stage stage = new Stage();
         stage.setScene(scene);
         stage.initModality(Modality.APPLICATION_MODAL);
-        stage.getIcons().add(new Image("file:" + new File("icon/stageIcon.png"), 30, 30,
+        stage.getIcons().add(new Image("file:" + new File("stageIcon.png"), 30, 30,
                 true, true));
         stage.setTitle("确认删除");
 

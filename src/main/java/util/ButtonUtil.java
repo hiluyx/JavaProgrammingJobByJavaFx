@@ -7,6 +7,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 import java.io.File;
+import java.net.URL;
 
 public class ButtonUtil {
     //创建一个Button，button的文字为函数参数
@@ -16,7 +17,8 @@ public class ButtonUtil {
         button.setPadding(new Insets(10, 10, 10, 10));
         //button.setText(buttonName);
         button.setStyle("-fx-background-color:White;");
-        button.setGraphic(new ImageView(new Image("file:"+new File("icon/"+buttonName+".png"),30, 30,
+        URL url = ButtonUtil.class.getClassLoader().getResource(buttonName+".png");
+        button.setGraphic(new ImageView(new Image(String.valueOf(new File(String.valueOf(url))),30, 30,
                 true, true)));
         button.setTooltip(new Tooltip(buttonName));
         button.setOnMouseEntered(event -> {

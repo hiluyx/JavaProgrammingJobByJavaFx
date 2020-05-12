@@ -89,7 +89,7 @@ public class SeePicturePane extends BorderPane {
         this.setStyle("-fx-background-color:White;");
         Scene scene = new Scene(this, 1350, 1350 * 0.65);
         Stage stage = new Stage();
-        stage.getIcons().add(new Image("file:"+new File("icon/stageIcon.png"),30, 30,
+        stage.getIcons().add(new Image("file:"+new File("stageIcon.png"),30, 30,
                 true, true));
         stage.setTitle("图片查看界面");
         stage.setScene(scene);
@@ -162,7 +162,7 @@ public class SeePicturePane extends BorderPane {
         //锁定当前提示框
         stage.initModality(Modality.APPLICATION_MODAL);
 
-        stage.getIcons().add(new Image("file:"+new File("icon/stageIcon.png"),30, 30,
+        stage.getIcons().add(new Image("file:"+new File("stageIcon.png"),30, 30,
                 true, true));
         stage.setTitle("提示");
         stage.setMinWidth(300);
