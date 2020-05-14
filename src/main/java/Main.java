@@ -20,7 +20,6 @@ public class Main extends Application {
             SplitPane root = InitMainPaneUtil.createRoot(left,right);
             //创建初始化primaryStage
             InitMainPaneUtil.initStage(primaryStage,root);
-            primaryStage.setOnCloseRequest(event -> System.exit(0));
             //show
             primaryStage.show();
         } catch (Exception e) {
