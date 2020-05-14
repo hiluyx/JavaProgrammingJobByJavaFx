@@ -36,7 +36,7 @@ public class FileTreeLoader implements Runnable {
     }
 
     /**
-     * 深度遍历+多线程算法，当文件层数大于3时，启动多线程加载。
+     * 广度优先遍历+多线程算法，当文件层数大于3时，启动多线程加载。
      *
      * 预加载
      */
