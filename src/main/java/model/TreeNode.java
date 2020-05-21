@@ -41,8 +41,8 @@ public class TreeNode{
 
             @Override
             public boolean accept(File pathname) {
-                set.addAll(Arrays.asList("jpg", "png", "gif", "bmp",
-                        "JPG", "PNG", "GIF", "BMP"));
+                set.addAll(Arrays.asList("jpg", "png", "gif", "bmp","jpeg",
+                        "JPG", "PNG", "GIF", "BMP","JPEG"));
                 return set.contains(getExtension(pathname.getName()));
             }
 
